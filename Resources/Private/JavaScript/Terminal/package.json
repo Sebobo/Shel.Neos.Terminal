@@ -1,0 +1,16 @@
+{
+    "name": "neos-terminal",
+    "version": "1.0.0",
+    "license": "proprietary",
+    "private": true,
+    "scripts": {
+        "build": "NODE_ENV=production neos-react-scripts build",
+        "watch": "neos-react-scripts watch"
+    },
+    "dependencies": {
+        "@neos-project/neos-ui-extensibility": "^5.3.4"
+    },
+    "neos": {
+        "buildTargetDirectory": "../../../Public/Assets"
+    }
+}

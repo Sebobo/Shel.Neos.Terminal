@@ -1,0 +1,28 @@
+{
+    "description": "Neos CMS Ui terminal for running Eel expressions and other commands",
+    "type": "neos-plugin",
+    "name": "shel/neos-terminal",
+    "license": "MIT",
+    "keywords": [
+      "flow",
+      "neoscms",
+      "terminal",
+      "console",
+      "eel"
+    ],
+    "require": {
+      "neos/neos": "^4.3 || ^5.3 || ^7.0 || dev-master",
+      "neos/neos-ui": "^4.0 || ^5.3 || ^7.0 || dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shel\\Neos\\Terminal\\": "Classes"
+        }
+    },
+    "extra": {
+        "neos": {
+            "package-key": "Shel.Neos.Terminal"
+        }
+    }
+}
+
