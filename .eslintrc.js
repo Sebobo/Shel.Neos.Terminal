@@ -26,6 +26,7 @@ module.exports = {
         '@typescript-eslint/no-var-requires': 'off',
         '@typescript-eslint/ban-ts-ignore': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
+        'react/prop-types': 'off',
         'prettier/prettier': ['error'],
         'react-hooks/rules-of-hooks': 'error',
     },

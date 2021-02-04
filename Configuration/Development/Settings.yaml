@@ -1,4 +1,6 @@
-Shel:
+Neos:
   Neos:
-    Terminal:
-      enabled: true
+    Ui:
+      frontendConfiguration:
+        'Shel.Neos.Terminal:Terminal':
+          enabled: true

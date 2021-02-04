@@ -1,0 +1,7 @@
+- name: 'Shel.Neos.Terminal:Commands'
+  uriPattern: 'neos/shel-neos-terminal/{@action}'
+  defaults:
+    '@package':    'Shel.Neos.Terminal'
+    '@controller': 'Terminal'
+    '@format':     'json'
+  appendExceedingArguments: true

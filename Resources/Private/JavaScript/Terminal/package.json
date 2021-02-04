@@ -1,16 +1,19 @@
 {
-    "name": "neos-terminal",
-    "version": "1.0.0",
-    "license": "proprietary",
-    "private": true,
-    "scripts": {
-        "build": "NODE_ENV=production neos-react-scripts build",
-        "watch": "neos-react-scripts watch"
-    },
-    "dependencies": {
-        "@neos-project/neos-ui-extensibility": "^5.3.4"
-    },
-    "neos": {
-        "buildTargetDirectory": "../../../Public/Assets"
-    }
+  "name": "neos-terminal",
+  "version": "1.0.0",
+  "license": "proprietary",
+  "private": true,
+  "scripts": {
+    "build": "NODE_ENV=production neos-react-scripts build",
+    "watch": "neos-react-scripts watch"
+  },
+  "dependencies": {
+    "@neos-project/neos-ui-extensibility": "^5.3.4",
+    "react-redux": "^7.1.3",
+    "plow-js": "^2.2.0",
+    "react-console-emulator": "^5.0.0"
+  },
+  "neos": {
+    "buildTargetDirectory": "../../../Public/Assets"
+  }
 }

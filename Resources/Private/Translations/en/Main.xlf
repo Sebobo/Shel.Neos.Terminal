@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file original="" product="Shel.Neos.Terminal" source-language="en" datatype="plaintext">
+        <body>
+            <trans-unit id="sponsorship">
+                <source>Become a sponsor</source>
+            </trans-unit>
+            <trans-unit id="welcome">
+                <source>Welcome to the Neos terminal!</source>
+            </trans-unit>
+            <trans-unit id="toggleTerminal">
+                <source>Toggle ReplWrapper terminal</source>
+            </trans-unit>
+            <trans-unit id="command.evaluating">
+                <source>Evaluating…</source>
+            </trans-unit>
+            <trans-unit id="command.error">
+                <source>An error has occurred.</source>
+            </trans-unit>
+
+            <trans-unit id="command.eel.description">
+                <source>Run an expression through the eel parser</source>
+            </trans-unit>
+            <trans-unit id="command.flushCache.description">
+                <source>Flush all or a single cache</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
