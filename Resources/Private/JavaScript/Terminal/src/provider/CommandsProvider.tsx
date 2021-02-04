@@ -1,70 +1,92 @@
 import * as React from 'react';
-import { useContext, createContext, useCallback } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 // @ts-ignore
 import { fetchWithErrorHandling } from '@neos-project/neos-ui-backend-connector';
 
-import Command from '../interfaces/Command';
 import { NodeContextPath } from '../interfaces/Node';
+import CommandList from '../interfaces/CommandList';
 
 interface CommandsContextProps {
     children: React.ReactElement;
-    commands: { [key: string]: Command };
+    getCommandsEndPoint: string;
+    invokeCommandEndPoint: string;
     siteNode: NodeContextPath;
     documentNode: NodeContextPath;
     focusedNode?: NodeContextPath;
 }
 
 interface CommandsContextValues {
-    commands: { [key: string]: Command };
-    executeCommand: (endPoint: string, param: string[]) => Promise<string>;
+    commands: CommandList;
+    invokeCommand: (endPoint: string, param: string[]) => Promise<string>;
 }
 
 export const CommandsContext = createContext({} as CommandsContextValues);
 export const useCommands = (): CommandsContextValues => useContext(CommandsContext);
 
-export const CommandsProvider = ({ children, commands, documentNode, focusedNode, siteNode }: CommandsContextProps) => {
-    const executeCommand = useCallback(
+export const CommandsProvider = ({
+    invokeCommandEndPoint,
+    getCommandsEndPoint,
+    children,
+    documentNode,
+    focusedNode,
+    siteNode,
+}: CommandsContextProps) => {
+    const [commands, setCommands] = useState<CommandList>({});
+
+    useEffect(() => {
+        fetchWithErrorHandling
+            .withCsrfToken((csrfToken) => ({
+                url: `${getCommandsEndPoint}`,
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'X-Flow-Csrftoken': csrfToken,
+                    'Content-Type': 'application/json',
+                },
+            }))
+            .then((response) => response && response.json())
+            .then(({ result }) => setCommands(result));
+    }, [getCommandsEndPoint, setCommands]);
+
+    const invokeCommand = useCallback(
         (commandName: string, args: string[]): Promise<string> => {
             const command = commands[commandName];
 
             // TODO: translate
             if (!command) throw Error(`Command ${commandName} does not exist!`);
 
-            const contextData = command.requiresNodeContext
-                ? {
-                      siteNode,
-                      focusedNode,
-                      documentNode,
-                  }
-                : {};
+            const contextData = {
+                commandName,
+                argument: args.join(' '),
+                siteNode,
+                focusedNode,
+                documentNode,
+            };
 
             return fetchWithErrorHandling
                 .withCsrfToken((csrfToken) => ({
-                    url: `${command.endPoint}`,
+                    url: `${invokeCommandEndPoint}`,
                     method: 'POST',
                     credentials: 'include',
                     headers: {
                         'X-Flow-Csrftoken': csrfToken,
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        [command.argumentName || 'payload']: args.join(' '),
-                        ...contextData,
-                    }),
+                    body: JSON.stringify(contextData),
                 }))
                 .then((response) => response && response.json())
                 .then((data) => {
                     if (data.success) {
                         // TODO: translate
-                        console.log(JSON.parse(data.result), `Output of command "${commandName} ${args.join(' ')}"`);
+                        console.log(data.result, `Output of command "${commandName} ${args.join(' ')}"`);
                         return data.result;
                     }
-                    throw new Error(data.message);
+                    throw new Error(data.result);
                 });
         },
         [commands, siteNode, documentNode, focusedNode]
     );
 
-    return <CommandsContext.Provider value={{ executeCommand, commands }}>{children}</CommandsContext.Provider>;
+    return <CommandsContext.Provider value={{ invokeCommand, commands }}>{children}</CommandsContext.Provider>;
 };

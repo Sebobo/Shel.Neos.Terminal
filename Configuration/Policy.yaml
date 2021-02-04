@@ -1,14 +1,14 @@
 privilegeTargets:
   'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
-    'Shel.Neos:Terminal:Terminal':
-      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalController->(?!initialize).*Action())'
+    'Shel.Neos:Terminal:ExecuteCommands':
+      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->(?!initialize).*Action())'
 
 roles:
   'Shel.Neos.Terminal:TerminalUser':
     privileges:
-      - privilegeTarget: 'Shel.Neos:Terminal:Terminal'
+      - privilegeTarget: 'Shel.Neos:Terminal:ExecuteCommands'
         permission: GRANT
   'Neos.Neos:Administrator':
     privileges:
-      - privilegeTarget: 'Shel.Neos:Terminal:Terminal'
+      - privilegeTarget: 'Shel.Neos:Terminal:ExecuteCommands'
         permission: GRANT

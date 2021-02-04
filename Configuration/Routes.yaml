@@ -2,6 +2,6 @@
   uriPattern: 'neos/shel-neos-terminal/{@action}'
   defaults:
     '@package':    'Shel.Neos.Terminal'
-    '@controller': 'Terminal'
+    '@controller': 'TerminalCommand'
     '@format':     'json'
   appendExceedingArguments: true

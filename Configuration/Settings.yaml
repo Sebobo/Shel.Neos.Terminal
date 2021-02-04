@@ -30,6 +30,8 @@ Neos:
           enabled: false
           welcomeMessage: 'Shel.Neos.Terminal:Main:welcome'
           registrationKey: ''
+          getCommandsEndPoint: '/neos/shel-neos-terminal/getcommands'
+          invokeCommandEndPoint: '/neos/shel-neos-terminal/invokecommand'
           theme:
             contentStyle:
               color: '#00adee'
@@ -38,19 +40,6 @@ Neos:
               color: '#ff8700'
             inputTextStyle:
               color: '#ffffff'
-          commands:
-            eel:
-              description: 'Shel.Neos.Terminal:Main:command.eel.description'
-              usage: 'eel <string>'
-              endPoint: '/neos/shel-neos-terminal/evaluateeelexpression'
-              useNodeContext: true
-              argumentName: 'expression'
-            flushCache:
-              description: 'Shel.Neos.Terminal:Main:command.flushCache.description'
-              usage: 'flushCache [<string>]'
-              endPoint: '/neos/shel-neos-terminal/flushcache'
-              useNodeContext: false
-              argumentName: 'cacheIdentifier'
 
     userInterface:
       translation:

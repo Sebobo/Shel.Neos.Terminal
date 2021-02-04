@@ -17,6 +17,9 @@
             <trans-unit id="command.error">
                 <source>An error has occurred.</source>
             </trans-unit>
+            <trans-unit id="command.empty">
+                <source>The command returned an empty result.</source>
+            </trans-unit>
 
             <trans-unit id="command.eel.description">
                 <source>Run an expression through the eel parser</source>

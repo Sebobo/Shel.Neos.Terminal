@@ -50,7 +50,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
     documentNode,
     registrationKey,
 }) => {
-    const { executeCommand, commands } = useCommands();
+    const { invokeCommand, commands } = useCommands();
     const terminal = useRef<Terminal>();
     const [showTerminal, setShowTerminal] = useState(false);
 
@@ -65,23 +65,27 @@ const ReplWrapper: React.FC<ReplProps> = ({
             const command = commands[commandName];
 
             // Register command globally
-            window['NeosTerminal'][commandName] = (...args) => executeCommand(commandName, args);
+            window['NeosTerminal'][commandName] = (...args) => invokeCommand(commandName, args);
 
             carry[commandName] = {
                 ...command,
                 description: i18nRegistry.translate(command.description ?? ''),
                 fn: (...args) => {
                     const currentTerminal = terminal.current;
-                    executeCommand(commandName, args)
+                    invokeCommand(commandName, args)
                         .then((result) => {
                             currentTerminal.state.stdout.pop();
-                            currentTerminal.pushToStdout(
-                                result !== undefined
-                                    ? result
-                                    : i18nRegistry.translate('Shel.Neos.Terminal:Main:command.error')
-                            );
+                            let output;
+                            if (!result) {
+                                output = i18nRegistry.translate('Shel.Neos.Terminal:Main:command.empty');
+                            } else {
+                                output = typeof result === 'string' ? result : JSON.stringify(result);
+                            }
+                            currentTerminal.pushToStdout(output);
                         })
-                        .catch(() => {
+                        .catch((error) => {
+                            // TODO: Translate error
+                            console.error(error, `An error occurred during invocation of the "${commandName}" command`);
                             currentTerminal.state.stdout.pop();
                             currentTerminal.pushToStdout(
                                 i18nRegistry.translate('Shel.Neos.Terminal:Main:command.error')
@@ -92,7 +96,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
             };
             return carry;
         }, {});
-    }, [commands, executeCommand]);
+    }, [commands, invokeCommand]);
 
     return (
         <div className={theme.replWrapper}>
