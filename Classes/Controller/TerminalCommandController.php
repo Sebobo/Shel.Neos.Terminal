@@ -15,6 +15,7 @@ namespace Shel\Neos\Terminal\Controller;
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Reflection\ReflectionService;
@@ -36,6 +37,12 @@ class TerminalCommandController extends ActionController
     ];
 
     /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * @Flow\InjectConfiguration(path="frontendConfiguration", package="Neos.Neos.Ui")
      * @var array
      */
@@ -45,17 +52,30 @@ class TerminalCommandController extends ActionController
     {
         $commands = $this->detectCommands();
 
-        $commandDefinitions = array_reduce($commands, static function ($carry, TerminalCommandControllerPluginInterface $command) {
-            // TODO: Only return if command privilege matches
-            $carry[$command::getCommandName()] = [
-                'name' => $command::getCommandName(),
-                'description' => $command::getCommandDescription(),
-                'usage' => $command::getCommandUsage(),
-            ];
+        $commandDefinitions = array_reduce($commands, function ($carry, TerminalCommandControllerPluginInterface $command) {
+            try {
+                $carry[$command::getCommandName()] = $this->loadCommand($command::getCommandName(), $command);
+            } catch (AccessDeniedException $e) {}
             return $carry;
         }, []);
 
         $this->view->assign('value', ['success' => true, 'result' => $commandDefinitions]);
+    }
+
+    /**
+     * This method is mainly used to limit command access via method privileges
+     *
+     * @param string $commandName
+     * @param TerminalCommandControllerPluginInterface $command
+     * @return array
+     */
+    protected function loadCommand(string $commandName, TerminalCommandControllerPluginInterface $command): array
+    {
+        return [
+            'name' => $commandName,
+            'description' => $command::getCommandDescription(),
+            'usage' => $command::getCommandUsage(),
+        ];
     }
 
     /**
@@ -95,15 +115,14 @@ class TerminalCommandController extends ActionController
         }
 
         if (!$result) {
-            // TODO: Translate message
-            $result = new CommandInvocationResult(false, 'Command "' . $commandName . '" not found');
+            $result = new CommandInvocationResult(false, $this->translator->translateById('commandNotFound', ['command' => $commandName]));
         }
 
         $this->view->assign('value', $result);
     }
 
     /**
-     * Thorws exception when terminal is disabled or the called command doesn't exist
+     * Throws an exception when terminal is disabled
      *
      * @throws TerminalException
      */
@@ -113,7 +132,7 @@ class TerminalCommandController extends ActionController
 
         $terminalEnabled = $terminalConfiguration['enabled'] ?? false;
         if (!$terminalEnabled) {
-            throw new TerminalException('Terminal commands are disabled');
+            throw new TerminalException($this->translator->translateById('disabled'));
         }
 
         parent::initializeAction();

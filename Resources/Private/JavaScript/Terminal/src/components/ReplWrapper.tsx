@@ -6,7 +6,6 @@ import { themr } from '@friendsofreactjs/react-css-themr';
 // @ts-ignore
 import { IconButton } from '@neos-project/react-ui-components';
 
-import I18nRegistry from '../interfaces/I18nRegistry';
 import { Node } from '../interfaces/Node';
 import { useCommands } from '../provider/CommandsProvider';
 
@@ -26,7 +25,6 @@ interface ReplProps {
         theme: TerminalTheme;
         welcomeMessage?: string;
     };
-    i18nRegistry: I18nRegistry;
     user: {
         firstName: string;
         lastName: string;
@@ -41,16 +39,8 @@ interface ReplProps {
 
 window['NeosTerminal'] = {};
 
-const ReplWrapper: React.FC<ReplProps> = ({
-    config,
-    i18nRegistry,
-    theme,
-    user,
-    siteNode,
-    documentNode,
-    registrationKey,
-}) => {
-    const { invokeCommand, commands } = useCommands();
+const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, documentNode, registrationKey }) => {
+    const { invokeCommand, commands, translate } = useCommands();
     const terminal = useRef<Terminal>();
     const [showTerminal, setShowTerminal] = useState(false);
 
@@ -69,7 +59,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
 
             carry[commandName] = {
                 ...command,
-                description: i18nRegistry.translate(command.description ?? ''),
+                description: translate(command.description ?? ''),
                 fn: (...args) => {
                     const currentTerminal = terminal.current;
                     invokeCommand(commandName, args)
@@ -77,31 +67,37 @@ const ReplWrapper: React.FC<ReplProps> = ({
                             currentTerminal.state.stdout.pop();
                             let output = result;
                             if (!result) {
-                                output = i18nRegistry.translate('Shel.Neos.Terminal:Main:command.empty');
+                                output = translate('command.empty');
                             }
                             currentTerminal.pushToStdout(output);
                         })
                         .catch((error) => {
-                            // TODO: Translate error
-                            console.error(error, `An error occurred during invocation of the "${commandName}" command`);
-                            currentTerminal.state.stdout.pop();
-                            currentTerminal.pushToStdout(
-                                i18nRegistry.translate('Shel.Neos.Terminal:Main:command.error')
+                            console.error(
+                                error,
+                                translate(
+                                    'command.invocationError',
+                                    'An error occurred during invocation of the "{commandName}" command',
+                                    { commandName }
+                                )
                             );
+                            currentTerminal.state.stdout.pop();
+                            currentTerminal.pushToStdout(translate('command.error'));
                         });
-                    return i18nRegistry.translate('Shel.Neos.Terminal:Main:command.evaluating');
+                    return translate('command.evaluating');
                 },
             };
             return carry;
         }, {});
     }, [commands, invokeCommand]);
 
+    if (!Object.keys(commands).length) return null;
+
     return (
         <div className={theme.replWrapper}>
             <IconButton
                 onClick={() => setShowTerminal(!showTerminal)}
                 isActive={showTerminal}
-                title={i18nRegistry.translate('Shel.Neos.Terminal:Main:toggleTerminal')}
+                title={translate('toggleTerminal')}
                 icon="terminal"
             />
             <div className={theme.terminalWrapper} style={{ display: showTerminal ? 'block' : 'none' }}>
@@ -110,7 +106,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
                     ref={terminal}
                     commands={commandsDefinition}
                     ignoreCommandCase={true}
-                    welcomeMessage={i18nRegistry.translate(config.welcomeMessage)}
+                    welcomeMessage={translate(config.welcomeMessage)}
                     promptLabel={promptLabel}
                     contentStyle={config.theme.contentStyle}
                     styleEchoBack={config.theme.styleEchoBack}
@@ -118,7 +114,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
                     inputTextStyle={config.theme.inputTextStyle}
                     style={{ borderRadius: 0, maxHeight: '50vh' }}
                 />
-                <SponsorshipWidget i18nRegistry={i18nRegistry} registrationKey={registrationKey} />
+                <SponsorshipWidget registrationKey={registrationKey} />
             </div>
         </div>
     );

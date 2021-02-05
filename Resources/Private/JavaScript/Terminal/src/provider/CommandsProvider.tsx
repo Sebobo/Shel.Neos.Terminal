@@ -5,6 +5,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { fetchWithErrorHandling } from '@neos-project/neos-ui-backend-connector';
 
 import { NodeContextPath } from '../interfaces/Node';
+import I18nRegistry from '../interfaces/I18nRegistry';
 import CommandList from '../interfaces/CommandList';
 
 interface CommandsContextProps {
@@ -14,11 +15,19 @@ interface CommandsContextProps {
     siteNode: NodeContextPath;
     documentNode: NodeContextPath;
     focusedNode?: NodeContextPath;
+    i18nRegistry: I18nRegistry;
 }
 
 interface CommandsContextValues {
     commands: CommandList;
     invokeCommand: (endPoint: string, param: string[]) => Promise<string>;
+    translate: (
+        id: string,
+        fallback?: string,
+        params?: Record<string, unknown> | string[],
+        packageKey?: string,
+        sourceName?: string
+    ) => string;
 }
 
 export const CommandsContext = createContext({} as CommandsContextValues);
@@ -31,6 +40,7 @@ export const CommandsProvider = ({
     documentNode,
     focusedNode,
     siteNode,
+    i18nRegistry,
 }: CommandsContextProps) => {
     const [commands, setCommands] = useState<CommandList>({});
 
@@ -49,12 +59,28 @@ export const CommandsProvider = ({
             .then(({ result }) => setCommands(result));
     }, [getCommandsEndPoint, setCommands]);
 
+    const translate = useCallback(
+        (
+            id: string,
+            fallback = '',
+            params: Record<string, unknown> | string[] = [],
+            packageKey = 'Shel.Neos.Terminal',
+            sourceName = 'Main'
+        ): string => {
+            return i18nRegistry.translate(id, fallback, params, packageKey, sourceName);
+        },
+        []
+    );
+
     const invokeCommand = useCallback(
         (commandName: string, args: string[]): Promise<string> => {
             const command = commands[commandName];
 
             // TODO: translate
-            if (!command) throw Error(`Command ${commandName} does not exist!`);
+            if (!command)
+                throw Error(
+                    translate('command.doesNotExist', `The command {commandName} does not exist!`, { commandName })
+                );
 
             const contextData = {
                 commandName,
@@ -85,7 +111,13 @@ export const CommandsProvider = ({
                             // Treat result as simple string
                         }
                         // TODO: translate
-                        console.log(result, `Output of command "${commandName} ${args.join(' ')}"`);
+                        console.log(
+                            result,
+                            translate('command.output', `Output of command "{commandName} {argument}"`, {
+                                commandName,
+                                argument: args.join(' '),
+                            })
+                        );
                         return data.result;
                     }
                     throw new Error(data.result);
@@ -94,5 +126,7 @@ export const CommandsProvider = ({
         [commands, siteNode, documentNode, focusedNode]
     );
 
-    return <CommandsContext.Provider value={{ invokeCommand, commands }}>{children}</CommandsContext.Provider>;
+    return (
+        <CommandsContext.Provider value={{ invokeCommand, commands, translate }}>{children}</CommandsContext.Provider>
+    );
 };

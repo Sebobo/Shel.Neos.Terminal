@@ -1,16 +1,16 @@
 import React from 'react';
 
-import I18nRegistry from '../interfaces/I18nRegistry';
-
 // @ts-ignore
 import style from './SponsorshipWidget.css';
+import { useCommands } from '../provider/CommandsProvider';
 
 interface SponsorshipWidgetProps {
     registrationKey?: string;
-    i18nRegistry: I18nRegistry;
 }
 
-const SponsorshipWidget: React.FC<SponsorshipWidgetProps> = ({ i18nRegistry, registrationKey }) => {
+const SponsorshipWidget: React.FC<SponsorshipWidgetProps> = ({ registrationKey }) => {
+    const { translate } = useCommands();
+
     // TODO: Verify registration key
     if (registrationKey) return null;
 
@@ -36,7 +36,7 @@ const SponsorshipWidget: React.FC<SponsorshipWidgetProps> = ({ i18nRegistry, reg
                 </defs>
                 <path d="M140.51 53.119H92.788l-8 28.306h47.691l-28.03 98.813h39.287l34.063-127.119z" fill="url(#a)" />
             </svg>
-            <span>{i18nRegistry.translate('Shel.Neos.Terminal:Main:sponsorship')}</span>
+            <span>{translate('sponsorship')}</span>
         </div>
     );
 };

@@ -2,6 +2,12 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
     <file original="" product="Shel.Neos.Terminal" source-language="en" datatype="plaintext">
         <body>
+            <trans-unit id="disabled">
+                <source>Terminal commands are disabled</source>
+            </trans-unit>
+            <trans-unit id="commandNotFound">
+                <source>Command "{command}" not found</source>
+            </trans-unit>
             <trans-unit id="sponsorship">
                 <source>Become a sponsor</source>
             </trans-unit>
@@ -11,11 +17,21 @@
             <trans-unit id="toggleTerminal">
                 <source>Toggle ReplWrapper terminal</source>
             </trans-unit>
+
             <trans-unit id="command.evaluating">
                 <source>Evaluating…</source>
             </trans-unit>
+            <trans-unit id="command.command.invocationError">
+                <source>An error occurred during invocation of the "{commandName}" command</source>
+            </trans-unit>
             <trans-unit id="command.error">
                 <source>An error has occurred.</source>
+            </trans-unit>
+            <trans-unit id="command.doesNotExist">
+                <source>The command {commandName} does not exist!</source>
+            </trans-unit>
+            <trans-unit id="command.output">
+                <source>Output of command "{commandName} {argument}"</source>
             </trans-unit>
             <trans-unit id="command.empty">
                 <source>The command returned an empty result.</source>
@@ -24,8 +40,18 @@
             <trans-unit id="command.eel.description">
                 <source>Run an expression through the eel parser</source>
             </trans-unit>
+
             <trans-unit id="command.flushCache.description">
                 <source>Flush all or a single cache</source>
+            </trans-unit>
+            <trans-unit id="command.flushCache.flushedAll">
+                <source>Flushed all caches</source>
+            </trans-unit>
+            <trans-unit id="command.flushCache.flushedOne">
+                <source>The cache "{cacheIdentifier}" has been flushed</source>
+            </trans-unit>
+            <trans-unit id="command.flushCache.cacheDoesNotExist">
+                <source>The cache "{cacheIdentifier}" does not exist</source>
             </trans-unit>
         </body>
     </file>

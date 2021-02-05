@@ -16,6 +16,7 @@ namespace Shel\Neos\Terminal\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\I18n\Translator;
 
 class FlushCacheCommand implements TerminalCommandControllerPluginInterface
 {
@@ -25,6 +26,12 @@ class FlushCacheCommand implements TerminalCommandControllerPluginInterface
      * @var CacheManager
      */
     protected $cacheManager;
+
+    /**
+     * @Flow\Inject
+     * @var Translator
+     */
+    protected $translator;
 
     public static function getCommandName(): string
     {
@@ -51,22 +58,22 @@ class FlushCacheCommand implements TerminalCommandControllerPluginInterface
         $cacheIdentifier = $argument;
         $success = true;
 
-        // TODO: Translate responses
         if ($cacheIdentifier) {
             if ($this->cacheManager->hasCache($cacheIdentifier)) {
                 $this->cacheManager->getCache($cacheIdentifier)->flush();
-                $result = 'The cache "' . $cacheIdentifier . '" has been flushed';
+                $result = $this->translator->translateById('command.flushCache.flushedOne', ['cacheIdentifier' => $cacheIdentifier]);
             } else {
                 $success = false;
-                $result = 'The cache "' . $cacheIdentifier . '" does not exist';
+                $result = $this->translator->translateById('command.flushCache.cacheDoesNotExist', ['cacheIdentifier' => $cacheIdentifier]);
             }
         } else {
             $this->cacheManager->flushCaches();
-            $result = 'Flushed all caches';
+            $result = $this->translator->translateById('command.flushCache.flushedAll');
         }
 
         // Echo response as we have to exit the process prematurely or the application
         // will throw errors due to the flushed caches.
+        // TODO: Find out if there is a better way to do this
         header('Content-Type: application/json');
         echo json_encode([
             'success' => $success,
