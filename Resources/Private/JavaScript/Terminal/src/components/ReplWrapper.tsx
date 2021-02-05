@@ -116,7 +116,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
                     styleEchoBack={config.theme.styleEchoBack}
                     promptLabelStyle={config.theme.promptLabelStyle}
                     inputTextStyle={config.theme.inputTextStyle}
-                    className={theme.terminalContainer}
+                    style={{ borderRadius: 0, maxHeight: '50vh' }}
                 />
                 <SponsorshipWidget i18nRegistry={i18nRegistry} registrationKey={registrationKey} />
             </div>
