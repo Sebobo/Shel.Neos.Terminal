@@ -58,8 +58,8 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
         ];
 
         try {
-            $result = $this->eelEvaluationService->evaluateEelExpression('${' . $argument . '}', $evaluationContext);
-        } catch (EelException | ParserException $e) {
+            $result = json_encode($this->eelEvaluationService->evaluateEelExpression('${' . $argument . '}', $evaluationContext), JSON_THROW_ON_ERROR);
+        } catch (EelException | \JsonException | ParserException $e) {
             $success = false;
             $result = $e->getMessage();
         }

@@ -75,11 +75,9 @@ const ReplWrapper: React.FC<ReplProps> = ({
                     invokeCommand(commandName, args)
                         .then((result) => {
                             currentTerminal.state.stdout.pop();
-                            let output;
+                            let output = result;
                             if (!result) {
                                 output = i18nRegistry.translate('Shel.Neos.Terminal:Main:command.empty');
-                            } else {
-                                output = typeof result === 'string' ? result : JSON.stringify(result);
                             }
                             currentTerminal.pushToStdout(output);
                         })

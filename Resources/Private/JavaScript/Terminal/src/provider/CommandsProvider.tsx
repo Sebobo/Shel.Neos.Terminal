@@ -78,8 +78,14 @@ export const CommandsProvider = ({
                 .then((response) => response && response.json())
                 .then((data) => {
                     if (data.success) {
+                        let result = data.result;
+                        try {
+                            result = JSON.parse(result);
+                        } catch (e) {
+                            // Treat result as simple string
+                        }
                         // TODO: translate
-                        console.log(data.result, `Output of command "${commandName} ${args.join(' ')}"`);
+                        console.log(result, `Output of command "${commandName} ${args.join(' ')}"`);
                         return data.result;
                     }
                     throw new Error(data.result);
