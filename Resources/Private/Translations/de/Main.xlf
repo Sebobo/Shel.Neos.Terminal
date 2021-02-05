@@ -1,60 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file original="" product="Shel.Neos.Terminal" source-language="en" datatype="plaintext">
+    <file original="" product="Shel.Neos.Terminal" source-language="en" target-language="de" datatype="plaintext">
         <body>
             <trans-unit id="disabled">
                 <source>Terminal commands are disabled</source>
+                <target>Terminalbefehle sind inaktiv</target>
             </trans-unit>
             <trans-unit id="commandNotFound">
                 <source>Command "{command}" not found</source>
+                <target>Befehl "{command}" nicht gefunden</target>
             </trans-unit>
             <trans-unit id="sponsorship">
                 <source>Become a plugin sponsor</source>
+                <target>Werde ein Plugin Sponsor</target>
             </trans-unit>
             <trans-unit id="sponsorship.title">
                 <source>Sponsor this plugin to get rid of this badge :)</source>
+                <target>Unterstütze diesen Plugin um diese Box verschwinden zu lassen :)</target>
             </trans-unit>
             <trans-unit id="welcome">
                 <source>Welcome to the Neos terminal!</source>
+                <target>Willkommen im Neos Terminal!</target>
             </trans-unit>
             <trans-unit id="toggleTerminal">
                 <source>Toggle Neos Terminal</source>
+                <target>Neos Terminal umschalten</target>
             </trans-unit>
 
             <trans-unit id="command.evaluating">
                 <source>Evaluating…</source>
+                <target>Auswerten…</target>
             </trans-unit>
             <trans-unit id="command.command.invocationError">
                 <source>An error occurred during invocation of the "{commandName}" command</source>
+                <target>Beim Ausführen des Befehls "{commandName}" ist ein Fehler aufgetreten</target>
             </trans-unit>
             <trans-unit id="command.error">
                 <source>An error has occurred.</source>
+                <target>Ein Fehler ist aufgetreten.</target>
             </trans-unit>
             <trans-unit id="command.doesNotExist">
                 <source>The command {commandName} does not exist!</source>
+                <target>Der Befehl {commandName} existiert nicht!</target>
             </trans-unit>
             <trans-unit id="command.output">
                 <source>Output of command "{commandName} {argument}"</source>
+                <target>Ausgabe des Befehls "{commandName} {argument}"</target>
             </trans-unit>
             <trans-unit id="command.empty">
                 <source>The command returned an empty result.</source>
+                <target>Der Befehl hat ein leeres Ergebnis zurückgegeben.</target>
             </trans-unit>
 
             <trans-unit id="command.eel.description">
                 <source>Run an expression through the eel parser</source>
+                <target>Einen Ausdruck durch den Eel-Parser laufen lassen</target>
             </trans-unit>
 
             <trans-unit id="command.flushCache.description">
                 <source>Flush all or a single cache</source>
+                <target>Alle oder einen einzelnen Cache leeren</target>
             </trans-unit>
             <trans-unit id="command.flushCache.flushedAll">
                 <source>Flushed all caches</source>
+                <target>Alle Caches geleert</target>
             </trans-unit>
             <trans-unit id="command.flushCache.flushedOne">
                 <source>The cache "{cacheIdentifier}" has been flushed</source>
+                <target>Der Cache "{cacheIdentifier}" wurde geleert</target>
             </trans-unit>
             <trans-unit id="command.flushCache.cacheDoesNotExist">
                 <source>The cache "{cacheIdentifier}" does not exist</source>
+                <target>Der Cache "{cacheIdentifier}" existiert nicht</target>
             </trans-unit>
         </body>
     </file>
