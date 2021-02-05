@@ -3,6 +3,8 @@ privilegeTargets:
     'Shel.Neos.Terminal:ExecuteCommands':
       matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->(?!initialize).*Action())'
 
+    'Shel.Neos.Terminal:Command.All':
+      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->loadCommand())'
     'Shel.Neos.Terminal:Command.Eel':
       matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->loadCommand(commandName == "eel"))'
     'Shel.Neos.Terminal:Command.FlushCache':
@@ -19,7 +21,5 @@ roles:
     privileges:
       - privilegeTarget: 'Shel.Neos.Terminal:ExecuteCommands'
         permission: GRANT
-      - privilegeTarget: 'Shel.Neos.Terminal:Command.FlushCache'
-        permission: GRANT
-      - privilegeTarget: 'Shel.Neos.Terminal:Command.Eel'
+      - privilegeTarget: 'Shel.Neos.Terminal:Command.All'
         permission: GRANT
