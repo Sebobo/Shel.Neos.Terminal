@@ -19,6 +19,7 @@ use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Exception\AccessDeniedException;
 use Shel\Neos\Terminal\Command\CommandInvocationResult;
 use Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface;
 use Shel\Neos\Terminal\Exception as TerminalException;
@@ -107,8 +108,8 @@ class TerminalCommandController extends ActionController
         $this->response->setContentType('application/json');
 
         foreach ($commands as $command) {
-            // TODO: Only invoke if command privilege matches
             if ($command::getCommandName() === $commandName) {
+                $this->loadCommand($commandName, $command);
                 $result = $command->invokeCommand($argument, $siteNode, $documentNode, $focusedNode);
                 break;
             }
