@@ -1,0 +1,27 @@
+.sponsorshipWidget {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+.sponsorshipWidget a {
+    background: #323232;
+    border-left: 1px solid #3f3f3f;
+    border-top: 1px solid #3f3f3f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    padding: .5rem 1rem;
+    font-weight: bold;
+}
+
+.sponsorshipWidget a:hover {
+    color: #00adee;
+}
+
+.sponsorshipWidget svg {
+    margin-left: 1rem;
+    width: 30px;
+    height: auto;
+}

@@ -9,7 +9,10 @@
                 <source>Command "{command}" not found</source>
             </trans-unit>
             <trans-unit id="sponsorship">
-                <source>Become a sponsor</source>
+                <source>Become a plugin sponsor</source>
+            </trans-unit>
+            <trans-unit id="sponsorship.title">
+                <source>Sponsor this plugin to get rid of this box :)</source>
             </trans-unit>
             <trans-unit id="welcome">
                 <source>Welcome to the Neos terminal!</source>

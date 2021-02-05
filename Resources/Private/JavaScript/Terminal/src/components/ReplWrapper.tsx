@@ -11,7 +11,7 @@ import { useCommands } from '../provider/CommandsProvider';
 
 // @ts-ignore
 import style from './ReplWrapper.css';
-import SponsorshipWidget from './SponsorshipWidget';
+import SponsorshipBadge from './SponsorshipBadge';
 
 export interface TerminalTheme {
     contentStyle: Record<string, any> | string;
@@ -114,7 +114,7 @@ const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, docum
                     inputTextStyle={config.theme.inputTextStyle}
                     style={{ borderRadius: 0, maxHeight: '50vh' }}
                 />
-                <SponsorshipWidget registrationKey={registrationKey} />
+                <SponsorshipBadge registrationKey={registrationKey} />
             </div>
         </div>
     );
