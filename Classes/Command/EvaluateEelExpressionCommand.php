@@ -58,12 +58,52 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
         ];
 
         try {
-            $result = json_encode($this->eelEvaluationService->evaluateEelExpression('${' . $argument . '}', $evaluationContext), JSON_THROW_ON_ERROR);
+            $result = $this->eelEvaluationService->evaluateEelExpression('${' . $argument . '}', $evaluationContext);
+            $result = $this->convertResult($result);
+            $result = json_encode($result, JSON_THROW_ON_ERROR);
         } catch (EelException | \JsonException | ParserException $e) {
             $success = false;
             $result = $e->getMessage();
         }
 
         return new CommandInvocationResult($success, $result);
+    }
+
+    /**
+     * Unwraps certain object types in the evaluation result.
+     * This makes it easier to view them when displayed in the terminal.
+     *
+     * @param mixed $result
+     * @return mixed
+     */
+    protected function convertResult($result)
+    {
+        if (is_array($result)) {
+            return array_map(function ($item) {
+                if ($item instanceof NodeInterface) {
+                    return $this->convertNode($item);
+                }
+                return $item;
+            }, $result);
+        }
+        if (is_object($result) && $result instanceof NodeInterface) {
+            return $this->convertNode($result);
+        }
+        return $result;
+    }
+
+    protected function convertNode(NodeInterface $node): array
+    {
+        $result = [];
+        foreach ($node->getProperties()->getIterator() as $key => $property) {
+            if (is_object($property)) {
+                $property = get_class($property);
+            }
+            if (is_array($property)) {
+                $property = '[…]';
+            }
+            $result[$key] = $property;
+        }
+        return $result;
     }
 }
