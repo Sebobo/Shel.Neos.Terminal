@@ -13,7 +13,7 @@ namespace Shel\Neos\Terminal\Command;
  * source code.
  */
 
-class CommandInvocationResult
+class CommandInvocationResult implements \JsonSerializable
 {
     protected bool $success;
 
@@ -45,7 +45,7 @@ class CommandInvocationResult
         return $this->result;
     }
 
-    public function __serialize(): array
+    public function jsonSerialize(): array
     {
         return [
             'success' => $this->success,
