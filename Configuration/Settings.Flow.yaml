@@ -1,0 +1,16 @@
+Neos:
+  Flow:
+    mvc:
+      routes:
+        'Shel.Neos.Terminal':
+          position: 'start'
+
+    security:
+      authentication:
+        providers:
+          'Neos.Neos:Backend':
+            requestPatterns:
+              'Shel.Neos.Terminal:Commands':
+                pattern: ControllerObjectName
+                patternOptions:
+                  controllerObjectNamePattern: 'Shel\Neos\Terminal\Controller\.*'
