@@ -29,7 +29,9 @@ Neos:
         'Shel.Neos.Terminal:Terminal':
           enabled: false
           welcomeMessage: 'Shel.Neos.Terminal:Main:welcome'
-          registrationKey: ''
+          registrationKey:
+            id: ''
+            signature: ''
           getCommandsEndPoint: '/neos/shel-neos-terminal/getcommands'
           invokeCommandEndPoint: '/neos/shel-neos-terminal/invokecommand'
           theme:

@@ -6,12 +6,12 @@ import { themr } from '@friendsofreactjs/react-css-themr';
 // @ts-ignore
 import { IconButton } from '@neos-project/react-ui-components';
 
-import { Node } from '../interfaces/Node';
+import { Node, RegistrationKey } from '../interfaces';
+import SponsorshipBadge from './SponsorshipBadge';
 import { useCommands } from '../provider/CommandsProvider';
 
 // @ts-ignore
 import style from './ReplWrapper.css';
-import SponsorshipBadge from './SponsorshipBadge';
 
 export interface TerminalTheme {
     contentStyle: Record<string, any> | string;
@@ -24,6 +24,7 @@ interface ReplProps {
     config: {
         theme: TerminalTheme;
         welcomeMessage?: string;
+        registrationKey?: RegistrationKey;
     };
     user: {
         firstName: string;
@@ -34,12 +35,11 @@ interface ReplProps {
     documentNode: Node;
     className?: string;
     theme?: Record<string, string>;
-    registrationKey: string;
 }
 
 window['NeosTerminal'] = {};
 
-const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, documentNode, registrationKey }) => {
+const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, documentNode }) => {
     const { invokeCommand, commands, translate } = useCommands();
     const terminal = useRef<Terminal>();
     const [showTerminal, setShowTerminal] = useState(false);
@@ -114,7 +114,7 @@ const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, docum
                     inputTextStyle={config.theme.inputTextStyle}
                     style={{ borderRadius: 0, maxHeight: '50vh' }}
                 />
-                <SponsorshipBadge registrationKey={registrationKey} />
+                <SponsorshipBadge registrationKey={config.registrationKey} />
             </div>
         </div>
     );

@@ -1,18 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // @ts-ignore
 import style from './SponsorshipBadge.css';
+
 import { useCommands } from '../provider/CommandsProvider';
+import { RegistrationKey } from '../interfaces';
 
 interface SponsorshipBadgeProps {
-    registrationKey?: string;
+    registrationKey?: RegistrationKey;
 }
+
+const CONSOLE_PREFIX = 'Shel.Neos.Terminal:';
 
 const SponsorshipBadge: React.FC<SponsorshipBadgeProps> = ({ registrationKey }) => {
     const { translate } = useCommands();
+    const [verified, setVerified] = useState(false);
 
-    // TODO: Verify registration key
-    if (registrationKey) return null;
+    useEffect(() => {
+        if (!registrationKey || !registrationKey.id || !registrationKey.signature) {
+            return console.info(CONSOLE_PREFIX, translate('sponsorship.missing'));
+        }
+
+        const { id, signature } = registrationKey;
+        const result = [...id.split('')].reduce((acc, char) => {
+            acc = (acc << 5) - acc + char.charCodeAt(0);
+            return acc & acc;
+        }, 0);
+
+        if ('V1' + result === atob(signature)) {
+            console.info(CONSOLE_PREFIX, translate('sponsorship.verified'));
+            setVerified(true);
+        } else {
+            console.warn(CONSOLE_PREFIX, translate('sponsorship.invalid'));
+        }
+    }, [registrationKey]);
+
+    if (verified) return null;
 
     return (
         <div className={style.sponsorshipWidget}>

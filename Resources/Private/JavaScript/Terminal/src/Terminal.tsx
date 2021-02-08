@@ -11,8 +11,7 @@ import { actions, selectors } from '@neos-project/neos-ui-redux-store';
 
 import ReplWrapper, { TerminalTheme } from './components/ReplWrapper';
 import { CommandsProvider } from './provider/CommandsProvider';
-import { Node } from './interfaces/Node';
-import I18nRegistry from './interfaces/I18nRegistry';
+import { Node, RegistrationKey, I18nRegistry } from './interfaces';
 
 interface TerminalProps {
     config: {
@@ -24,7 +23,7 @@ interface TerminalProps {
     siteNode: Node;
     documentNode: Node;
     focusedNodes: string[];
-    registrationKey: string;
+    registrationKey: RegistrationKey;
     i18nRegistry: I18nRegistry;
 }
 
@@ -51,7 +50,6 @@ export default class Terminal extends React.PureComponent<TerminalProps> {
         siteNode: PropTypes.object,
         documentNode: PropTypes.object,
         focusedNodes: PropTypes.array,
-        registrationKey: PropTypes.string,
     };
 
     render() {

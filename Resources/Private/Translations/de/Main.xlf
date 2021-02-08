@@ -12,11 +12,23 @@
             </trans-unit>
             <trans-unit id="sponsorship">
                 <source>Become a plugin sponsor</source>
-                <target>Werde ein Plugin Sponsor</target>
+                <target>Unterstütze diesen Plugin</target>
             </trans-unit>
             <trans-unit id="sponsorship.title">
                 <source>Sponsor this plugin to get rid of this badge :)</source>
                 <target>Unterstütze diesen Plugin um diese Box verschwinden zu lassen :)</target>
+            </trans-unit>
+            <trans-unit id="sponsorship.missing">
+                <source>Registration missing. You are using an unregistered version of this plugin.</source>
+                <target>Registrierung fehlt. Sie verwenden eine unregistrierte Version dieses Plugins.</target>
+            </trans-unit>
+            <trans-unit id="sponsorship.verified">
+                <source>Registration verified. Thanks for supporting the development of this plugin!</source>
+                <target>Registrierung bestätigt. Danke für die Unterstützung dieses Plugins!</target>
+            </trans-unit>
+            <trans-unit id="sponsorship.invalid">
+                <source>Registration is invalid! Please get in touch to get support.</source>
+                <target>Registrierung ist ungültig! Bitte kontaktieren Sie uns um Unterstützung zu erhalten.</target>
             </trans-unit>
             <trans-unit id="welcome">
                 <source>Welcome to the Neos terminal!</source>

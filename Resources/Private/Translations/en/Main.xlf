@@ -14,6 +14,15 @@
             <trans-unit id="sponsorship.title">
                 <source>Sponsor this plugin to get rid of this badge :)</source>
             </trans-unit>
+            <trans-unit id="sponsorship.missing">
+                <source>Registration missing. You are using an unregistered version of this plugin.</source>
+            </trans-unit>
+            <trans-unit id="sponsorship.verified">
+                <source>Registration verified. Thanks for supporting the development of this plugin!</source>
+            </trans-unit>
+            <trans-unit id="sponsorship.invalid">
+                <source>Registration is invalid! Please get in touch to get help.</source>
+            </trans-unit>
             <trans-unit id="welcome">
                 <source>Welcome to the Neos terminal!</source>
             </trans-unit>
