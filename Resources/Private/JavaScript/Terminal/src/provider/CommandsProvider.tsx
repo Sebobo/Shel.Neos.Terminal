@@ -118,7 +118,7 @@ export const CommandsProvider = ({
                                 argument: args.join(' '),
                             })
                         );
-                        return data.result;
+                        return JSON.stringify(result, null, 2);
                     }
                     throw new Error(data.result);
                 });

@@ -108,11 +108,8 @@ const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, docum
                     ignoreCommandCase={true}
                     welcomeMessage={translate(config.welcomeMessage)}
                     promptLabel={promptLabel}
-                    contentStyle={config.theme.contentStyle}
-                    styleEchoBack={config.theme.styleEchoBack}
-                    promptLabelStyle={config.theme.promptLabelStyle}
-                    inputTextStyle={config.theme.inputTextStyle}
                     style={{ borderRadius: 0, maxHeight: '50vh' }}
+                    {...config.theme}
                 />
                 <SponsorshipBadge registrationKey={config.registrationKey} />
             </div>

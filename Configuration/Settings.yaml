@@ -26,6 +26,8 @@ Neos:
               color: '#ff8700'
             inputTextStyle:
               color: '#ffffff'
+            messageStyle:
+              white-space: 'pre-wrap'
 
     userInterface:
       translation:
