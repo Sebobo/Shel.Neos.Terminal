@@ -69,6 +69,7 @@ class TerminalCommandController extends ActionController
      * @param string $commandName
      * @param TerminalCommandControllerPluginInterface $command
      * @return array
+     * @throws AccessDeniedException thrown by the policy if a role is not allowed access to the specified command
      */
     protected function loadCommand(string $commandName, TerminalCommandControllerPluginInterface $command): array
     {
@@ -109,8 +110,10 @@ class TerminalCommandController extends ActionController
 
         foreach ($commands as $command) {
             if ($command::getCommandName() === $commandName) {
-                $this->loadCommand($commandName, $command);
-                $result = $command->invokeCommand($argument, $siteNode, $documentNode, $focusedNode);
+                try {
+                    $this->loadCommand($commandName, $command);
+                    $result = $command->invokeCommand($argument, $siteNode, $documentNode, $focusedNode);
+                }  catch (AccessDeniedException $e) {}
                 break;
             }
         }
