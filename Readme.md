@@ -5,7 +5,16 @@ Several commands are provided to safe time during development & debugging of Neo
 
 It uses the great [terminal component](https://github.com/linuswillner/react-console-emulator) by [Linus Willner](https://github.com/linuswillner).
 
-## Provided commands
+## Included commands
+
+Available default commands:
+
+* `eel` - Eel expression parser
+* `flushCache` - Flush one or all Neos/Flow caches
+* `help` - Show command list
+* `clear` - Clear terminal
+
+You can add [custom commands](#adding-your-own-commands). 
 
 ### Eel evaluator
 
@@ -163,6 +172,10 @@ class JokeCommand implements TerminalCommandControllerPluginInterface
     }
 }
 ```
+
+Did you create awesome commands that could be helpful to others?
+Send a link to a [gist](https://gist.github.com) containing the PHP 
+class or a link to your repo, and we can add it to the docs.
 
 ## Supporting this plugin / how to get rid of the sponsorship badge
 
