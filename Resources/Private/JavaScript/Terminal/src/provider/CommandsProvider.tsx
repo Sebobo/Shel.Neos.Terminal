@@ -102,25 +102,28 @@ export const CommandsProvider = ({
                     body: JSON.stringify(contextData),
                 }))
                 .then((response) => response && response.json())
-                .then((data) => {
-                    if (data.success) {
-                        let result = data.result;
+                .then(({ success, result }) => {
+                    if (success) {
+                        let parsedResult = result;
+                        let textResult = result;
+                        // Try to prettify json results
                         try {
-                            result = JSON.parse(result);
+                            parsedResult = JSON.parse(result);
+                            textResult = JSON.stringify(parsedResult, null, 2);
                         } catch (e) {
                             // Treat result as simple string
                         }
                         // TODO: translate
                         console.log(
-                            result,
+                            parsedResult,
                             translate('command.output', `Output of command "{commandName} {argument}"`, {
                                 commandName,
                                 argument: args.join(' '),
                             })
                         );
-                        return JSON.stringify(result, null, 2);
+                        return textResult;
                     }
-                    throw new Error(data.result);
+                    throw new Error(result);
                 });
         },
         [commands, siteNode, documentNode, focusedNode]
