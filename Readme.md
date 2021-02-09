@@ -8,6 +8,18 @@ for easier handling of JSON results and persistent history.
 
 It uses the great [terminal component](https://github.com/linuswillner/react-console-emulator) by [Linus Willner](https://github.com/linuswillner).
 
+## Example
+
+![Terminal example in the Neos CMS backend](Documentation/shel-neos-terminal-example.jpg)
+
+## Installation
+
+Run the following command in your Neos project:
+
+```shell
+composer require shel/neos-terminal
+```
+
 ## Included commands
 
 Available default commands:
