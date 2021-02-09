@@ -90,7 +90,10 @@ class TerminalCommandController extends ActionController
         $commandConfiguration = [];
         $classNames = $this->objectManager->get(ReflectionService::class)->getAllImplementationClassNamesForInterface(TerminalCommandControllerPluginInterface::class);
         foreach ($classNames as $className) {
-            $commandConfiguration[$className] = $this->objectManager->get($this->objectManager->getObjectNameByClassName($className));
+            $objectName = $this->objectManager->getObjectNameByClassName($className);
+            if ($objectName) {
+                $commandConfiguration[$className] = $this->objectManager->get($objectName);
+            }
         }
         return $commandConfiguration;
     }
