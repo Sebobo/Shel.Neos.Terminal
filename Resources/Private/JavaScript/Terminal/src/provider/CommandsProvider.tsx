@@ -103,9 +103,10 @@ export const CommandsProvider = ({
                 }))
                 .then((response) => response && response.json())
                 .then(({ success, result }) => {
+                    let parsedResult = result;
+                    let textResult = result;
+
                     if (success) {
-                        let parsedResult = result;
-                        let textResult = result;
                         // Try to prettify json results
                         try {
                             parsedResult = JSON.parse(result);
@@ -113,17 +114,15 @@ export const CommandsProvider = ({
                         } catch (e) {
                             // Treat result as simple string
                         }
-                        // TODO: translate
-                        console.log(
-                            parsedResult,
-                            translate('command.output', `Output of command "{commandName} {argument}"`, {
-                                commandName,
-                                argument: args.join(' '),
-                            })
-                        );
-                        return textResult;
                     }
-                    throw new Error(result);
+                    console[success ? 'log' : 'error'](
+                        parsedResult,
+                        translate('command.output', `Output of command "{commandName} {argument}"`, {
+                            commandName,
+                            argument: args.join(' '),
+                        })
+                    );
+                    return textResult;
                 });
         },
         [commands, siteNode, documentNode, focusedNode]
