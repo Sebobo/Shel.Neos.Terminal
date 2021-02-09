@@ -15,9 +15,9 @@ namespace Shel\Neos\Terminal\Command;
 
 use Neos\Eel\ParserException;
 use Neos\Flow\Annotations as Flow;
-use Flowpack\NodeTemplates\Service\EelEvaluationService;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\Exception as EelException;
+use Shel\Neos\Terminal\Service\EelEvaluationService;
 
 class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInterface
 {
