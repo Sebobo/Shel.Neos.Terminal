@@ -15,6 +15,7 @@ namespace Shel\Neos\Terminal\Command;
 
 use Neos\Eel\ParserException;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\Error\Exception as ErrorException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\Exception as EelException;
 use Shel\Neos\Terminal\Service\EelEvaluationService;
@@ -61,7 +62,7 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
             $result = $this->eelEvaluationService->evaluateEelExpression('${' . $argument . '}', $evaluationContext);
             $result = $this->convertResult($result);
             $result = json_encode($result, JSON_THROW_ON_ERROR);
-        } catch (EelException | \JsonException | ParserException $e) {
+        } catch (EelException | \JsonException | ParserException | ErrorException $e) {
             $success = false;
             $result = $e->getMessage();
         }
