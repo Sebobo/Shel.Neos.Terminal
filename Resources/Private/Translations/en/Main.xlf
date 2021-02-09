@@ -24,7 +24,7 @@
                 <source>Registration is invalid! Please get in touch to get help.</source>
             </trans-unit>
             <trans-unit id="welcome">
-                <source>Welcome to the Neos terminal!</source>
+                <source>Welcome to the Neos terminal! Type 'help' to get a list of commands.</source>
             </trans-unit>
             <trans-unit id="toggleTerminal">
                 <source>Toggle Neos Terminal</source>

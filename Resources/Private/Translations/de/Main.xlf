@@ -31,8 +31,8 @@
                 <target>Registrierung ist ungültig! Bitte kontaktieren Sie uns um Unterstützung zu erhalten.</target>
             </trans-unit>
             <trans-unit id="welcome">
-                <source>Welcome to the Neos terminal!</source>
-                <target>Willkommen im Neos Terminal!</target>
+                <source>Welcome to the Neos terminal! Type 'help' to get a list of commands.</source>
+                <target>Willkommen im Neos Terminal! Gebe 'help' ein für eine Liste aller Kommandos.</target>
             </trans-unit>
             <trans-unit id="toggleTerminal">
                 <source>Toggle Neos Terminal</source>
