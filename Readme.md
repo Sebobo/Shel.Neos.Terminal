@@ -1,7 +1,10 @@
 # Neos CMS terminal for running Eel expressions and other commands in the UI
 
-This package provides a Terminal plugin for the [Neos CMS](https://www.neos.io) UI.
+This package provides a Terminal emulator plugin for the [Neos CMS](https://www.neos.io) UI.
 Several commands are provided to safe time during development & debugging of Neos CMS projects.
+
+All commands, and their output are also automatically available in the browser dev console
+for easier handling of JSON results and persistent history. 
 
 It uses the great [terminal component](https://github.com/linuswillner/react-console-emulator) by [Linus Willner](https://github.com/linuswillner).
 
