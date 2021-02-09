@@ -78,7 +78,7 @@ class FlushCacheCommand implements TerminalCommandControllerPluginInterface
         echo json_encode([
             'success' => $success,
             'result' => $result,
-        ], JSON_THROW_ON_ERROR);
+        ]);
         exit;
     }
 }

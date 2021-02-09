@@ -47,7 +47,7 @@ class TerminalCommandController extends ActionController
      * @Flow\InjectConfiguration(path="frontendConfiguration", package="Neos.Neos.Ui")
      * @var array
      */
-    protected array $frontendConfiguration;
+    protected $frontendConfiguration;
 
     public function getCommandsAction(): void
     {

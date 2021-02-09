@@ -15,7 +15,7 @@ namespace Shel\Neos\Terminal\Command;
 
 class CommandInvocationResult implements \JsonSerializable
 {
-    protected bool $success;
+    protected $success;
 
     protected $result;
 
