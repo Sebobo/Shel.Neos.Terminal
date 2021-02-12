@@ -1,8 +1,6 @@
 import { version as ReactVersion } from 'react';
 
 import manifest from '@neos-project/neos-ui-extensibility';
-// @ts-ignore
-import { selectors } from '@neos-project/neos-ui-redux-store';
 
 import doInvokeCommand from './helpers/doInvokeCommand';
 import fetchCommands from './helpers/fetchCommands';
@@ -30,22 +28,9 @@ manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { frontendConfigura
         fetchCommands(getCommandsEndPoint).then(({ success, result }) => {
             if (!success) return;
 
-            const siteNode = selectors.CR.Nodes.siteNodeSelector;
-            const documentNode = selectors.CR.Nodes.documentNodeSelector;
-            const focusedNodes = selectors.CR.Nodes.focusedNodePathsSelector;
-
-            debugger;
-
+            // TODO: Find a way to forward context nodes to command
             const invokeCommand = (commandName, ...args) => {
-                const focusedNode = focusedNodes && focusedNodes.length > 0 ? focusedNodes[0] : null;
-                return doInvokeCommand(
-                    invokeCommandEndPoint,
-                    commandName,
-                    args,
-                    siteNode,
-                    documentNode,
-                    focusedNode
-                ).then(({ success, result }) => {
+                return doInvokeCommand(invokeCommandEndPoint, commandName, args).then(({ success, result }) => {
                     if (success) console.log(result);
                     else console.error(result);
                 });
