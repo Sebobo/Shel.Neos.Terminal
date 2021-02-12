@@ -11,7 +11,7 @@ import { selectors } from '@neos-project/neos-ui-redux-store';
 
 import ReplWrapper, { TerminalTheme } from './components/ReplWrapper';
 import { CommandsProvider } from './provider/CommandsProvider';
-import { Node, RegistrationKey, I18nRegistry } from './interfaces';
+import { Node, I18nRegistry } from './interfaces';
 
 interface TerminalProps {
     config: {
@@ -23,7 +23,6 @@ interface TerminalProps {
     siteNode: Node;
     documentNode: Node;
     focusedNodes: string[];
-    registrationKey: RegistrationKey;
     i18nRegistry: I18nRegistry;
 }
 
