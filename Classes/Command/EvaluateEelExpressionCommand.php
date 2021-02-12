@@ -76,6 +76,7 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
      *
      * @param mixed $result
      * @return mixed
+     * @throws \Exception
      */
     protected function convertResult($result)
     {
@@ -93,9 +94,24 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
         return $result;
     }
 
+    /**
+     * Serialises a node into an array with its properties and attributes
+     * to improve readability in the terminal output
+     *
+     * @param NodeInterface $node
+     * @return array
+     * @throws \Exception
+     */
     protected function convertNode(NodeInterface $node): array
     {
-        $result = [];
+        $result = [
+            '_identifier' => $node->getIdentifier(),
+            '_nodeType' => $node->getNodeType()->getName(),
+            '_name' => $node->getName(),
+            '_workspace' => $node->getWorkspace()->getName(),
+            '_path' => $node->getPath(),
+        ];
+
         foreach ($node->getProperties()->getIterator() as $key => $property) {
             if (is_object($property)) {
                 $property = get_class($property);
@@ -105,6 +121,9 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
             }
             $result[$key] = $property;
         }
+
+        ksort($result);
+
         return $result;
     }
 }
