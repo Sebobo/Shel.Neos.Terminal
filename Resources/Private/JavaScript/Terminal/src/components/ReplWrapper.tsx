@@ -37,8 +37,6 @@ interface ReplProps {
     theme?: Record<string, string>;
 }
 
-window['NeosTerminal'] = {};
-
 const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, documentNode }) => {
     const { invokeCommand, commands, translate } = useCommands();
     const terminal = useRef<Terminal>();
@@ -55,7 +53,7 @@ const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, docum
             const command = commands[commandName];
 
             // Register command globally
-            window['NeosTerminal'][commandName] = (...args) => invokeCommand(commandName, args);
+            window.NeosTerminal[commandName] = (...args) => invokeCommand(commandName, args);
 
             carry[commandName] = {
                 ...command,

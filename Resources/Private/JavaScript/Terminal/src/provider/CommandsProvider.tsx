@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
-// @ts-ignore
-import { fetchWithErrorHandling } from '@neos-project/neos-ui-backend-connector';
-
 import { NodeContextPath } from '../interfaces/Node';
 import I18nRegistry from '../interfaces/I18nRegistry';
 import CommandList from '../interfaces/CommandList';
+import fetchCommands from '../helpers/fetchCommands';
+import doInvokeCommand from '../helpers/doInvokeCommand';
 
 interface CommandsContextProps {
     children: React.ReactElement;
@@ -45,18 +44,7 @@ export const CommandsProvider = ({
     const [commands, setCommands] = useState<CommandList>({});
 
     useEffect(() => {
-        fetchWithErrorHandling
-            .withCsrfToken((csrfToken) => ({
-                url: `${getCommandsEndPoint}`,
-                method: 'POST',
-                credentials: 'include',
-                headers: {
-                    'X-Flow-Csrftoken': csrfToken,
-                    'Content-Type': 'application/json',
-                },
-            }))
-            .then((response) => response && response.json())
-            .then(({ result }) => setCommands(result));
+        fetchCommands(getCommandsEndPoint).then(({ result }) => setCommands(result));
     }, [getCommandsEndPoint, setCommands]);
 
     const translate = useCallback(
@@ -82,27 +70,8 @@ export const CommandsProvider = ({
                     translate('command.doesNotExist', `The command {commandName} does not exist!`, { commandName })
                 );
 
-            const contextData = {
-                commandName,
-                argument: args.join(' '),
-                siteNode,
-                focusedNode,
-                documentNode,
-            };
-
-            return fetchWithErrorHandling
-                .withCsrfToken((csrfToken) => ({
-                    url: `${invokeCommandEndPoint}`,
-                    method: 'POST',
-                    credentials: 'include',
-                    headers: {
-                        'X-Flow-Csrftoken': csrfToken,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(contextData),
-                }))
-                .then((response) => response && response.json())
-                .then(({ success, result }) => {
+            return doInvokeCommand(invokeCommandEndPoint, commandName, args, siteNode, focusedNode, documentNode).then(
+                ({ success, result }) => {
                     let parsedResult = result;
                     let textResult = result;
 
@@ -123,7 +92,8 @@ export const CommandsProvider = ({
                         })
                     );
                     return textResult;
-                });
+                }
+            );
         },
         [commands, siteNode, documentNode, focusedNode]
     );

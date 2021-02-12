@@ -7,7 +7,8 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "jsx": "react"
+    "jsx": "react",
+    "typeRoots": ["./Resources/Private/JavaScript/Terminal/src/typings"]
   },
   "exclude": [
     "node_modules"

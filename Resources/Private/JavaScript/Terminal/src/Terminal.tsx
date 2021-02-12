@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 // @ts-ignore
 import { neos } from '@neos-project/neos-ui-decorators';
 // @ts-ignore
-import { actions, selectors } from '@neos-project/neos-ui-redux-store';
+import { selectors } from '@neos-project/neos-ui-redux-store';
 
 import ReplWrapper, { TerminalTheme } from './components/ReplWrapper';
 import { CommandsProvider } from './provider/CommandsProvider';
@@ -33,10 +33,7 @@ interface TerminalProps {
         siteNode: selectors.CR.Nodes.siteNodeSelector,
         documentNode: selectors.CR.Nodes.documentNodeSelector,
         focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector,
-    }),
-    {
-        addFlashMessage: actions.UI.FlashMessages.add,
-    }
+    })
 )
 @neos((globalRegistry) => ({
     i18nRegistry: globalRegistry.get('i18n'),

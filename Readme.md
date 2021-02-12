@@ -4,7 +4,7 @@ This package provides a Terminal emulator plugin for the [Neos CMS](https://www.
 Several commands are provided to safe time during development & debugging of Neos CMS projects.
 
 All commands, and their output are also automatically available in the browser dev console
-for easier handling of JSON results and persistent history. 
+as `NeosTerminal` for easier handling of JSON results and persistent history. 
 
 It uses the great [terminal component](https://github.com/linuswillner/react-console-emulator) by [Linus Willner](https://github.com/linuswillner).
 
@@ -19,6 +19,19 @@ Run the following command in your Neos project:
 ```shell
 composer require shel/neos-terminal
 ```
+
+### Supported Neos versions
+
+Due to required React features, the Terminal UI integration is only available 
+for more recent Neos versions which provide React >= 16.8.
+But the commands are still registered and available via the `NeosTerminal` global 
+window object even when the React version is too old.
+
+| Neos version  | Terminal         |
+| ------------- | ---------------- |
+| 4.3           | Commands are only available via the browser console |
+| 5.2 - 5.3     | Full support     |
+| 7.0+          | Full support     |
 
 ## Included commands
 
