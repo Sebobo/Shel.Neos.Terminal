@@ -31,7 +31,17 @@ window object even when the React version is too old.
 | ------------- | ---------------- |
 | 4.3           | Commands are only available via the browser console |
 | 5.2 - 5.3     | Full support     |
-| 7.0+          | Full support     |
+| 7.0+          | Full support     |      
+
+## Usage
+
+There are three ways to access the terminal functionality:
+
+1. Open the terminal by clicking on the terminal icon in the top menu bar in the Neos backend.
+2. Open the terminal with the `t t` hotkey (configured via the Neos hotkey API in the `Settings.yaml`).
+3. Access the terminal commands from the browser dev console via the global `NeosTerminal` object.
+
+Now you can run any of the provided commands, or your own.
 
 ## Included commands
 

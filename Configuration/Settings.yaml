@@ -29,7 +29,11 @@ Neos:
             messageStyle:
               whiteSpace: 'pre-wrap'
 
+        hotkeys:
+          'Shel.Neos.Terminal.toggle': 't t'
+
     userInterface:
       translation:
         autoInclude:
           Shel.Neos.Terminal: ['Main']
+

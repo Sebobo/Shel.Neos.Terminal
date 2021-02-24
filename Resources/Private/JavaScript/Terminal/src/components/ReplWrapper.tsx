@@ -35,12 +35,21 @@ interface ReplProps {
     documentNode: Node;
     className?: string;
     theme?: Record<string, string>;
+    terminalOpen?: boolean;
+    toggleNeosTerminal: (visible?: boolean) => void;
 }
 
-const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, documentNode }) => {
+const ReplWrapper: React.FC<ReplProps> = ({
+    config,
+    theme,
+    user,
+    siteNode,
+    documentNode,
+    terminalOpen,
+    toggleNeosTerminal,
+}) => {
     const { invokeCommand, commands, translate } = useCommands();
     const terminal = useRef<Terminal>();
-    const [showTerminal, setShowTerminal] = useState(false);
 
     const promptLabel = useMemo(() => {
         const currentPath =
@@ -93,12 +102,12 @@ const ReplWrapper: React.FC<ReplProps> = ({ config, theme, user, siteNode, docum
     return (
         <div className={theme.replWrapper}>
             <IconButton
-                onClick={() => setShowTerminal(!showTerminal)}
-                isActive={showTerminal}
+                onClick={() => toggleNeosTerminal()}
+                isActive={terminalOpen}
                 title={translate('toggleTerminal')}
                 icon="terminal"
             />
-            <div className={theme.terminalWrapper} style={{ display: showTerminal ? 'block' : 'none' }}>
+            <div className={theme.terminalWrapper} style={{ display: terminalOpen ? 'block' : 'none' }}>
                 <Terminal
                     autoFocus={true}
                     ref={terminal}

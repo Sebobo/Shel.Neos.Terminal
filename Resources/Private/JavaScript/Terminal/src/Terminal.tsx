@@ -12,6 +12,7 @@ import { selectors } from '@neos-project/neos-ui-redux-store';
 import ReplWrapper, { TerminalTheme } from './components/ReplWrapper';
 import { CommandsProvider } from './provider/CommandsProvider';
 import { Node, I18nRegistry } from './interfaces';
+import { actions, selectors as terminalSelectors } from './actions';
 
 interface TerminalProps {
     config: {
@@ -24,14 +25,19 @@ interface TerminalProps {
     documentNode: Node;
     focusedNodes: string[];
     i18nRegistry: I18nRegistry;
+    terminalOpen: boolean;
 }
 
+@connect((state) => ({}), {
+    toggleNeosTerminal: actions.toggleNeosTerminal,
+})
 @connect(
     $transform({
         user: $get('user.name'),
         siteNode: selectors.CR.Nodes.siteNodeSelector,
         documentNode: selectors.CR.Nodes.documentNodeSelector,
         focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector,
+        terminalOpen: terminalSelectors.terminalOpen,
     })
 )
 @neos((globalRegistry) => ({
@@ -46,6 +52,8 @@ export default class Terminal extends React.PureComponent<TerminalProps> {
         siteNode: PropTypes.object,
         documentNode: PropTypes.object,
         focusedNodes: PropTypes.array,
+        terminalOpen: PropTypes.bool,
+        toggleNeosTerminal: PropTypes.func,
     };
 
     render() {
