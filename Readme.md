@@ -1,10 +1,10 @@
 # Neos CMS terminal for running Eel expressions and other commands in the UI
 
 This package provides a Terminal emulator plugin for the [Neos CMS](https://www.neos.io) UI.
-Several commands are provided to safe time during development & debugging of Neos CMS projects.
+Several commands are provided to save time during development & debugging of Neos CMS projects.
 
-All commands, and their output are also automatically available in the browser dev console
-as `NeosTerminal` for easier handling of JSON results and persistent history. 
+All commands and their output are also automatically available in the browser dev console
+as `NeosTerminal` - for easier handling of JSON results and persistent history. 
 
 It uses the great [terminal component](https://github.com/linuswillner/react-console-emulator) by [Linus Willner](https://github.com/linuswillner).
 
@@ -31,7 +31,7 @@ window object even when the React version is too old.
 | ------------- | ---------------- |
 | 4.3           | Commands are only available via the browser console |
 | 5.2 - 5.3     | Full support     |
-| 7.0+          | Full support     |      
+| 7.0+          | Full support     |
 
 ## Usage
 
@@ -82,12 +82,12 @@ Or more complex ones. The following call will return the labels of all subpages 
 eel Array.map(q(site).children().get(), page => page.label)
 ```
 
-By default, the current `siteNode`, `documentNode` and currently selected `node` are
+By default, the current `siteNode`, `documentNode` and the currently selected `node` are
 available in your expression context.
 
-*Note:* The command will run some conversions on the result: 
+*Note:* The command will run some conversions on the result:
 
-* If the result is a node or is a list of nodes each node will be replaced
+* If the result is a node or a list of nodes, each node will be replaced
 with a list of their `properties`.
 * Properties that are objects are replaced with their classname.
 
@@ -95,9 +95,9 @@ This will be optimised in future releases and should improve the readability of 
 
 ### Flush caches
 
-The `flushCache` command allows you to flush all or a single cache.
+The `flushCache` command allows you to flush all caches or a single cache.
 
-F.e. the following call will flush the Fusion rendering cache:
+E.g. the following call will flush the Fusion rendering cache:
 
 ```
 flushCache Neos_Fusion_Content
@@ -113,7 +113,7 @@ Caching issues can be fixed in the implementation.
 ### Enabling the plugin in Production context 
 
 By default, the plugin is only loaded in *Development* context.
-If you want to have it active in *Production* you have to override the setting in your `Settings.yaml`:
+If you want to have it active in *Production*, you have to override the setting in your `Settings.yaml`:
 
 ```yaml
 Neos:
@@ -128,14 +128,14 @@ Neos:
 
 Executing commands in the Neos backend opens up a possible security risk.
 
-Therefore, when you use this plugin in production, make sure only a limited
+Therefore, if you use this plugin in production, make sure only a limited
 number of users have access to it.
 
 When creating your own commands, keep in mind to make sure nothing bad can happen to your
 database or other systems.
 
-F.e. if you have your own Eel helper that can send api requests to another system 
-with full write access. This could be used by someone if a backend user with
+Example: If you have your own Eel helper that can send API requests to another system 
+with full write access, this could be abused by someone if a backend user with
 enough privileges is hacked.
 
 ### Theming
@@ -147,8 +147,8 @@ It allows you to override the theme with your own.
 
 By default, any *Administrator* has full access to all existing and added commands.
 
-Additionally, the role `Shel.Neos.Terminal:TerminalUser` exists which can only run the `eel` command by default.
-You can add more privileges to this role to allow more commands and assign it to users or as `parentRole` for other roles.
+Additionally, the role `Shel.Neos.Terminal:TerminalUser` exists which by default can only run the `eel` command.
+You can add more privileges to this role to allow more commands and assign it to users or as a `parentRole` for other roles.
 See [Policy.yaml](Configuration/Policy.yaml) in this package for examples.
 
 ## Adding your own commands
@@ -157,7 +157,7 @@ Adding your commands is quite easy (depending on what you plan to do).
 
 Create a new class named `MyCommand` and implement the `TerminalCommandControllerPluginInterface` from 
 this package or inherit from `AbstractTerminalCommand`. 
-As soon as you implemented all required methods you are good to go!
+As soon as you implemented all required methods, you are good to go!
 
 As an example, you can create a command to show the joke of the day with the following class.
 Just adapt the namespace depending on your own package key.
@@ -217,11 +217,12 @@ class or a link to your repo, and we can add it to the docs.
 
 ### Providing commands in other packages
 
-If you have a package that provides a command you should check whether the
+If you have a package that provides a command, you should check whether the
 Terminal is installed in your code when defining the command.
 
-For that you have to wrap the command class in a condition and use the fully qualified name to
-reference classes and interfaces from the Terminal package:
+In order to achieve that, you have to wrap the command class in a condition
+and use the fully qualified name to reference classes and interfaces from the 
+Terminal package:
 
 ```php
 if (interface_exists('Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface', false)) {
@@ -249,7 +250,7 @@ Therefore, I decided to add a small nagging badge to promote financial support f
 
 There are several ways to get rid of the little sponsoring badge in the terminal:
 
-1. Get in touch with [me](sponsor@helzle.it) for direct sponsoring 100€ (excl. VAT) / registration key
+1. Get in touch with [me](sponsor@helzle.it) for a direct sponsoring of 100€ (excl. VAT) / registration key
 2. Become a sponsor via [Github](https://github.com/sebobo) 20$+/month level
 3. Become a [patreon](https://www.patreon.com/shelzle) 20$+/month level
 
@@ -262,13 +263,13 @@ Of course, I'll also do my best to react quickly to issues & questions.
 There is a 4th way: Fork this repo and patch the verification check (or whatever other way you might find).
 Sure you can do that. But you will receive bad karma, and you won't be helping the future of this plugin.
 
-If the badge doesn't bother you it's fine too. Keep it and enjoy the plugin :)
+If the badge doesn't bother you, that's fine too. Keep it and enjoy the plugin :).
 
 ## Contribute
 
 Contributions are very welcome.
 
-For code contributions please create a fork and create a PR against the lowest maintained
+For code contributions, please create a fork and create a PR against the lowest maintained
 branch of this repository (currently master).
 
 * Don't include any generated file in `/Resources/Public/` in your change.
