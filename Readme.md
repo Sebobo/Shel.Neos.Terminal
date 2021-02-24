@@ -205,6 +205,33 @@ Did you create awesome commands that could be helpful to others?
 Send a link to a [gist](https://gist.github.com) containing the PHP 
 class or a link to your repo, and we can add it to the docs.
 
+### Providing commands in other packages
+
+If you have a package that provides a command you should check whether the
+Terminal is installed in your code when defining the command.
+
+For that you have to wrap the command class in a condition and use the fully qualified name to
+reference classes and interfaces from the Terminal package:
+
+```php
+if (interface_exists('Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface', false)) {
+    class JokeCommand implements \Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface
+    {
+        public static function getCommandName(): string { ... }
+        public static function getCommandDescription(): string { ... }
+        public static function getCommandUsage(): string { ... }
+
+        public function invokeCommand( ... ): \Shel\Neos\Terminal\Command\CommandInvocationResult {
+            ...
+
+            return new \Shel\Neos\Terminal\Command\CommandInvocationResult(true, $result);
+        }
+    }
+} else {
+    class JodCommand {}
+}
+```
+
 ## Supporting this plugin / how to get rid of the sponsorship badge
 
 Creating and maintaining a plugin like this takes a lot of time.
