@@ -18,6 +18,8 @@
     "buildTargetDirectory": "../../../Public/Assets"
   },
   "devDependencies": {
-    "patch-package": "^6.2.2"
+    "patch-package": "^6.2.2",
+    "react": "^16.12.0",
+    "@types/react": "^16.12.0"
   }
 }

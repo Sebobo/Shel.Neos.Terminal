@@ -1,5 +1,12 @@
 // @ts-ignore
 import { fetchWithErrorHandling } from '@neos-project/neos-ui-backend-connector';
+import { FeedbackEnvelope } from '../interfaces';
+
+interface CommandInvocationResult {
+    success: boolean;
+    result: any;
+    feedback: FeedbackEnvelope;
+}
 
 const doInvokeCommand = async (
     endPoint: string,
@@ -8,7 +15,7 @@ const doInvokeCommand = async (
     siteNode: string = null,
     focusedNode: string = null,
     documentNode: string = null
-): Promise<any> => {
+): Promise<CommandInvocationResult> => {
     return fetchWithErrorHandling
         .withCsrfToken((csrfToken) => ({
             url: endPoint,

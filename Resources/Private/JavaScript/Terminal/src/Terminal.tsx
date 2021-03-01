@@ -7,12 +7,12 @@ import PropTypes from 'prop-types';
 // @ts-ignore
 import { neos } from '@neos-project/neos-ui-decorators';
 // @ts-ignore
-import { selectors } from '@neos-project/neos-ui-redux-store';
+import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
 import ReplWrapper, { TerminalTheme } from './components/ReplWrapper';
 import { CommandsProvider } from './provider/CommandsProvider';
-import { Node, I18nRegistry } from './interfaces';
-import { actions, selectors as terminalSelectors } from './actions';
+import { Node, I18nRegistry, FeedbackEnvelope } from './interfaces';
+import { actions as terminalActions, selectors as terminalSelectors } from './actions';
 
 interface TerminalProps {
     config: {
@@ -26,10 +26,11 @@ interface TerminalProps {
     focusedNodes: string[];
     i18nRegistry: I18nRegistry;
     terminalOpen: boolean;
+    handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
-@connect((state) => ({}), {
-    toggleNeosTerminal: actions.toggleNeosTerminal,
+@connect(() => ({}), {
+    toggleNeosTerminal: terminalActions.toggleNeosTerminal,
 })
 @connect(
     $transform({
@@ -38,7 +39,10 @@ interface TerminalProps {
         documentNode: selectors.CR.Nodes.documentNodeSelector,
         focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector,
         terminalOpen: terminalSelectors.terminalOpen,
-    })
+    }),
+    {
+        handleServerFeedback: actions.ServerFeedback.handleServerFeedback,
+    }
 )
 @neos((globalRegistry) => ({
     i18nRegistry: globalRegistry.get('i18n'),
@@ -54,6 +58,7 @@ export default class Terminal extends React.PureComponent<TerminalProps> {
         focusedNodes: PropTypes.array,
         terminalOpen: PropTypes.bool,
         toggleNeosTerminal: PropTypes.func,
+        handleServerFeedback: PropTypes.func,
     };
 
     render() {
@@ -67,6 +72,7 @@ export default class Terminal extends React.PureComponent<TerminalProps> {
                 documentNode={this.props.documentNode.contextPath}
                 focusedNode={this.props.focusedNodes?.length > 0 ? this.props.focusedNodes[0] : null}
                 i18nRegistry={this.props.i18nRegistry}
+                handleServerFeedback={this.props.handleServerFeedback}
             >
                 <ReplWrapper {...this.props} />
             </CommandsProvider>

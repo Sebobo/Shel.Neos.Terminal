@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
-import { NodeContextPath } from '../interfaces/Node';
-import I18nRegistry from '../interfaces/I18nRegistry';
-import CommandList from '../interfaces/CommandList';
+import { FeedbackEnvelope, I18nRegistry, CommandList, NodeContextPath } from '../interfaces';
 import fetchCommands from '../helpers/fetchCommands';
 import doInvokeCommand from '../helpers/doInvokeCommand';
 
@@ -15,6 +13,7 @@ interface CommandsContextProps {
     documentNode: NodeContextPath;
     focusedNode?: NodeContextPath;
     i18nRegistry: I18nRegistry;
+    handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
 interface CommandsContextValues {
@@ -40,6 +39,7 @@ export const CommandsProvider = ({
     focusedNode,
     siteNode,
     i18nRegistry,
+    handleServerFeedback,
 }: CommandsContextProps) => {
     const [commands, setCommands] = useState<CommandList>({});
 
@@ -71,7 +71,7 @@ export const CommandsProvider = ({
                 );
 
             return doInvokeCommand(invokeCommandEndPoint, commandName, args, siteNode, focusedNode, documentNode).then(
-                ({ success, result }) => {
+                ({ success, result, feedback }) => {
                     let parsedResult = result;
                     let textResult = result;
 
@@ -91,6 +91,12 @@ export const CommandsProvider = ({
                             argument: args.join(' '),
                         })
                     );
+
+                    // Forward server feedback to the Neos UI
+                    if (feedback) {
+                        handleServerFeedback(feedback);
+                    }
+
                     return textResult;
                 }
             );

@@ -1,28 +1,28 @@
 {
-    "name": "shel-neos-terminal",
-    "version": "1.0.0",
-    "license": "GNU GPLv3",
-    "private": true,
-    "engines": {
-        "node": ">=14"
-    },
-    "scripts": {
-        "postinstall": "patch-package",
-        "build": "yarn workspace neos-terminal run build",
-        "watch": "yarn workspace neos-terminal run watch"
-    },
-    "workspaces": [
-        "Resources/Private/JavaScript/Terminal"
-    ],
-    "devDependencies": {
-        "@neos-project/eslint-config-neos": "*",
-        "@typescript-eslint/eslint-plugin": "^4.11.0",
-        "@typescript-eslint/parser": "^4.11.0",
-        "eslint": "^7.16.0",
-        "eslint-config-prettier": "^7.1.0",
-        "eslint-plugin-prettier": "^3.3.0",
-        "eslint-plugin-react": "^7.21.5",
-        "eslint-plugin-react-hooks": "^4.2.0",
-        "eslint-plugin-testcafe": "^0.2.1"
-    }
+  "name": "shel-neos-terminal",
+  "version": "1.0.0",
+  "license": "GNU GPLv3",
+  "private": true,
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "postinstall": "patch-package",
+    "build": "yarn workspace neos-terminal run build",
+    "watch": "yarn workspace neos-terminal run watch"
+  },
+  "workspaces": [
+    "Resources/Private/JavaScript/Terminal"
+  ],
+  "devDependencies": {
+    "@neos-project/eslint-config-neos": "*",
+    "@typescript-eslint/eslint-plugin": "^4.11.0",
+    "@typescript-eslint/parser": "^4.11.0",
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.0",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-testcafe": "^0.2.1"
+  }
 }

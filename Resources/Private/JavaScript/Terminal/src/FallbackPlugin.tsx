@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 // @ts-ignore
 import { neos } from '@neos-project/neos-ui-decorators';
 // @ts-ignore
-import { selectors } from '@neos-project/neos-ui-redux-store';
+import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
-import { Node, I18nRegistry } from './interfaces';
+import { Node, I18nRegistry, FeedbackEnvelope } from './interfaces';
 import fetchCommands from './helpers/fetchCommands';
 import doInvokeCommand from './helpers/doInvokeCommand';
 
@@ -22,6 +22,7 @@ interface FallbackPluginProps {
     documentNode: Node;
     focusedNodes: string[];
     i18nRegistry: I18nRegistry;
+    handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
 @connect(
@@ -30,12 +31,19 @@ interface FallbackPluginProps {
         siteNode: selectors.CR.Nodes.siteNodeSelector,
         documentNode: selectors.CR.Nodes.documentNodeSelector,
         focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector,
-    })
+    }),
+    {
+        handleServerFeedback: actions.ServerFeedback.handleServerFeedback,
+    }
 )
 @neos((globalRegistry) => ({
     i18nRegistry: globalRegistry.get('i18n'),
     config: globalRegistry.get('frontendConfiguration').get('Shel.Neos.Terminal:Terminal'),
 }))
+/**
+ * The fallback plugin provides the command functionality in Neos 4.3 via the browser console.
+ * Full UI integration is not supported due to the old React version in Neos 4.3.
+ */
 export default class FallbackPlugin extends React.PureComponent<FallbackPluginProps> {
     static propTypes = {
         config: PropTypes.object.isRequired,
@@ -43,6 +51,7 @@ export default class FallbackPlugin extends React.PureComponent<FallbackPluginPr
         siteNode: PropTypes.object,
         documentNode: PropTypes.object,
         focusedNodes: PropTypes.array,
+        handleServerFeedback: PropTypes.func,
     };
 
     componentDidMount() {
@@ -64,9 +73,15 @@ export default class FallbackPlugin extends React.PureComponent<FallbackPluginPr
                     siteNode.contextPath,
                     focusedNode,
                     documentNode.contextPath
-                ).then(({ success, result }) => {
+                ).then(({ success, result, feedback }) => {
                     if (success) console.log(result);
                     else console.error(result);
+
+                    // Forward server feedback to the Neos UI
+                    if (feedback) {
+                        this.props.handleServerFeedback(feedback);
+                    }
+
                     return result;
                 });
             };
