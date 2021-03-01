@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Shel\Neos\Terminal\Command;
 
+use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
+use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
+
 /**
  * This file is part of the Shel.Neos.Terminal package.
  *
@@ -15,23 +18,38 @@ namespace Shel\Neos\Terminal\Command;
 
 class CommandInvocationResult implements \JsonSerializable
 {
+    /**
+     * @var bool
+     */
     protected $success;
 
+    /**
+     * @var mixed
+     */
     protected $result;
 
     /**
-     * @param bool $success
-     * @param mixed $result anything that can be json serialised
+     * @var array<FeedbackInterface>
      */
-    public function __construct(bool $success, $result)
+    protected $feedback;
+
+    /**
+     * @var FeedbackCollection
+     */
+    protected $feedbackCollection;
+
+    /**
+     * @param bool $success
+     * @param mixed $result has to be json serializable
+     * @param array $feedback
+     */
+    public function __construct(bool $success, $result, array $feedback = [])
     {
         $this->success = $success;
         $this->result = $result;
+        $this->feedback = $feedback;
     }
 
-    /**
-     * @return bool
-     */
     public function isSuccess(): bool
     {
         return $this->success;
@@ -45,11 +63,26 @@ class CommandInvocationResult implements \JsonSerializable
         return $this->result;
     }
 
+    public function getFeedback(): array
+    {
+        return $this->feedback;
+    }
+
+    public function setFeedbackCollection(FeedbackCollection $feedbackCollection): void
+    {
+        $this->feedbackCollection = $feedbackCollection;
+    }
+
     public function jsonSerialize(): array
     {
+        foreach($this->feedback as $feedback) {
+            $this->feedbackCollection->add($feedback);
+        }
+
         return [
             'success' => $this->success,
             'result' => $this->result,
+            'feedback' => $this->feedbackCollection,
         ];
     }
 }

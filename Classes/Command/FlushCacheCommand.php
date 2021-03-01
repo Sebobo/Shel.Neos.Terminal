@@ -14,7 +14,6 @@ namespace Shel\Neos\Terminal\Command;
  */
 
 use Neos\Flow\Annotations as Flow;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\I18n\Translator;
 
@@ -48,12 +47,7 @@ class FlushCacheCommand implements TerminalCommandControllerPluginInterface
         return 'flushCache [<string>]';
     }
 
-    public function invokeCommand(
-        string $argument,
-        NodeInterface $siteNode = null,
-        NodeInterface $documentNode = null,
-        NodeInterface $focusedNode = null
-    ): CommandInvocationResult
+    public function invokeCommand(string $argument, CommandContext $commandContext): CommandInvocationResult
     {
         $cacheIdentifier = $argument;
         $success = true;

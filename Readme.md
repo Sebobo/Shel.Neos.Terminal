@@ -168,9 +168,9 @@ declare(strict_types=1);
 
 namespace Vendor\Package\Command;
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\CurlEngine;
+use Shel\Neos\Terminal\Command\CommandContext;
 use Shel\Neos\Terminal\Command\CommandInvocationResult;
 use Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface;
 
@@ -192,12 +192,7 @@ class JokeCommand implements TerminalCommandControllerPluginInterface
         return 'jod [<string>]';
     }
 
-    public function invokeCommand(
-        string $argument,
-        NodeInterface $siteNode = null,
-        NodeInterface $documentNode = null,
-        NodeInterface $focusedNode = null
-    ): CommandInvocationResult
+    public function invokeCommand(string $argument, CommandContext $commandContext): CommandInvocationResult
     {
         $browser = new Browser();
         $browser->setRequestEngine(new CurlEngine());
@@ -232,7 +227,7 @@ if (interface_exists('Shel\Neos\Terminal\Command\TerminalCommandControllerPlugin
         public static function getCommandDescription(): string { ... }
         public static function getCommandUsage(): string { ... }
 
-        public function invokeCommand( ... ): \Shel\Neos\Terminal\Command\CommandInvocationResult {
+        public function invokeCommand(string $argument, \Shel\Neos\Terminal\Command\CommandContext $commandContext): \Shel\Neos\Terminal\Command\CommandInvocationResult {
             ...
 
             return new \Shel\Neos\Terminal\Command\CommandInvocationResult(true, $result);

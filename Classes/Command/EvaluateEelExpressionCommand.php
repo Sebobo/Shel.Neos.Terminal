@@ -43,19 +43,14 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
         return 'eel <string>';
     }
 
-    public function invokeCommand(
-        string $argument,
-        NodeInterface $siteNode = null,
-        NodeInterface $documentNode = null,
-        NodeInterface $focusedNode = null
-    ): CommandInvocationResult
+    public function invokeCommand(string $argument, CommandContext $commandContext): CommandInvocationResult
     {
         $success = true;
 
         $evaluationContext = [
-            'site' => $siteNode,
-            'documentNode' => $documentNode,
-            'node' => $focusedNode,
+            'site' => $commandContext->getSiteNode(),
+            'documentNode' => $commandContext->getDocumentNode(),
+            'node' => $commandContext->getFocusedNode(),
         ];
 
         try {
@@ -78,7 +73,7 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
      * @return mixed
      * @throws \Exception
      */
-    protected function convertResult($result)
+    protected function convertResult($result): array
     {
         if (is_array($result)) {
             return array_map(function ($item) {

@@ -16,10 +16,15 @@ namespace Shel\Neos\Terminal\Controller;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Translator;
+use Neos\Flow\Mvc\ActionRequest;
+use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
+use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Security\Exception\AccessDeniedException;
+use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
+use Shel\Neos\Terminal\Command\CommandContext;
 use Shel\Neos\Terminal\Command\CommandInvocationResult;
 use Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface;
 use Shel\Neos\Terminal\Exception as TerminalException;
@@ -44,11 +49,31 @@ class TerminalCommandController extends ActionController
     protected $translator;
 
     /**
+     * @Flow\Inject
+     * @var FeedbackCollection
+     */
+    protected $feedbackCollection;
+
+    /**
      * @Flow\InjectConfiguration(path="frontendConfiguration", package="Neos.Neos.Ui")
      * @var array
      */
     protected $frontendConfiguration;
 
+    /**
+     * @param ActionRequest $request
+     * @param ActionResponse $response
+     * @throws UnsupportedRequestTypeException
+     */
+    protected function initializeController(ActionRequest $request, ActionResponse $response)
+    {
+        parent::initializeController($request, $response);
+        $this->feedbackCollection->setControllerContext($this->getControllerContext());
+    }
+
+    /**
+     *
+     */
     public function getCommandsAction(): void
     {
         $commands = $this->detectCommands();
@@ -56,28 +81,12 @@ class TerminalCommandController extends ActionController
         $commandDefinitions = array_reduce($commands, function ($carry, TerminalCommandControllerPluginInterface $command) {
             try {
                 $carry[$command::getCommandName()] = $this->loadCommand($command::getCommandName(), $command);
-            } catch (AccessDeniedException $e) {}
+            } catch (AccessDeniedException $e) {
+            }
             return $carry;
         }, []);
 
         $this->view->assign('value', ['success' => true, 'result' => $commandDefinitions]);
-    }
-
-    /**
-     * This method is mainly used to limit command access via method privileges
-     *
-     * @param string $commandName
-     * @param TerminalCommandControllerPluginInterface $command
-     * @return array
-     * @throws AccessDeniedException thrown by the policy if a role is not allowed access to the specified command
-     */
-    protected function loadCommand(string $commandName, TerminalCommandControllerPluginInterface $command): array
-    {
-        return [
-            'name' => $commandName,
-            'description' => $command::getCommandDescription(),
-            'usage' => $command::getCommandUsage(),
-        ];
     }
 
     /**
@@ -98,6 +107,23 @@ class TerminalCommandController extends ActionController
         return $commandConfiguration;
     }
 
+    /**
+     * This method is mainly used to limit command access via method privileges
+     *
+     * @param string $commandName
+     * @param TerminalCommandControllerPluginInterface $command
+     * @return array
+     * @throws AccessDeniedException thrown by the policy if a role is not allowed access to the specified command
+     */
+    protected function loadCommand(string $commandName, TerminalCommandControllerPluginInterface $command): array
+    {
+        return [
+            'name' => $commandName,
+            'description' => $command::getCommandDescription(),
+            'usage' => $command::getCommandUsage(),
+        ];
+    }
+
     public function invokeCommandAction(
         string $commandName,
         string $argument = null,
@@ -115,14 +141,28 @@ class TerminalCommandController extends ActionController
             if ($command::getCommandName() === $commandName) {
                 try {
                     $this->loadCommand($commandName, $command);
-                    $result = $command->invokeCommand($argument, $siteNode, $documentNode, $focusedNode);
-                }  catch (AccessDeniedException $e) {}
+
+                    $commandContext = (new CommandContext($this->getControllerContext()))
+                        ->setSiteNode($siteNode)
+                        ->setDocumentNode($documentNode)
+                        ->setFocusedNode($focusedNode)
+                        ->setFocusedNode($focusedNode);
+
+                    $result = $command->invokeCommand($argument, $commandContext);
+                } catch (AccessDeniedException $e) {
+                }
                 break;
             }
         }
 
         if (!$result) {
             $result = new CommandInvocationResult(false, $this->translator->translateById('commandNotFound', ['command' => $commandName]));
+        }
+
+        if ($result->getFeedback()) {
+            // Change format to prevent url generation errors when serialising url based feedback
+            $this->getControllerContext()->getRequest()->getMainRequest()->setFormat('html');
+            $result->setFeedbackCollection($this->feedbackCollection);
         }
 
         $this->view->assign('value', $result);
@@ -133,7 +173,7 @@ class TerminalCommandController extends ActionController
      *
      * @throws TerminalException
      */
-    protected function initializeAction()
+    protected function initializeAction(): void
     {
         $terminalConfiguration = $this->frontendConfiguration['Shel.Neos.Terminal:Terminal'];
 
@@ -144,4 +184,5 @@ class TerminalCommandController extends ActionController
 
         parent::initializeAction();
     }
+
 }

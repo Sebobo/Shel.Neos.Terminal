@@ -13,8 +13,6 @@ namespace Shel\Neos\Terminal\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-
 /**
  * An interface for plugins for the TerminalCommandController
  */
@@ -26,10 +24,5 @@ interface TerminalCommandControllerPluginInterface
 
     public static function getCommandUsage(): string;
 
-    public function invokeCommand(
-        string $argument,
-        NodeInterface $siteNode = null,
-        NodeInterface $documentNode = null,
-        NodeInterface $focusedNode = null
-    ): CommandInvocationResult;
+    public function invokeCommand(string $argument, CommandContext $commandContext): CommandInvocationResult;
 }
