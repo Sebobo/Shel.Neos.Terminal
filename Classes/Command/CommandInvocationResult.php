@@ -31,18 +31,18 @@ class CommandInvocationResult
     /**
      * @var array<FeedbackInterface>
      */
-    protected $feedback;
+    protected $uiFeedback;
 
     /**
      * @param bool $success
      * @param mixed $result has to be json serializable
-     * @param array $feedback
+     * @param array $uiFeedback
      */
-    public function __construct(bool $success, $result, array $feedback = [])
+    public function __construct(bool $success, $result, array $uiFeedback = [])
     {
         $this->success = $success;
         $this->result = $result;
-        $this->feedback = $feedback;
+        $this->uiFeedback = $uiFeedback;
     }
 
     public function isSuccess(): bool
@@ -58,8 +58,8 @@ class CommandInvocationResult
         return $this->result;
     }
 
-    public function getFeedback(): array
+    public function getUiFeedback(): array
     {
-        return $this->feedback;
+        return $this->uiFeedback;
     }
 }

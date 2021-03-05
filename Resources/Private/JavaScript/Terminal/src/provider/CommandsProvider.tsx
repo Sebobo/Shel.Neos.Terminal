@@ -71,7 +71,7 @@ export const CommandsProvider = ({
                 );
 
             return doInvokeCommand(invokeCommandEndPoint, commandName, args, siteNode, focusedNode, documentNode).then(
-                ({ success, result, feedback }) => {
+                ({ success, result, uiFeedback }) => {
                     let parsedResult = result;
                     let textResult = result;
 
@@ -93,8 +93,8 @@ export const CommandsProvider = ({
                     );
 
                     // Forward server feedback to the Neos UI
-                    if (feedback) {
-                        handleServerFeedback(feedback);
+                    if (uiFeedback) {
+                        handleServerFeedback(uiFeedback);
                     }
 
                     return textResult;

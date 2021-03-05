@@ -73,13 +73,13 @@ export default class FallbackPlugin extends React.PureComponent<FallbackPluginPr
                     siteNode.contextPath,
                     focusedNode,
                     documentNode.contextPath
-                ).then(({ success, result, feedback }) => {
+                ).then(({ success, result, uiFeedback }) => {
                     if (success) console.log(result);
                     else console.error(result);
 
                     // Forward server feedback to the Neos UI
-                    if (feedback) {
-                        this.props.handleServerFeedback(feedback);
+                    if (uiFeedback) {
+                        this.props.handleServerFeedback(uiFeedback);
                     }
 
                     return result;

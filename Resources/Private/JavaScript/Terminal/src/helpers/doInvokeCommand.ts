@@ -5,7 +5,7 @@ import { FeedbackEnvelope } from '../interfaces';
 interface CommandInvocationResult {
     success: boolean;
     result: any;
-    feedback: FeedbackEnvelope;
+    uiFeedback: FeedbackEnvelope;
 }
 
 const doInvokeCommand = async (
