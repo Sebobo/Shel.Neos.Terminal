@@ -210,6 +210,32 @@ Did you create awesome commands that could be helpful to others?
 Send a link to a [gist](https://gist.github.com) containing the PHP 
 class or a link to your repo, and we can add it to the docs.
 
+### Providing feedback to Neos UI
+
+The Neos UI supports `ServerFeedbacks`. Those are commonly used to trigger reload of
+nodes and documents or changing the state of nodes after manipulating them.
+
+You can add those feedbacks to the `CommandInvocationResult`.
+
+An example of a invocation method which triggers a reload of the Neos UI guestframe 
+after a node has been updated execution would look like this:
+
+```php
+  public function invokeCommand(string $argument, CommandContext $commandContext): CommandInvocationResult
+    {
+        $newNodeTitle = $argument;
+        $commandContext->getFocusedNode()->setProperty('title', $newNodeTitle);    
+        $result = 'I updated the node title';
+        $feedback = [
+            new \Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument()        
+        ];
+
+        return new CommandInvocationResult(true, $result, $feedback);
+    }
+```
+
+If you have a Neos UI plugin that has its own registered feedbacks you can trigger them too.
+
 ### Providing commands in other packages
 
 If you have a package that provides a command, you should check whether the
