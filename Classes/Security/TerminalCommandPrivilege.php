@@ -14,7 +14,6 @@ namespace Shel\Neos\Terminal\Security;
  */
 
 use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
-use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
@@ -25,6 +24,7 @@ use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Flow\Security\Exception\InvalidPolicyException;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
 use Shel\Neos\Terminal\Command\TerminalCommandInterface;
+use Shel\Neos\Terminal\Service\TerminalCommandService;
 
 /**
  */
@@ -53,17 +53,10 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
         if ($this->getParsedMatcher() === '*') {
             $methodPrivilegeMatcher = 'within(' . TerminalCommandInterface::class . ') && method(public .*->invokeCommand())';
         } else {
-            $classNames = $this->objectManager->get(ReflectionService::class)->getAllImplementationClassNamesForInterface(TerminalCommandInterface::class);
-            $commandClassName = null;
-            foreach ($classNames as $className) {
-                $objectName = $this->objectManager->getObjectNameByClassName($className);
-                /** @var $objectName TerminalCommandInterface */
-                if ($objectName && $objectName::getCommandName() === $this->getParsedMatcher()) {
-                    $commandClassName = $className;
-                    break;
-                }
-            }
-            if ($commandClassName === null) {
+            $commandNames = TerminalCommandService::detectCommandNames($this->objectManager);
+            if (array_key_exists($this->getParsedMatcher(), $commandNames)) {
+                $commandClassName = $commandNames[$this->getParsedMatcher()];
+            } else {
                 throw new InvalidPolicyException(sprintf('Command %s not found', $this->getParsedMatcher()), 1614933733);
             }
             $methodPrivilegeMatcher = 'method(' . $commandClassName . '->invokeCommand())';

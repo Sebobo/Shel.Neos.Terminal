@@ -8,6 +8,9 @@
             <trans-unit id="commandNotFound">
                 <source>Command "{command}" not found</source>
             </trans-unit>
+            <trans-unit id="commandNotGranted">
+                <source>You are not permitted to invoke the "{command}" command</source>
+            </trans-unit>
             <trans-unit id="sponsorship">
                 <source>Become a plugin sponsor</source>
             </trans-unit>

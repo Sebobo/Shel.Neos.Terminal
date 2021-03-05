@@ -10,6 +10,10 @@
                 <source>Command "{command}" not found</source>
                 <target>Befehl "{command}" nicht gefunden</target>
             </trans-unit>
+            <trans-unit id="commandNotGranted">
+                <source>You are not permitted to invoke the "{command}" command</source>
+                <target>Sie dürfen den Befehl "{command}" nicht ausführen</target>
+            </trans-unit>
             <trans-unit id="sponsorship">
                 <source>Become a plugin sponsor</source>
                 <target>Unterstütze diesen Plugin</target>
@@ -32,7 +36,7 @@
             </trans-unit>
             <trans-unit id="welcome">
                 <source>Welcome to the Neos terminal! Type 'help' to get a list of commands.</source>
-                <target>Willkommen im Neos Terminal! Gebe 'help' ein für eine Liste aller Kommandos.</target>
+                <target>Willkommen im Neos Terminal! Gebe 'help' ein für eine Liste aller Befehle.</target>
             </trans-unit>
             <trans-unit id="toggleTerminal">
                 <source>Toggle Neos Terminal</source>

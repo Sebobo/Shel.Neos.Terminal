@@ -15,6 +15,8 @@ namespace Shel\Neos\Terminal\Controller;
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Flow\Annotations as Flow;
+use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
@@ -74,9 +76,6 @@ class TerminalCommandController extends ActionController
      */
     protected $privilegeManager;
 
-    /**
-     *
-     */
     public function getCommandsAction(): void
     {
         $commandNames = $this->terminalCommandService->getCommandNames();
@@ -86,14 +85,15 @@ class TerminalCommandController extends ActionController
                 new TerminalCommandPrivilegeSubject($commandName));
         });
 
-        $commandDefinitions = array_map(function ($commandName) {
+        $commandDefinitions = array_reduce($availableCommandNames, function (array $carry, string $commandName) {
             $command = $this->terminalCommandService->getCommand($commandName);
-            return [
+            $carry[$commandName] = [
                 'name' => $commandName,
                 'description' => $command::getCommandDescription(),
                 'usage' => $command::getCommandUsage(),
             ];
-        }, $availableCommandNames);
+            return $carry;
+        }, []);
 
         $this->view->assign('value', ['success' => true, 'result' => $commandDefinitions]);
     }
@@ -116,20 +116,24 @@ class TerminalCommandController extends ActionController
             ->withDocumentNode($documentNode)
             ->withFocusedNode($focusedNode)
             ->withFocusedNode($focusedNode);
+
         try {
             $result = $command->invokeCommand($argument, $commandContext);
         } catch (AccessDeniedException $e) {
+            $result = new CommandInvocationResult(false,
+                $this->translateById('commandNotGranted', ['command' => $commandName]));
         }
 
         if (!$result) {
             $result = new CommandInvocationResult(false,
-                $this->translator->translateById('commandNotFound', ['command' => $commandName]));
+                $this->translateById('commandNotFound', ['command' => $commandName]));
         }
 
-        if ($result->getFeedback()) {
+        // TODO: Move the feedback related logic into a separate service
+        if ($result->getUiFeedback()) {
             // Change format to prevent url generation errors when serialising url based feedback
             $this->getControllerContext()->getRequest()->getMainRequest()->setFormat('html');
-            foreach ($result->getFeedback() as $feedback) {
+            foreach ($result->getUiFeedback() as $feedback) {
                 $this->feedbackCollection->add($feedback);
             }
         }
@@ -146,7 +150,7 @@ class TerminalCommandController extends ActionController
      * @param ActionResponse $response
      * @throws UnsupportedRequestTypeException
      */
-    protected function initializeController(ActionRequest $request, ActionResponse $response)
+    protected function initializeController(ActionRequest $request, ActionResponse $response): void
     {
         parent::initializeController($request, $response);
         $this->feedbackCollection->setControllerContext($this->getControllerContext());
@@ -163,10 +167,19 @@ class TerminalCommandController extends ActionController
 
         $terminalEnabled = $terminalConfiguration['enabled'] ?? false;
         if (!$terminalEnabled) {
-            throw new TerminalException($this->translator->translateById('disabled'));
+            throw new TerminalException($this->translateById('disabled'));
         }
 
         parent::initializeAction();
+    }
+
+    protected function translateById(string $id, array $arguments = []): string
+    {
+        try {
+            return $this->translator->translateById('disabled', $arguments);
+        } catch (InvalidFormatPlaceholderException | IndexOutOfBoundsException $e) {
+        }
+        return $id;
     }
 
 }
