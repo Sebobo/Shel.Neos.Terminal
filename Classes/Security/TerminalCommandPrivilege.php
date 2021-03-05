@@ -3,7 +3,16 @@ declare(strict_types=1);
 
 namespace Shel\Neos\Terminal\Security;
 
-use Neos\Flow\Annotations as Flow;
+/**
+ * This file is part of the Shel.Neos.Terminal package.
+ *
+ * (c) 2021 Sebastian Helzle
+ *
+ * This package is Open Source Software. For the full copyright and license
+ * information, please view the LICENSE file which was distributed with this
+ * source code.
+ */
+
 use Neos\Flow\Aop\Pointcut\PointcutFilterInterface;
 use Neos\Flow\Reflection\ReflectionService;
 use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
@@ -12,10 +21,10 @@ use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
+use Neos\Flow\Security\Exception as SecurityException;
 use Neos\Flow\Security\Exception\InvalidPolicyException;
 use Neos\Flow\Security\Exception\InvalidPrivilegeTypeException;
 use Shel\Neos\Terminal\Command\TerminalCommandInterface;
-use Shel\Neos\Terminal\Service\TerminalCommandService;
 
 /**
  */
@@ -32,10 +41,9 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
     private $initialized = false;
 
     /**
-     * @return void
-     * @throws \Neos\Flow\Security\Exception
+     * @throws SecurityException
      */
-    public function initialize()
+    public function initialize(): void
     {
         if ($this->initialized) {
             return;
@@ -49,14 +57,14 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
             $commandClassName = null;
             foreach ($classNames as $className) {
                 $objectName = $this->objectManager->getObjectNameByClassName($className);
-                if ($objectName instanceof TerminalCommandInterface && $objectName::getCommandName() === $this->getParsedMatcher()) {
+                /** @var $objectName TerminalCommandInterface */
+                if ($objectName && $objectName::getCommandName() === $this->getParsedMatcher()) {
                     $commandClassName = $className;
                     break;
                 }
             }
             if ($commandClassName === null) {
-                // TODO: Add message
-                throw new InvalidPolicyException();
+                throw new InvalidPolicyException(sprintf('Command %s not found', $this->getParsedMatcher()), 1614933733);
             }
             $methodPrivilegeMatcher = 'method(' . $commandClassName . '->invokeCommand())';
         }
@@ -70,6 +78,7 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
      * related to this object.
      *
      * @return string
+     * @throws SecurityException
      */
     public function getCacheEntryIdentifier(): string
     {
@@ -82,9 +91,9 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
      *
      * @param PrivilegeSubjectInterface $subject
      * @return boolean
-     * @throws InvalidPrivilegeTypeException if the given $subject is not supported by the privilege
+     * @throws InvalidPrivilegeTypeException|SecurityException if the given $subject is not supported by the privilege
      */
-    public function matchesSubject(PrivilegeSubjectInterface $subject)
+    public function matchesSubject(PrivilegeSubjectInterface $subject): bool
     {
         if (!($subject instanceof TerminalCommandPrivilegeSubject) && !($subject instanceof MethodPrivilegeSubject)) {
             throw new InvalidPrivilegeTypeException(
@@ -102,13 +111,14 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
         if ($subject instanceof MethodPrivilegeSubject) {
             return $this->methodPrivilege->matchesSubject($subject);
         }
-        return $subject->getCommandName() === $this->getParsedMatcher();
+        return $this->getParsedMatcher() === '*' || $subject->getCommandName() === $this->getParsedMatcher();
     }
 
     /**
      * @param string $className
      * @param string $methodName
      * @return boolean
+     * @throws SecurityException
      */
     public function matchesMethod($className, $methodName)
     {
@@ -118,6 +128,7 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
 
     /**
      * @return PointcutFilterInterface
+     * @throws SecurityException
      */
     public function getPointcutFilterComposite()
     {
