@@ -3,12 +3,13 @@ privilegeTargets:
     'Shel.Neos.Terminal:ExecuteCommands':
       matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->(?!initialize).*Action())'
 
+  'Shel\Neos\Terminal\Security\TerminalCommandPrivilege':
     'Shel.Neos.Terminal:Command.All':
-      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->loadCommand())'
+      matcher: '*'
     'Shel.Neos.Terminal:Command.Eel':
-      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->loadCommand(commandName == "eel"))'
+      matcher: 'eel'
     'Shel.Neos.Terminal:Command.FlushCache':
-      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->loadCommand(commandName == "flushCache"))'
+      matcher: 'flushCache'
 
 roles:
   'Shel.Neos.Terminal:TerminalUser':

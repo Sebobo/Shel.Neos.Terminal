@@ -172,9 +172,9 @@ use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\CurlEngine;
 use Shel\Neos\Terminal\Command\CommandContext;
 use Shel\Neos\Terminal\Command\CommandInvocationResult;
-use Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface;
+use Shel\Neos\Terminal\Command\TerminalCommandInterface;
 
-class JokeCommand implements TerminalCommandControllerPluginInterface
+class JokeCommand implements TerminalCommandInterface
 {           
 
     public static function getCommandName(): string
@@ -220,8 +220,8 @@ and use the fully qualified name to reference classes and interfaces from the
 Terminal package:
 
 ```php
-if (interface_exists('Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface', false)) {
-    class JokeCommand implements \Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface
+if (interface_exists('Shel\Neos\Terminal\Command\TerminalCommandInterface', false)) {
+    class JokeCommand implements \Shel\Neos\Terminal\Command\TerminalCommandInterface
     {
         public static function getCommandName(): string { ... }
         public static function getCommandDescription(): string { ... }

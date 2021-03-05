@@ -21,13 +21,15 @@ use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
 use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\JsonView;
-use Neos\Flow\Reflection\ReflectionService;
+use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 use Shel\Neos\Terminal\Command\CommandContext;
 use Shel\Neos\Terminal\Command\CommandInvocationResult;
-use Shel\Neos\Terminal\Command\TerminalCommandControllerPluginInterface;
 use Shel\Neos\Terminal\Exception as TerminalException;
+use Shel\Neos\Terminal\Security\TerminalCommandPrivilege;
+use Shel\Neos\Terminal\Security\TerminalCommandPrivilegeSubject;
+use Shel\Neos\Terminal\Service\TerminalCommandService;
 
 /**
  * @Flow\Scope("singleton")
@@ -61,67 +63,39 @@ class TerminalCommandController extends ActionController
     protected $frontendConfiguration;
 
     /**
-     * @param ActionRequest $request
-     * @param ActionResponse $response
-     * @throws UnsupportedRequestTypeException
+     * @Flow\Inject
+     * @var TerminalCommandService
      */
-    protected function initializeController(ActionRequest $request, ActionResponse $response)
-    {
-        parent::initializeController($request, $response);
-        $this->feedbackCollection->setControllerContext($this->getControllerContext());
-    }
+    protected $terminalCommandService;
+
+    /**
+     * @Flow\Inject
+     * @var PrivilegeManagerInterface
+     */
+    protected $privilegeManager;
 
     /**
      *
      */
     public function getCommandsAction(): void
     {
-        $commands = $this->detectCommands();
+        $commandNames = $this->terminalCommandService->getCommandNames();
 
-        $commandDefinitions = array_reduce($commands, function ($carry, TerminalCommandControllerPluginInterface $command) {
-            try {
-                $carry[$command::getCommandName()] = $this->loadCommand($command::getCommandName(), $command);
-            } catch (AccessDeniedException $e) {
-            }
-            return $carry;
-        }, []);
+        $availableCommandNames = array_filter($commandNames, function ($commandName) {
+            return $this->privilegeManager->isGranted(TerminalCommandPrivilege::class,
+                new TerminalCommandPrivilegeSubject($commandName));
+        });
+
+        $commandDefinitions = array_map(function ($commandName) {
+            $command = $this->terminalCommandService->getCommand($commandName);
+            return [
+                'name' => $commandName,
+                'description' => $command::getCommandDescription(),
+                'usage' => $command::getCommandUsage(),
+            ];
+        }, $availableCommandNames);
 
         $this->view->assign('value', ['success' => true, 'result' => $commandDefinitions]);
-    }
-
-    /**
-     * Detects plugins for this command controller
-     *
-     * @return array<TerminalCommandControllerPluginInterface>
-     */
-    protected function detectCommands(): array
-    {
-        $commandConfiguration = [];
-        $classNames = $this->objectManager->get(ReflectionService::class)->getAllImplementationClassNamesForInterface(TerminalCommandControllerPluginInterface::class);
-        foreach ($classNames as $className) {
-            $objectName = $this->objectManager->getObjectNameByClassName($className);
-            if ($objectName) {
-                $commandConfiguration[$className] = $this->objectManager->get($objectName);
-            }
-        }
-        return $commandConfiguration;
-    }
-
-    /**
-     * This method is mainly used to limit command access via method privileges
-     *
-     * @param string $commandName
-     * @param TerminalCommandControllerPluginInterface $command
-     * @return array
-     * @throws AccessDeniedException thrown by the policy if a role is not allowed access to the specified command
-     */
-    protected function loadCommand(string $commandName, TerminalCommandControllerPluginInterface $command): array
-    {
-        return [
-            'name' => $commandName,
-            'description' => $command::getCommandDescription(),
-            'usage' => $command::getCommandUsage(),
-        ];
     }
 
     public function invokeCommandAction(
@@ -130,42 +104,52 @@ class TerminalCommandController extends ActionController
         NodeInterface $siteNode = null,
         NodeInterface $documentNode = null,
         NodeInterface $focusedNode = null
-    ): void
-    {
-        $commands = $this->detectCommands();
+    ): void {
         $result = null;
 
         $this->response->setContentType('application/json');
 
-        foreach ($commands as $command) {
-            if ($command::getCommandName() === $commandName) {
-                try {
-                    $this->loadCommand($commandName, $command);
+        $command = $this->terminalCommandService->getCommand($commandName);
 
-                    $commandContext = (new CommandContext($this->getControllerContext()))
-                        ->setSiteNode($siteNode)
-                        ->setDocumentNode($documentNode)
-                        ->setFocusedNode($focusedNode)
-                        ->setFocusedNode($focusedNode);
-
-                    $result = $command->invokeCommand($argument, $commandContext);
-                } catch (AccessDeniedException $e) {
-                }
-                break;
-            }
+        $commandContext = (new CommandContext($this->request->getHttpRequest()))
+            ->withSiteNode($siteNode)
+            ->withDocumentNode($documentNode)
+            ->withFocusedNode($focusedNode)
+            ->withFocusedNode($focusedNode);
+        try {
+            $result = $command->invokeCommand($argument, $commandContext);
+        } catch (AccessDeniedException $e) {
         }
 
         if (!$result) {
-            $result = new CommandInvocationResult(false, $this->translator->translateById('commandNotFound', ['command' => $commandName]));
+            $result = new CommandInvocationResult(false,
+                $this->translator->translateById('commandNotFound', ['command' => $commandName]));
         }
 
         if ($result->getFeedback()) {
             // Change format to prevent url generation errors when serialising url based feedback
             $this->getControllerContext()->getRequest()->getMainRequest()->setFormat('html');
-            $result->setFeedbackCollection($this->feedbackCollection);
+            foreach ($result->getFeedback() as $feedback) {
+                $this->feedbackCollection->add($feedback);
+            }
         }
 
-        $this->view->assign('value', $result);
+        $this->view->assign('value', [
+            'success' => $result->isSuccess(),
+            'result' => $result->getResult(),
+            'uiFeedback' => $this->feedbackCollection,
+        ]);
+    }
+
+    /**
+     * @param ActionRequest $request
+     * @param ActionResponse $response
+     * @throws UnsupportedRequestTypeException
+     */
+    protected function initializeController(ActionRequest $request, ActionResponse $response)
+    {
+        parent::initializeController($request, $response);
+        $this->feedbackCollection->setControllerContext($this->getControllerContext());
     }
 
     /**

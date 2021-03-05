@@ -16,7 +16,7 @@ use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
  * source code.
  */
 
-class CommandInvocationResult implements \JsonSerializable
+class CommandInvocationResult
 {
     /**
      * @var bool
@@ -32,11 +32,6 @@ class CommandInvocationResult implements \JsonSerializable
      * @var array<FeedbackInterface>
      */
     protected $feedback;
-
-    /**
-     * @var FeedbackCollection
-     */
-    protected $feedbackCollection;
 
     /**
      * @param bool $success
@@ -66,23 +61,5 @@ class CommandInvocationResult implements \JsonSerializable
     public function getFeedback(): array
     {
         return $this->feedback;
-    }
-
-    public function setFeedbackCollection(FeedbackCollection $feedbackCollection): void
-    {
-        $this->feedbackCollection = $feedbackCollection;
-    }
-
-    public function jsonSerialize(): array
-    {
-        foreach($this->feedback as $feedback) {
-            $this->feedbackCollection->add($feedback);
-        }
-
-        return [
-            'success' => $this->success,
-            'result' => $this->result,
-            'feedback' => $this->feedbackCollection,
-        ];
     }
 }

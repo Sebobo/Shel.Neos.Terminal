@@ -16,7 +16,7 @@ namespace Shel\Neos\Terminal\Command;
 /**
  * An interface for plugins for the TerminalCommandController
  */
-interface TerminalCommandControllerPluginInterface
+interface TerminalCommandInterface
 {
     public static function getCommandName(): string;
 

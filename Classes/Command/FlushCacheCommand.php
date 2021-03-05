@@ -17,7 +17,7 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\I18n\Translator;
 
-class FlushCacheCommand implements TerminalCommandControllerPluginInterface
+class FlushCacheCommand implements TerminalCommandInterface
 {
 
     /**

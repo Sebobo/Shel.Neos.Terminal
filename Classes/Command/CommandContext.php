@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace Shel\Neos\Terminal\Command;
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
+use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * This file is part of the Shel.Neos.Terminal package.
@@ -22,7 +24,7 @@ class CommandContext
     /**
      * @var ControllerContext
      */
-    protected $controllerContext;
+    protected $request;
 
     /**
      * @var NodeInterface
@@ -40,11 +42,11 @@ class CommandContext
     protected $focusedNode;
 
     /**
-     * @param ControllerContext $controllerContext
+     * @param ServerRequestInterface $request
      */
-    public function __construct(ControllerContext $controllerContext)
+    public function __construct(ServerRequestInterface $request)
     {
-        $this->controllerContext = $controllerContext;
+        $this->request = $request;
     }
 
     /**
@@ -52,13 +54,13 @@ class CommandContext
      */
     public function getControllerContext(): ControllerContext
     {
-        return $this->controllerContext;
+        return $this->request;
     }
 
     /**
      * @return NodeInterface|null
      */
-    public function getSiteNode(): NodeInterface
+    public function getSiteNode(): ?NodeInterface
     {
         return $this->siteNode;
     }
@@ -67,16 +69,17 @@ class CommandContext
      * @param NodeInterface|null $siteNode
      * @return CommandContext
      */
-    public function setSiteNode(NodeInterface $siteNode = null): CommandContext
+    public function withSiteNode(NodeInterface $siteNode = null): CommandContext
     {
-        $this->siteNode = $siteNode;
-        return $this;
+        $instance = clone $this;
+        $instance->siteNode = $siteNode;
+        return $instance;
     }
 
     /**
      * @return NodeInterface|null
      */
-    public function getDocumentNode(): NodeInterface
+    public function getDocumentNode(): ?NodeInterface
     {
         return $this->documentNode;
     }
@@ -85,16 +88,17 @@ class CommandContext
      * @param NodeInterface|null $documentNode
      * @return CommandContext
      */
-    public function setDocumentNode(NodeInterface $documentNode = null): CommandContext
+    public function withDocumentNode(NodeInterface $documentNode = null): CommandContext
     {
-        $this->documentNode = $documentNode;
-        return $this;
+        $instance = clone $this;
+        $instance->documentNode = $documentNode;
+        return $instance;
     }
 
     /**
      * @return NodeInterface|null
      */
-    public function getFocusedNode(): NodeInterface
+    public function getFocusedNode(): ?NodeInterface
     {
         return $this->focusedNode;
     }
@@ -103,10 +107,11 @@ class CommandContext
      * @param NodeInterface|null $focusedNode
      * @return CommandContext
      */
-    public function setFocusedNode(NodeInterface $focusedNode = null): CommandContext
+    public function withFocusedNode(NodeInterface $focusedNode = null): CommandContext
     {
-        $this->focusedNode = $focusedNode;
-        return $this;
+        $instance = clone $this;
+        $instance->focusedNode = $focusedNode;
+        return $instance;
     }
 
 }

@@ -18,9 +18,10 @@ use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Error\Exception as ErrorException;
 use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\Exception as EelException;
+use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
 use Shel\Neos\Terminal\Service\EelEvaluationService;
 
-class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInterface
+class EvaluateEelExpressionCommand implements TerminalCommandInterface
 {
     /**
      * @Flow\Inject
@@ -73,7 +74,7 @@ class EvaluateEelExpressionCommand implements TerminalCommandControllerPluginInt
      * @return mixed
      * @throws \Exception
      */
-    protected function convertResult($result): array
+    protected function convertResult($result)
     {
         if (is_array($result)) {
             return array_map(function ($item) {
