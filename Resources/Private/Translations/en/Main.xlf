@@ -56,6 +56,13 @@
                 <source>Run an expression through the eel parser</source>
             </trans-unit>
 
+            <trans-unit id="command.search.description">
+                <source>Fulltext search on nodes</source>
+            </trans-unit>
+            <trans-unit id="command.search.noContext">
+                <source>Context node not available</source>
+            </trans-unit>
+
             <trans-unit id="command.flushCache.description">
                 <source>Flush all or a single cache</source>
             </trans-unit>

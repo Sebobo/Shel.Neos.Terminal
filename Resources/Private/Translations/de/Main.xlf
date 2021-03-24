@@ -73,6 +73,15 @@
                 <target>Einen Ausdruck durch den Eel-Parser laufen lassen</target>
             </trans-unit>
 
+            <trans-unit id="command.search.description">
+                <source>Fulltext search on nodes</source>
+                <target>Volltextsuche auf Nodes</target>
+            </trans-unit>
+            <trans-unit id="command.search.noContext">
+                <source>Context node not available</source>
+                <target>Context Node nicht verfügbar</target>
+            </trans-unit>
+
             <trans-unit id="command.flushCache.description">
                 <source>Flush all or a single cache</source>
                 <target>Alle oder einen einzelnen Cache leeren</target>
