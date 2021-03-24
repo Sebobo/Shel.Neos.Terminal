@@ -15,10 +15,9 @@ namespace Shel\Neos\Terminal\Command;
 
 use Neos\Eel\ParserException;
 use Neos\Flow\Annotations as Flow;
-use Neos\Flow\Error\Exception as ErrorException;
-use Neos\ContentRepository\Domain\Model\NodeInterface;
 use Neos\Eel\Exception as EelException;
-use Neos\Neos\Ui\Domain\Model\Feedback\Operations\ReloadDocument;
+use Shel\Neos\Terminal\Domain\CommandContext;
+use Shel\Neos\Terminal\Domain\CommandInvocationResult;
 use Shel\Neos\Terminal\Service\EelEvaluationService;
 
 class EvaluateEelExpressionCommand implements TerminalCommandInterface
@@ -56,70 +55,11 @@ class EvaluateEelExpressionCommand implements TerminalCommandInterface
 
         try {
             $result = $this->eelEvaluationService->evaluateEelExpression('${' . $argument . '}', $evaluationContext);
-            $result = $this->convertResult($result);
-            $result = json_encode($result);
-        } catch (EelException | ParserException | ErrorException | \Exception $e) {
+        } catch (EelException | ParserException | \Exception $e) {
             $success = false;
             $result = $e->getMessage();
         }
 
         return new CommandInvocationResult($success, $result);
-    }
-
-    /**
-     * Unwraps certain object types in the evaluation result.
-     * This makes it easier to view them when displayed in the terminal.
-     *
-     * @param mixed $result
-     * @return mixed
-     * @throws \Exception
-     */
-    protected function convertResult($result)
-    {
-        if (is_array($result)) {
-            return array_map(function ($item) {
-                if ($item instanceof NodeInterface) {
-                    return $this->convertNode($item);
-                }
-                return $item;
-            }, $result);
-        }
-        if (is_object($result) && $result instanceof NodeInterface) {
-            return $this->convertNode($result);
-        }
-        return $result;
-    }
-
-    /**
-     * Serialises a node into an array with its properties and attributes
-     * to improve readability in the terminal output
-     *
-     * @param NodeInterface $node
-     * @return array
-     * @throws \Exception
-     */
-    protected function convertNode(NodeInterface $node): array
-    {
-        $result = [
-            '_identifier' => $node->getIdentifier(),
-            '_nodeType' => $node->getNodeType()->getName(),
-            '_name' => $node->getName(),
-            '_workspace' => $node->getWorkspace()->getName(),
-            '_path' => $node->getPath(),
-        ];
-
-        foreach ($node->getProperties()->getIterator() as $key => $property) {
-            if (is_object($property)) {
-                $property = get_class($property);
-            }
-            if (is_array($property)) {
-                $property = '[…]';
-            }
-            $result[$key] = $property;
-        }
-
-        ksort($result);
-
-        return $result;
     }
 }

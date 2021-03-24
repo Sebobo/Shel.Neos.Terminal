@@ -1,12 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Shel\Neos\Terminal\Command;
+namespace Shel\Neos\Terminal\Domain;
 
 use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * This file is part of the Shel.Neos.Terminal package.
@@ -24,7 +22,7 @@ class CommandContext
     /**
      * @var ControllerContext
      */
-    protected $request;
+    protected $controllerContext;
 
     /**
      * @var NodeInterface
@@ -42,11 +40,11 @@ class CommandContext
     protected $focusedNode;
 
     /**
-     * @param ServerRequestInterface $request
+     * @param ControllerContext $controllerContext
      */
-    public function __construct(ServerRequestInterface $request)
+    public function __construct(ControllerContext $controllerContext)
     {
-        $this->request = $request;
+        $this->controllerContext = $controllerContext;
     }
 
     /**
@@ -54,7 +52,7 @@ class CommandContext
      */
     public function getControllerContext(): ControllerContext
     {
-        return $this->request;
+        return $this->controllerContext;
     }
 
     /**

@@ -16,6 +16,8 @@ namespace Shel\Neos\Terminal\Command;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\I18n\Translator;
+use Shel\Neos\Terminal\Domain\CommandContext;
+use Shel\Neos\Terminal\Domain\CommandInvocationResult;
 
 class FlushCacheCommand implements TerminalCommandInterface
 {

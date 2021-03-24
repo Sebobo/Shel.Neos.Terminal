@@ -170,8 +170,8 @@ namespace Vendor\Package\Command;
 
 use Neos\Flow\Http\Client\Browser;
 use Neos\Flow\Http\Client\CurlEngine;
-use Shel\Neos\Terminal\Command\CommandContext;
-use Shel\Neos\Terminal\Command\CommandInvocationResult;
+use Shel\Neos\Terminal\Domain\CommandContext;
+use Shel\Neos\Terminal\Domain\CommandInvocationResult;
 use Shel\Neos\Terminal\Command\TerminalCommandInterface;
 
 class JokeCommand implements TerminalCommandInterface
@@ -253,10 +253,10 @@ if (interface_exists('Shel\Neos\Terminal\Command\TerminalCommandInterface', fals
         public static function getCommandDescription(): string { ... }
         public static function getCommandUsage(): string { ... }
 
-        public function invokeCommand(string $argument, \Shel\Neos\Terminal\Command\CommandContext $commandContext): \Shel\Neos\Terminal\Command\CommandInvocationResult {
+        public function invokeCommand(string $argument, \Shel\Neos\Terminal\Domain\CommandContext $commandContext): \Shel\Neos\Terminal\Domain\CommandInvocationResult {
             ...
 
-            return new \Shel\Neos\Terminal\Command\CommandInvocationResult(true, $result);
+            return new \Shel\Neos\Terminal\Domain\CommandInvocationResult(true, $result);
         }
     }
 } else {

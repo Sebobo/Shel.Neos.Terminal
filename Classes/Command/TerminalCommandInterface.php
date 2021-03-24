@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Shel\Neos\Terminal\Command;
 
+use Shel\Neos\Terminal\Domain\CommandContext;
+use Shel\Neos\Terminal\Domain\CommandInvocationResult;
+
 /**
  * This file is part of the Shel.Neos.Terminal package.
  *

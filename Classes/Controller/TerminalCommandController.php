@@ -26,11 +26,12 @@ use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
-use Shel\Neos\Terminal\Command\CommandContext;
-use Shel\Neos\Terminal\Command\CommandInvocationResult;
+use Shel\Neos\Terminal\Domain\CommandContext;
+use Shel\Neos\Terminal\Domain\CommandInvocationResult;
 use Shel\Neos\Terminal\Exception as TerminalException;
 use Shel\Neos\Terminal\Security\TerminalCommandPrivilege;
 use Shel\Neos\Terminal\Security\TerminalCommandPrivilegeSubject;
+use Shel\Neos\Terminal\Service\SerializationService;
 use Shel\Neos\Terminal\Service\TerminalCommandService;
 
 /**
@@ -111,11 +112,13 @@ class TerminalCommandController extends ActionController
 
         $command = $this->terminalCommandService->getCommand($commandName);
 
-        $commandContext = (new CommandContext($this->request->getHttpRequest()))
+        $commandContext = (new CommandContext($this->getControllerContext()))
             ->withSiteNode($siteNode)
             ->withDocumentNode($documentNode)
             ->withFocusedNode($focusedNode)
             ->withFocusedNode($focusedNode);
+
+        $this->getControllerContext()->getRequest()->getMainRequest()->setFormat('html');
 
         try {
             $result = $command->invokeCommand($argument, $commandContext);
@@ -132,7 +135,6 @@ class TerminalCommandController extends ActionController
         // TODO: Move the feedback related logic into a separate service
         if ($result->getUiFeedback()) {
             // Change format to prevent url generation errors when serialising url based feedback
-            $this->getControllerContext()->getRequest()->getMainRequest()->setFormat('html');
             foreach ($result->getUiFeedback() as $feedback) {
                 $this->feedbackCollection->add($feedback);
             }
@@ -140,7 +142,7 @@ class TerminalCommandController extends ActionController
 
         $this->view->assign('value', [
             'success' => $result->isSuccess(),
-            'result' => $result->getResult(),
+            'result' => SerializationService::serialize($result->getResult()),
             'uiFeedback' => $this->feedbackCollection,
         ]);
     }

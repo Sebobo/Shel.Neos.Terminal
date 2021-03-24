@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Shel\Neos\Terminal\Command;
+namespace Shel\Neos\Terminal\Domain;
 
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
