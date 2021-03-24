@@ -64,7 +64,6 @@ export const CommandsProvider = ({
         (commandName: string, args: string[]): Promise<string> => {
             const command = commands[commandName];
 
-            // TODO: translate
             if (!command)
                 throw Error(
                     translate('command.doesNotExist', `The command {commandName} does not exist!`, { commandName })
@@ -75,15 +74,18 @@ export const CommandsProvider = ({
                     let parsedResult = result;
                     let textResult = result;
 
-                    if (success) {
-                        // Try to prettify json results
-                        try {
-                            parsedResult = JSON.parse(result);
+                    // Try to prettify json results
+                    try {
+                        parsedResult = JSON.parse(result);
+                        if (typeof parsedResult !== 'string') {
                             textResult = JSON.stringify(parsedResult, null, 2);
-                        } catch (e) {
-                            // Treat result as simple string
+                        } else {
+                            textResult = parsedResult;
                         }
+                    } catch (e) {
+                        // Treat result as simple string
                     }
+
                     console[success ? 'log' : 'error'](
                         parsedResult,
                         translate('command.output', `Output of command "{commandName} {argument}"`, {
