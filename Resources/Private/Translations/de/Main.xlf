@@ -10,6 +10,10 @@
                 <source>Command "{command}" not found</source>
                 <target>Befehl "{command}" nicht gefunden</target>
             </trans-unit>
+            <trans-unit id="matchingCommands">
+                <source>Matching commands: {commands}</source>
+                <target>Passende Befehle: {commands}</target>
+            </trans-unit>
             <trans-unit id="commandNotGranted">
                 <source>You are not permitted to invoke the "{command}" command</source>
                 <target>Sie dürfen den Befehl "{command}" nicht ausführen</target>

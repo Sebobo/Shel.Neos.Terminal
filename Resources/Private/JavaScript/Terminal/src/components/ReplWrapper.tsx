@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import Terminal from 'react-console-emulator';
 
 // @ts-ignore
@@ -98,6 +98,30 @@ const ReplWrapper: React.FC<ReplProps> = ({
         }, {});
     }, [commands, invokeCommand]);
 
+    const autocomplete = useCallback(
+        (input) => {
+            const commandNames = Object.keys(commands);
+            const currentValue = input.value;
+            const matches = commandNames.filter((key) => key.startsWith(currentValue));
+
+            if (!matches) return;
+
+            if (matches.length === 1) {
+                input.value = matches[0] + ' ';
+            } else {
+                const currentTerminal = terminal.current;
+                const [lastItem] = currentTerminal.state.stdout.slice(-1);
+                const message = translate('matchingCommands', 'Matching commands: {commands}', {
+                    commands: matches.join(' '),
+                });
+                if (lastItem.message !== message) {
+                    currentTerminal.pushToStdout(message, { isEcho: true });
+                }
+            }
+        },
+        [commands]
+    );
+
     if (!Object.keys(commands).length) return null;
 
     return (
@@ -116,6 +140,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
                     ignoreCommandCase={true}
                     welcomeMessage={translate(config.welcomeMessage)}
                     promptLabel={promptLabel}
+                    onTab={autocomplete}
                     style={{ borderRadius: 0, maxHeight: '50vh' }}
                     {...config.theme}
                 />
