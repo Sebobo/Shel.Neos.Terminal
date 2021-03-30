@@ -20,7 +20,7 @@ Neos:
           invokeCommandEndPoint: '/neos/shel-neos-terminal/invokecommand'
           theme:
             contentStyle:
-              color: '#00adee'
+              color: '#adadad'
             styleEchoBack: 'fullInherit'
             promptLabelStyle:
               color: '#ff8700'
@@ -29,6 +29,7 @@ Neos:
               color: '#ffffff'
             messageStyle:
               whiteSpace: 'pre-wrap'
+              color: '#00adee'
 
         hotkeys:
           'Shel.Neos.Terminal.toggle': 't t'
