@@ -24,6 +24,7 @@ Neos:
             styleEchoBack: 'fullInherit'
             promptLabelStyle:
               color: '#ff8700'
+              whitespace: 'nowrap'
             inputTextStyle:
               color: '#ffffff'
             messageStyle:
