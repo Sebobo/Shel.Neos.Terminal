@@ -28,7 +28,9 @@ const SponsorshipBadge: React.FC<SponsorshipBadgeProps> = ({ registrationKey }) 
         }, 0);
 
         if ('V1' + result === atob(signature)) {
-            console.info(CONSOLE_PREFIX, translate('sponsorship.verified'));
+            if (registrationKey.showThankYouMessage) {
+                console.info(CONSOLE_PREFIX, translate('sponsorship.verified'));
+            }
             setVerified(true);
         } else {
             console.warn(CONSOLE_PREFIX, translate('sponsorship.invalid'));

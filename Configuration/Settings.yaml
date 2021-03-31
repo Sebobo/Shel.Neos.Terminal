@@ -16,6 +16,7 @@ Neos:
           registrationKey:
             id: ''
             signature: ''
+            showThankYouMessage: true
           getCommandsEndPoint: '/neos/shel-neos-terminal/getcommands'
           invokeCommandEndPoint: '/neos/shel-neos-terminal/invokecommand'
           theme:
