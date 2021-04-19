@@ -8,7 +8,20 @@ as `NeosTerminal` - for easier handling of JSON results and persistent history.
 
 It uses the great [terminal component](https://github.com/linuswillner/react-console-emulator) by [Linus Willner](https://github.com/linuswillner).
 
-## Example
+**Quick overview:**
+              
+* Run commands via the Neos UI or in the browser console
+  * Evaluate Eel expressions on the currently selected page & content
+  * Search for nodes by their properties
+  * Flush caches
+* Autocompletion for command names  
+* Open Terminal via `t+t` shortcut  
+* Limit commands to backend roles
+* Create your own commands and provide them in your own packages
+
+## How it looks
+
+Watch the [video](https://vimeo.com/manage/videos/538570712)
 
 ![Terminal example in the Neos CMS backend](Documentation/shel-neos-terminal-example.jpg)
 
@@ -51,6 +64,7 @@ Available default commands:
 * `flushCache` - Flush one or all Neos/Flow caches
 * `help` - Show command list
 * `clear` - Clear terminal
+* `search` - Search for nodes by their properties
 
 You can add [custom commands](#adding-your-own-commands). 
 
