@@ -57,14 +57,17 @@ class FlushCacheCommand implements TerminalCommandInterface
         if ($cacheIdentifier) {
             if ($this->cacheManager->hasCache($cacheIdentifier)) {
                 $this->cacheManager->getCache($cacheIdentifier)->flush();
-                $result = $this->translator->translateById('command.flushCache.flushedOne', ['cacheIdentifier' => $cacheIdentifier]);
+                $result = $this->translator->translateById('command.flushCache.flushedOne',
+                    ['cacheIdentifier' => $cacheIdentifier], null, null, 'Main', 'Shel.Neos.Terminal');
             } else {
                 $success = false;
-                $result = $this->translator->translateById('command.flushCache.cacheDoesNotExist', ['cacheIdentifier' => $cacheIdentifier]);
+                $result = $this->translator->translateById('command.flushCache.cacheDoesNotExist',
+                    ['cacheIdentifier' => $cacheIdentifier], null, null, 'Main', 'Shel.Neos.Terminal');
             }
         } else {
+            $result = $this->translator->translateById('command.flushCache.flushedAll', [], null, null, 'Main',
+                'Shel.Neos.Terminal');
             $this->cacheManager->flushCaches();
-            $result = $this->translator->translateById('command.flushCache.flushedAll');
         }
 
         // Echo response as we have to exit the process prematurely or the application
