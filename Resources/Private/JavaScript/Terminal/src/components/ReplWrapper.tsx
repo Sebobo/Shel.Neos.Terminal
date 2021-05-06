@@ -54,9 +54,9 @@ const ReplWrapper: React.FC<ReplProps> = ({
 
     const promptLabel = useMemo(() => {
         const currentPath =
-            siteNode.contextPath === documentNode.contextPath ? '~' : documentNode.properties.uriPathSegment;
-        return `${user.firstName}@${siteNode.name}:${currentPath}$`;
-    }, [user.firstName, siteNode.name, documentNode.contextPath, documentNode.properties.uriPathSegment]);
+            siteNode?.contextPath === documentNode?.contextPath ? '~' : documentNode?.properties.uriPathSegment;
+        return `${user.firstName}@${siteNode?.name}:${currentPath}$`;
+    }, [user.firstName, siteNode?.name, documentNode?.contextPath, documentNode?.properties.uriPathSegment]);
 
     const commandsDefinition = useMemo(() => {
         return Object.keys(commands).reduce((carry, commandName) => {
