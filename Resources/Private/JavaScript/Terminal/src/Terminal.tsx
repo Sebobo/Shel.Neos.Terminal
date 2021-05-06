@@ -29,9 +29,11 @@ interface TerminalProps {
     handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
+// @ts-ignore
 @connect(() => ({}), {
     toggleNeosTerminal: terminalActions.toggleNeosTerminal,
 })
+// @ts-ignore
 @connect(
     $transform({
         user: $get('user.name'),

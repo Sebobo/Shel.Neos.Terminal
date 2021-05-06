@@ -25,6 +25,7 @@ interface FallbackPluginProps {
     handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
+// @ts-ignore
 @connect(
     $transform({
         user: $get('user.name'),
