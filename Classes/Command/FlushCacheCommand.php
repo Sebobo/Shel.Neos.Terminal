@@ -18,6 +18,10 @@ use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\I18n\Translator;
 use Shel\Neos\Terminal\Domain\CommandContext;
 use Shel\Neos\Terminal\Domain\CommandInvocationResult;
+use Symfony\Component\Console\Exception\RuntimeException;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\StringInput;
 
 class FlushCacheCommand implements TerminalCommandInterface
 {
@@ -46,12 +50,28 @@ class FlushCacheCommand implements TerminalCommandInterface
 
     public static function getCommandUsage(): string
     {
-        return 'flushCache [<string>]';
+        return 'flushCache ' . self::getInputDefinition()->getSynopsis();
+    }
+
+    public static function getInputDefinition(): InputDefinition
+    {
+        return new InputDefinition([
+            new InputArgument('cacheIdentifier', InputArgument::OPTIONAL),
+        ]);
     }
 
     public function invokeCommand(string $argument, CommandContext $commandContext): CommandInvocationResult
     {
-        $cacheIdentifier = $argument;
+        $input = new StringInput($argument);
+        $input->bind(self::getInputDefinition());
+
+        try {
+            $input->validate();
+        } catch (RuntimeException $e) {
+            return new CommandInvocationResult(false, $e->getMessage());
+        }
+
+        $cacheIdentifier = $input->getArgument('cacheIdentifier');
         $success = true;
 
         if ($cacheIdentifier) {
