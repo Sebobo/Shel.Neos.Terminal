@@ -10,6 +10,10 @@ privilegeTargets:
       matcher: 'eel'
     'Shel.Neos.Terminal:Command.FlushCache':
       matcher: 'flushCache'
+    'Shel.Neos.Terminal:Command.Search':
+      matcher: 'search'
+    'Shel.Neos.Terminal:Command.NodeRepair':
+      matcher: 'nodeRepair'
 
 roles:
   'Shel.Neos.Terminal:TerminalUser':
@@ -17,6 +21,8 @@ roles:
       - privilegeTarget: 'Shel.Neos.Terminal:ExecuteCommands'
         permission: GRANT
       - privilegeTarget: 'Shel.Neos.Terminal:Command.Eel'
+        permission: GRANT
+      - privilegeTarget: 'Shel.Neos.Terminal:Command.Search'
         permission: GRANT
   'Neos.Neos:Administrator':
     privileges:
