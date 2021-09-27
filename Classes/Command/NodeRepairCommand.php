@@ -70,8 +70,8 @@ class NodeRepairCommand implements TerminalCommandInterface
         return new InputDefinition([
             new InputArgument('methodName', InputArgument::REQUIRED),
             new InputArgument('nodeType', InputArgument::REQUIRED),
-            new InputOption('workspace', 'w', InputOption::VALUE_OPTIONAL),
-            new InputOption('dryRun', 'd', InputOption::VALUE_NEGATABLE, 'Desc', false),
+            new InputOption('workspace', 'w', InputOption::VALUE_REQUIRED),
+            new InputOption('dryRun', 'd', InputOption::VALUE_NONE, 'Desc'),
         ]);
     }
 
