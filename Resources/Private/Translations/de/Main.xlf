@@ -74,7 +74,7 @@
 
             <trans-unit id="command.eel.description">
                 <source>Run an expression through the eel parser</source>
-                <target>Einen Ausdruck durch den Eel-Parser laufen lassen</target>
+                <target>Einen Ausdruck durch den Eel-Parser ausführen lassen</target>
             </trans-unit>
 
             <trans-unit id="command.search.description">
@@ -114,6 +114,20 @@
             <trans-unit id="command.nodeRepair.noMatchingMethodName">
                 <source>No result for the method "{methodName}"</source>
                 <target>Kein Ergebnis für die Methode "{methodName}"</target>
+            </trans-unit>
+
+            <trans-unit id="command.help.description">
+                <source>Show help</source>
+                <target>Hilfe anzeigen</target>
+            </trans-unit>
+            <trans-unit id="command.help.unknownCommand">
+                <source>Unknown command</source>
+                <target>Unbekannter Befehl</target>
+            </trans-unit>
+
+            <trans-unit id="command.clear.description">
+                <source>Clear terminal</source>
+                <target>Terminal löschen</target>
             </trans-unit>
         </body>
     </file>
