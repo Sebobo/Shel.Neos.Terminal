@@ -59,7 +59,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
     }, [user.firstName, siteNode?.name, documentNode?.contextPath, documentNode?.properties.uriPathSegment]);
 
     const commandsDefinition = useMemo(() => {
-        return Object.keys(commands).reduce((carry, commandName) => {
+        const newCommands = Object.keys(commands).reduce((carry, commandName) => {
             const command = commands[commandName];
 
             // Register command globally
@@ -96,6 +96,32 @@ const ReplWrapper: React.FC<ReplProps> = ({
             };
             return carry;
         }, {});
+
+        newCommands['help'] = {
+            name: 'help',
+            description: translate('command.help.description'),
+            usage: 'help <commandName>',
+            fn: (commandName) => {
+                const currentTerminal = terminal.current;
+                if (!commandName) {
+                    currentTerminal.showHelp();
+                } else if (!commands[commandName]) {
+                    currentTerminal.pushToStdout(translate('command.help.unknownCommand'));
+                } else {
+                    const command = commands[commandName];
+                    currentTerminal.pushToStdout(`${translate(command.description)} - ${command.usage}`);
+                }
+            },
+        };
+
+        newCommands['clear'] = {
+            name: 'clear',
+            description: translate('command.clear.description'),
+            usage: 'clear',
+            fn: () => terminal.current.clearStdout(),
+        };
+
+        return newCommands;
     }, [commands, invokeCommand]);
 
     const autocomplete = useCallback(
@@ -141,6 +167,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
                     welcomeMessage={translate(config.welcomeMessage)}
                     promptLabel={promptLabel}
                     onTab={autocomplete}
+                    noDefaults
                     style={{ borderRadius: 0, maxHeight: '50vh' }}
                     {...config.theme}
                 />

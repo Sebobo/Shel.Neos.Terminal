@@ -88,6 +88,17 @@
             <trans-unit id="command.nodeRepair.noMatchingMethodName">
                 <source>No result for the method "{methodName}"</source>
             </trans-unit>
+
+            <trans-unit id="command.help.description">
+                <source>Show help</source>
+            </trans-unit>
+            <trans-unit id="command.help.unknownCommand">
+                <source>Unknown command</source>
+            </trans-unit>
+
+            <trans-unit id="command.clear.description">
+                <source>Clear terminal</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>
