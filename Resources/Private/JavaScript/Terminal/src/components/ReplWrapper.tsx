@@ -155,12 +155,22 @@ const ReplWrapper: React.FC<ReplProps> = ({
         }
     }, [terminalOpen]);
 
+    // Close terminal on ESC
+    const onKeyUp = useCallback(
+        (e) => {
+            if (terminalOpen && e.keyCode === 27) {
+                toggleNeosTerminal(false);
+            }
+        },
+        [terminalOpen]
+    );
+
     if (!Object.keys(commands).length) return null;
 
     return (
-        <div className={theme.replWrapper}>
+        <div className={theme.replWrapper} onKeyUp={onKeyUp}>
             <IconButton
-                onClick={() => toggleNeosTerminal()}
+                onClick={toggleNeosTerminal}
                 isActive={terminalOpen}
                 title={translate('toggleTerminal')}
                 icon="terminal"
