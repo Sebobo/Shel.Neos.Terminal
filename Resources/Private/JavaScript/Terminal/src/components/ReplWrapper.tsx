@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import Terminal from 'react-console-emulator';
 
 // @ts-ignore
@@ -147,6 +147,13 @@ const ReplWrapper: React.FC<ReplProps> = ({
         },
         [commands]
     );
+
+    // Focus terminal when opened
+    useEffect(() => {
+        if (terminalOpen) {
+            setTimeout(() => terminal.current?.focusTerminal(), 0);
+        }
+    }, [terminalOpen]);
 
     if (!Object.keys(commands).length) return null;
 
