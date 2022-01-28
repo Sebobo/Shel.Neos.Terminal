@@ -20,6 +20,7 @@ use Shel\Neos\Terminal\Domain\CommandContext;
 use Shel\Neos\Terminal\Domain\CommandInvocationResult;
 use Shel\Neos\Terminal\Service\EelEvaluationService;
 use Symfony\Component\Console\Exception\RuntimeException;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\StringInput;
@@ -50,22 +51,21 @@ class EvaluateEelExpressionCommand implements TerminalCommandInterface
     public static function getInputDefinition(): InputDefinition
     {
         return new InputDefinition([
-            new InputArgument('expression', InputArgument::REQUIRED),
+            new InputArgument('expression', InputArgument::REQUIRED | InputArgument::IS_ARRAY),
         ]);
     }
 
     public function invokeCommand(string $argument, CommandContext $commandContext): CommandInvocationResult
     {
         $input = new StringInput($argument);
-        $input->bind(self::getInputDefinition());
 
         try {
+            $input->bind(self::getInputDefinition());
             $input->validate();
         } catch (RuntimeException $e) {
             return new CommandInvocationResult(false, $e->getMessage());
         }
 
-        $expression = $input->getArgument('expression');
         $success = true;
 
         $evaluationContext = [
@@ -75,7 +75,7 @@ class EvaluateEelExpressionCommand implements TerminalCommandInterface
         ];
 
         try {
-            $result = $this->eelEvaluationService->evaluateEelExpression('${' . $expression . '}', $evaluationContext);
+            $result = $this->eelEvaluationService->evaluateEelExpression('${' . $argument . '}', $evaluationContext);
         } catch (EelException | ParserException | \Exception $e) {
             $success = false;
             $result = $e->getMessage();
