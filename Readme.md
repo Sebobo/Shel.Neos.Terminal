@@ -338,6 +338,14 @@ branch of this repository (currently master).
 * Don't include any generated file in `/Resources/Public/` in your change.
 * Please provide a thorough explanation of your change and well-formed commit messages in your commits.
 
+### Run Tests
+
+Make sure you have the behat dependency required in your `composer.json` and run the following command:
+
+```console
+FLOW_CONTEXT=Testing bin/phpunit -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/Plugins/Shel.Neos.Terminal/Tests/Functional
+```
+
 ## License
 
 See [License](LICENSE.txt)
