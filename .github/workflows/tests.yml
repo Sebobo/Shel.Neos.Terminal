@@ -13,11 +13,11 @@ jobs:
     strategy:
       matrix:
         neosVersion:
-          - '4.3'
+#          - '4.3'
           - '5.3'
           - '7.3'
 
-    name: 'Terminal ${{ matrix.neosVersion }} test'
+    name: 'Terminal with Neos ${{ matrix.neosVersion }} test'
 
     env:
       NEOS_TARGET_VERSION: ${{matrix.neosVersion}}
