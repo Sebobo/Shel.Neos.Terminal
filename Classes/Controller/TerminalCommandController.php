@@ -152,7 +152,7 @@ class TerminalCommandController extends ActionController
      * @param ActionResponse $response
      * @throws UnsupportedRequestTypeException
      */
-    protected function initializeController(ActionRequest $request, ActionResponse $response): void
+    protected function initializeController(ActionRequest $request, ActionResponse $response)
     {
         parent::initializeController($request, $response);
         $this->feedbackCollection->setControllerContext($this->getControllerContext());
@@ -163,7 +163,7 @@ class TerminalCommandController extends ActionController
      *
      * @throws TerminalException
      */
-    protected function initializeAction(): void
+    protected function initializeAction()
     {
         $terminalConfiguration = $this->frontendConfiguration['Shel.Neos.Terminal:Terminal'];
 
