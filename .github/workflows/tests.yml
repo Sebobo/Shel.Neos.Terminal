@@ -2,9 +2,9 @@ name: Tests
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
@@ -12,20 +12,25 @@ jobs:
 
     strategy:
       matrix:
-        flowVersion:
+        neosVersion:
+          - '4.3'
           - '5.3'
-          - '6.3'
           - '7.3'
 
-    name: 'Terminal ${{ matrix.flowVersion }} test'
+    name: 'Terminal ${{ matrix.neosVersion }} test'
 
     env:
-      FLOW_TARGET_VERSION: ${{matrix.flowVersion}}
+      NEOS_TARGET_VERSION: ${{matrix.neosVersion}}
       FLOW_CONTEXT: Testing
-      FLOW_FOLDER: ../flow-base-distribution
+      FLOW_FOLDER: ../neos-base-distribution
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 7.4
 
     - name: Update Composer
       run: |
@@ -46,7 +51,8 @@ jobs:
 
     - name: Prepare Flow distribution
       run: |
-        git clone https://github.com/neos/flow-base-distribution.git -b ${FLOW_TARGET_VERSION} ${FLOW_FOLDER}
+        git clone https://github.com/neos/neos-base-distribution.git -b ${NEOS_TARGET_VERSION} ${FLOW_FOLDER}
+        cd ${FLOW_FOLDER}
         composer require --no-update --no-interaction shel/neos-terminal
 
     - name: Install distribution
