@@ -170,7 +170,7 @@ const ReplWrapper: React.FC<ReplProps> = ({
     return (
         <div className={theme.replWrapper} onKeyUp={onKeyUp}>
             <IconButton
-                onClick={toggleNeosTerminal}
+                onClick={() => toggleNeosTerminal()}
                 isActive={terminalOpen}
                 title={translate('toggleTerminal')}
                 icon="terminal"
