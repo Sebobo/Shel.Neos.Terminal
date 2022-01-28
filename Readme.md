@@ -1,5 +1,7 @@
 # Neos CMS terminal for running Eel expressions and other commands in the UI
 
+[![Tests](https://github.com/Sebobo/Shel.Neos.Terminal/actions/workflows/tests.yml/badge.svg)](https://github.com/Sebobo/Shel.Neos.Terminal/actions/workflows/tests.yml)
+
 This package provides a Terminal emulator plugin for the [Neos CMS](https://www.neos.io) UI.
 Several commands are provided to save time during development & debugging of Neos CMS projects.
 
