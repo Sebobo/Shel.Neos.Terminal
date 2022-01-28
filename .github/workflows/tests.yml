@@ -1,0 +1,62 @@
+name: Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        flowVersion:
+          - '5.3'
+          - '6.3'
+          - '7.3'
+
+    name: 'Terminal ${{ matrix.flowVersion }} test'
+
+    env:
+      FLOW_TARGET_VERSION: ${{matrix.flowVersion}}
+      FLOW_CONTEXT: Testing
+      FLOW_FOLDER: ../flow-base-distribution
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Update Composer
+      run: |
+        sudo composer self-update
+        composer --version
+
+    # Directory permissions for .composer are wrong, so we remove the complete directory
+    # https://github.com/actions/virtual-environments/issues/824
+    - name: Delete .composer directory
+      run: |
+        sudo rm -rf ~/.composer
+
+    - name: Cache dependencies
+      uses: actions/cache@v1
+      with:
+        path: ~/.composer/cache
+        key: dependencies-composer-${{ hashFiles('composer.json') }}
+
+    - name: Prepare Flow distribution
+      run: |
+        git clone https://github.com/neos/flow-base-distribution.git -b ${FLOW_TARGET_VERSION} ${FLOW_FOLDER}
+        composer require --no-update --no-interaction shel/neos-terminal
+
+    - name: Install distribution
+      run: |
+        cd ${FLOW_FOLDER}
+        composer install --no-interaction --no-progress
+        rm -rf Packages/Plugins/Shel.Neos.Terminal
+        cp -r ../Shel.Neos.Terminal Packages/Plugins/Shel.Neos.Terminal
+
+    - name: Run Functional tests
+      run: |
+        cd ${FLOW_FOLDER}
+        bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/Plugins/Shel.Neos.Terminal/Tests/Functional/*
