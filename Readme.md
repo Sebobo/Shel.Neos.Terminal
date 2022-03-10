@@ -100,7 +100,7 @@ Or more complex ones. The following call will return the labels of all subpages 
 eel Array.map(q(site).children().get(), page => page.label)
 ```
 
-By default, the current `siteNode`, `documentNode` and the currently selected `node` are
+By default, the current `site`, `documentNode` and the currently selected `node` are
 available in your expression context.
 
 *Note:* The command will run some conversions on the result:
