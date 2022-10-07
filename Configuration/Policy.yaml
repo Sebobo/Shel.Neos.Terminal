@@ -17,6 +17,8 @@ privilegeTargets:
 
 roles:
   'Shel.Neos.Terminal:TerminalUser':
+    label: 'Terminal user'
+    description: 'Grants access to run read-only eel and search terminal commands'
     privileges:
       - privilegeTarget: 'Shel.Neos.Terminal:ExecuteCommands'
         permission: GRANT
