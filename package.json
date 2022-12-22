@@ -4,25 +4,33 @@
   "license": "GNU GPLv3",
   "private": true,
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "scripts": {
-    "postinstall": "patch-package",
     "build": "yarn workspace neos-terminal run build",
     "watch": "yarn workspace neos-terminal run watch"
   },
   "workspaces": [
     "Resources/Private/JavaScript/Terminal"
   ],
+  "dependencies": {
+    "@neos-project/neos-ui-extensibility": "^5.3.18",
+    "plow-js": "^3.0.0",
+    "react": "^16.14.0",
+    "react-console-emulator": "^5.0.2",
+    "react-redux": "^7.2.9",
+    "redux-actions": "^0.12.0"
+  },
   "devDependencies": {
-    "@neos-project/eslint-config-neos": "*",
-    "@typescript-eslint/eslint-plugin": "^4.11.0",
-    "@typescript-eslint/parser": "^4.11.0",
-    "eslint": "^7.16.0",
-    "eslint-config-prettier": "^7.1.0",
-    "eslint-plugin-prettier": "^3.3.0",
-    "eslint-plugin-react": "^7.21.5",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "@neos-project/eslint-config-neos": "^2.6.1",
+    "@types/react": "^16.14.34",
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.11",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-testcafe": "^0.2.1"
   },
   "fig": {
@@ -34,5 +42,6 @@
       "description": "Watch the plugin fand rebuild on change",
       "icon": "⭐️"
     }
-  }
+  },
+  "packageManager": "yarn@3.3.1"
 }
