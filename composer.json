@@ -11,9 +11,9 @@
       "eel"
     ],
     "require": {
-      "php": ">=7.2",
-      "neos/neos": "^4.3 || ^5.2 || ^7.0 || ^8.0 || dev-master",
-      "neos/neos-ui": "^4.0 || ^5.2 || ^7.0 || ^8.0 || dev-master",
+      "php": ">=7.4",
+      "neos/neos": "^7.3 || ^8.0",
+      "neos/neos-ui": "^7.3 || ^8.0",
       "symfony/console": "^4.2 || ^5.1"
     },
     "autoload": {
