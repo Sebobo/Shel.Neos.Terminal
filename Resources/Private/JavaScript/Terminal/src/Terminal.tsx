@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { $get, $transform } from 'plow-js';
 import PropTypes from 'prop-types';
 
 // Neos dependencies are provided by the UI
@@ -11,7 +10,7 @@ import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
 import ReplWrapper, { TerminalTheme } from './components/ReplWrapper';
 import { CommandsProvider } from './provider/CommandsProvider';
-import { Node, I18nRegistry, FeedbackEnvelope } from './interfaces';
+import { Node, I18nRegistry, FeedbackEnvelope, NeosRootState } from './interfaces';
 import { actions as terminalActions, selectors as terminalSelectors } from './actions';
 
 interface TerminalProps {
@@ -35,12 +34,12 @@ interface TerminalProps {
 })
 // @ts-ignore
 @connect(
-    $transform({
-        user: $get('user.name'),
-        siteNode: selectors.CR.Nodes.siteNodeSelector,
-        documentNode: selectors.CR.Nodes.documentNodeSelector,
-        focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector,
-        terminalOpen: terminalSelectors.terminalOpen,
+    (state: NeosRootState) => ({
+        user: state?.user?.name,
+        siteNode: selectors.CR.Nodes.siteNodeSelector(state),
+        documentNode: selectors.CR.Nodes.documentNodeSelector(state),
+        focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector(state),
+        terminalOpen: terminalSelectors.terminalOpen(state),
     }),
     {
         handleServerFeedback: actions.ServerFeedback.handleServerFeedback,

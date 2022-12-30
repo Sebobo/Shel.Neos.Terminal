@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { $get, $transform } from 'plow-js';
 import PropTypes from 'prop-types';
 
 // Neos dependencies are provided by the UI
@@ -9,7 +8,7 @@ import { neos } from '@neos-project/neos-ui-decorators';
 // @ts-ignore
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
-import { Node, I18nRegistry, FeedbackEnvelope } from './interfaces';
+import { Node, I18nRegistry, FeedbackEnvelope, NeosRootState } from './interfaces';
 import fetchCommands from './helpers/fetchCommands';
 import doInvokeCommand from './helpers/doInvokeCommand';
 
@@ -25,10 +24,11 @@ interface FallbackPluginProps {
     handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
+// TODO: Replace decorators with method calls
 // @ts-ignore
 @connect(
-    $transform({
-        user: $get('user.name'),
+    (state: NeosRootState) => ({
+        user: state?.user?.name,
         siteNode: selectors.CR.Nodes.siteNodeSelector,
         documentNode: selectors.CR.Nodes.documentNodeSelector,
         focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector,

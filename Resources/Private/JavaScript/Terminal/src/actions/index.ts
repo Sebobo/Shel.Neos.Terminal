@@ -1,5 +1,4 @@
 import { createAction, handleActions } from 'redux-actions';
-import { $get } from 'plow-js';
 
 export const actionTypes = {
     TOGGLE_NEOS_TERMINAL: 'TOGGLE_NEOS_TERMINAL',
@@ -33,5 +32,5 @@ export const reducer = handleActions(
 );
 
 export const selectors = {
-    terminalOpen: (state) => $get('plugins.neosTerminal.open', state),
+    terminalOpen: (state) => state.plugins?.neosTerminal?.open,
 };
