@@ -31,6 +31,21 @@ interface CommandsContextValues {
 export const CommandsContext = createContext({} as CommandsContextValues);
 export const useCommands = (): CommandsContextValues => useContext(CommandsContext);
 
+const ConsoleStyle = {
+    base: ['color: #fff', 'background-color: #00adee', 'font-weight: bold', 'padding: 2px 4px', 'border-radius: 2px'],
+    error: ['color: #fff', 'background-color: red'],
+    success: ['color: #fff', 'background-color: #00a338'],
+    text: ['color:#fff'],
+};
+
+const logToConsole = (type = 'log', text: string, ...args) => {
+    let finalStyle = ConsoleStyle.base.join(';') + ';';
+    if (ConsoleStyle[type]) {
+        finalStyle += ConsoleStyle[type].join(';');
+    }
+    console[type](`%c[Neos.Terminal]%c ${text}:`, finalStyle, ConsoleStyle.text.join(';'), ...args);
+};
+
 export const CommandsProvider = ({
     invokeCommandEndPoint,
     getCommandsEndPoint,
@@ -86,14 +101,13 @@ export const CommandsProvider = ({
                         // Treat result as simple string
                     }
 
-                    console[success ? 'log' : 'error'](
-                        '%c' +
-                            translate('command.output', `Output of command "{commandName} {argument}":`, {
-                                commandName,
-                                argument: args.join(' '),
-                            }),
-                        parsedResult,
-                        'background: #222; color: #bada55'
+                    logToConsole(
+                        success ? 'log' : 'error',
+                        translate('command.output', `"{commandName} {argument}":`, {
+                            commandName,
+                            argument: args.join(' '),
+                        }),
+                        parsedResult
                     );
 
                     // Forward server feedback to the Neos UI
