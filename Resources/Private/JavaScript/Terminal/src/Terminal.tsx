@@ -28,28 +28,7 @@ interface TerminalProps {
     handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
-// @ts-ignore
-@connect(() => ({}), {
-    toggleNeosTerminal: terminalActions.toggleNeosTerminal,
-})
-// @ts-ignore
-@connect(
-    (state: NeosRootState) => ({
-        user: state?.user?.name,
-        siteNode: selectors.CR.Nodes.siteNodeSelector(state),
-        documentNode: selectors.CR.Nodes.documentNodeSelector(state),
-        focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector(state),
-        terminalOpen: terminalSelectors.terminalOpen(state),
-    }),
-    {
-        handleServerFeedback: actions.ServerFeedback.handleServerFeedback,
-    }
-)
-@neos((globalRegistry) => ({
-    i18nRegistry: globalRegistry.get('i18n'),
-    config: globalRegistry.get('frontendConfiguration').get('Shel.Neos.Terminal:Terminal'),
-}))
-export default class Terminal extends React.PureComponent<TerminalProps> {
+class Terminal extends React.PureComponent<TerminalProps> {
     static propTypes = {
         config: PropTypes.object.isRequired,
         i18nRegistry: PropTypes.object.isRequired,
@@ -80,3 +59,22 @@ export default class Terminal extends React.PureComponent<TerminalProps> {
         );
     }
 }
+
+const mapStateToProps = (state: NeosRootState) => ({
+    user: state?.user?.name,
+    siteNode: selectors.CR.Nodes.siteNodeSelector(state),
+    documentNode: selectors.CR.Nodes.documentNodeSelector(state),
+    focusedNodes: selectors.CR.Nodes.focusedNodePathsSelector(state),
+    terminalOpen: terminalSelectors.terminalOpen(state),
+});
+
+const mapDispatchToProps = () => ({ handleServerFeedback: actions.ServerFeedback.handleServerFeedback });
+
+const mapGlobalRegistryToProps = neos((globalRegistry: any) => ({
+    i18nRegistry: globalRegistry.get('i18n'),
+    config: globalRegistry.get('frontendConfiguration').get('Shel.Neos.Terminal:Terminal'),
+}));
+
+export default connect(() => ({}), { toggleNeosTerminal: terminalActions.toggleNeosTerminal })(
+    connect(mapStateToProps, mapDispatchToProps)(mapGlobalRegistryToProps(Terminal))
+);

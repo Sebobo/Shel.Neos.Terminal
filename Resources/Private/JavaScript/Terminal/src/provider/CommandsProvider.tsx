@@ -87,11 +87,13 @@ export const CommandsProvider = ({
                     }
 
                     console[success ? 'log' : 'error'](
+                        '%c' +
+                            translate('command.output', `Output of command "{commandName} {argument}":`, {
+                                commandName,
+                                argument: args.join(' '),
+                            }),
                         parsedResult,
-                        translate('command.output', `Output of command "{commandName} {argument}"`, {
-                            commandName,
-                            argument: args.join(' '),
-                        })
+                        'background: #222; color: #bada55'
                     );
 
                     // Forward server feedback to the Neos UI
