@@ -6,9 +6,8 @@ module.exports = {
         'plugin:@typescript-eslint/recommended',
         'plugin:react/recommended',
         'plugin:prettier/recommended',
-        'prettier/@typescript-eslint',
     ],
-    plugins: ['prettier', 'react', 'react-hooks'],
+    plugins: ['@typescript-eslint', 'prettier', 'react', 'react-hooks'],
     settings: {
         react: {
             version: 'detect',

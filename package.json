@@ -7,31 +7,26 @@
     "node": ">=16"
   },
   "scripts": {
+    "postinstall": "patch-package",
+    "lint": "yarn workspace neos-terminal run lint",
     "build": "yarn workspace neos-terminal run build",
     "watch": "yarn workspace neos-terminal run watch"
   },
   "workspaces": [
     "Resources/Private/JavaScript/Terminal"
   ],
-  "dependencies": {
-    "@neos-project/neos-ui-extensibility": "^5.3.18",
-    "plow-js": "^3.0.0",
-    "react": "^16.14.0",
-    "react-console-emulator": "^5.0.2",
-    "react-redux": "^7.2.9",
-    "redux-actions": "^0.12.0"
-  },
   "devDependencies": {
     "@neos-project/eslint-config-neos": "^2.6.1",
     "@types/react": "^16.14.34",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
-    "eslint": "^7.32.0",
+    "@typescript-eslint/eslint-plugin": "^5.47.1",
+    "@typescript-eslint/parser": "^5.47.1",
+    "eslint": "^8.30.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "eslint-plugin-testcafe": "^0.2.1"
+    "patch-package": "^6.5.0",
+    "prettier": "^2.8.1"
   },
   "fig": {
     "build": {
