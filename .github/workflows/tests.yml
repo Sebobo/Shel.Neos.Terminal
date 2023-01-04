@@ -13,9 +13,8 @@ jobs:
     strategy:
       matrix:
         neosVersion:
-#          - '4.3'
-          - '5.3'
           - '7.3'
+          - '8.2'
 
     name: 'Terminal with Neos ${{ matrix.neosVersion }} test'
 
@@ -30,24 +29,19 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: 7.4
+        php-version: 8.1
+        tools: composer:v2
 
-    - name: Update Composer
-      run: |
-        sudo composer self-update
-        composer --version
-
-    # Directory permissions for .composer are wrong, so we remove the complete directory
-    # https://github.com/actions/virtual-environments/issues/824
-    - name: Delete .composer directory
-      run: |
-        sudo rm -rf ~/.composer
+    - name: Get composer cache directory
+      id: composer-cache
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
 
     - name: Cache dependencies
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
-        path: ~/.composer/cache
-        key: dependencies-composer-${{ hashFiles('composer.json') }}
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ matrix.neosVersion }}-${{ hashFiles('**/composer.json') }}
+        restore-keys: ${{ runner.os }}-composer-${{ matrix.neosVersion }}-
 
     - name: Prepare Flow distribution
       run: |
@@ -58,6 +52,7 @@ jobs:
     - name: Install distribution
       run: |
         cd ${FLOW_FOLDER}
+        composer config --no-plugins allow-plugins.neos/composer-plugin true
         composer install --no-interaction --no-progress
         rm -rf Packages/Plugins/Shel.Neos.Terminal
         cp -r ../Shel.Neos.Terminal Packages/Plugins/Shel.Neos.Terminal
