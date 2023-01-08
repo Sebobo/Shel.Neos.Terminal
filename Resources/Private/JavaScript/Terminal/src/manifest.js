@@ -9,18 +9,13 @@ manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { frontendConfigura
 
     if (!enabled) return;
 
-    const containersRegistry = globalRegistry.get('containers');
-    const hotkeyRegistry = globalRegistry.get('hotkeys');
-    const reducersRegistry = globalRegistry.get('reducers');
+    globalRegistry.get('reducers').set('Shel.Neos.Terminal', { reducer });
+    globalRegistry.get('containers').set('PrimaryToolbar/Middle/Terminal', Terminal);
 
     if (frontendConfiguration.hotkeys !== null && frontendConfiguration.hotkeys.length !== 0) {
-        hotkeyRegistry.set('Shel.Neos.Terminal.toggle', {
+        globalRegistry.get('hotkeys').set('Shel.Neos.Terminal.toggle', {
             description: 'Toggle Neos Terminal',
             action: actions.toggleNeosTerminal,
         });
-
-        reducersRegistry.set('Shel.Neos.Terminal', { reducer });
     }
-
-    containersRegistry.set('PrimaryToolbar/Middle/Terminal', Terminal);
 });
