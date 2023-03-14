@@ -14,13 +14,6 @@ import { useCommands } from '../provider/CommandsProvider';
 // @ts-ignore
 import style from './ReplWrapper.css';
 
-export interface TerminalTheme {
-    contentStyle: Record<string, any> | string;
-    styleEchoBack: Record<string, any> | string;
-    promptLabelStyle: Record<string, any> | string;
-    inputTextStyle: Record<string, any> | string;
-}
-
 interface ReplProps {
     config: {
         theme: TerminalTheme;

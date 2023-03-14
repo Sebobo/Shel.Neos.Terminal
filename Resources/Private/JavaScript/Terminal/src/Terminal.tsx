@@ -8,18 +8,13 @@ import { neos } from '@neos-project/neos-ui-decorators';
 // @ts-ignore
 import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
-import ReplWrapper, { TerminalTheme } from './components/ReplWrapper';
+import ReplWrapper from './components/ReplWrapper';
 import { CommandsProvider } from './provider/CommandsProvider';
 import { Node, I18nRegistry, FeedbackEnvelope, NeosRootState } from './interfaces';
 import { actions as terminalActions, selectors as terminalSelectors } from './actions';
 
 interface TerminalProps {
-    config: {
-        getCommandsEndPoint: string;
-        invokeCommandEndPoint: string;
-        theme: TerminalTheme;
-        welcomeMessage?: string;
-    };
+    config: TerminalConfig;
     siteNode: Node;
     documentNode: Node;
     focusedNodes: string[];
