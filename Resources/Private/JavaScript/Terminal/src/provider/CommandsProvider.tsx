@@ -46,6 +46,7 @@ const logToConsole = (type = 'log', text: string, ...args) => {
     console[type](`%c[Neos.Terminal]%c ${text}:`, finalStyle, ConsoleStyle.text.join(';'), ...args);
 };
 
+// TODO: Either provider or use TerminalCommandRegistry instead
 export const CommandsProvider = ({
     invokeCommandEndPoint,
     getCommandsEndPoint,

@@ -1,13 +1,15 @@
 import manifest from '@neos-project/neos-ui-extensibility';
+
 import { reducer, actions } from './actions';
 import Terminal from './Terminal';
+import getTerminalCommandRegistry from './registry/TerminalCommandRegistry';
 
 window['NeosTerminal'] = window.NeosTerminal || {};
 
-manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { frontendConfiguration }) => {
-    const { enabled } = frontendConfiguration['Shel.Neos.Terminal:Terminal'];
+manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { store, frontendConfiguration }) => {
+    const config = frontendConfiguration['Shel.Neos.Terminal:Terminal'];
 
-    if (!enabled) return;
+    if (!config.enabled) return;
 
     globalRegistry.get('reducers').set('Shel.Neos.Terminal', { reducer });
     globalRegistry.get('containers').set('PrimaryToolbar/Middle/Terminal', Terminal);
@@ -16,6 +18,16 @@ manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { frontendConfigura
         globalRegistry.get('hotkeys').set('Shel.Neos.Terminal.toggle', {
             description: 'Toggle Neos Terminal',
             action: actions.toggleNeosTerminal,
+        });
+    }
+
+    // Register test plugin command
+    const commandBarRegistry = globalRegistry.get('Shel.Neos.CommandBar');
+    if (commandBarRegistry) {
+        commandBarRegistry.set('plugins/terminal', async () => {
+            const i18nRegistry = globalRegistry.get('i18n');
+            const terminalCommandRegistry = getTerminalCommandRegistry(config, i18nRegistry, store);
+            return terminalCommandRegistry.getCommandsForCommandBar();
         });
     }
 });

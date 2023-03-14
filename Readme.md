@@ -21,6 +21,7 @@ It uses the great [terminal component](https://github.com/linuswillner/react-con
 * Open Terminal via `t+t` shortcut  
 * Limit commands to backend roles
 * Create your own commands and provide them in your own packages
+* Full support for the [Shel.Neos.CommandBar](https://github.com/Sebobo/Shel.Neos.CommandBar)
 
 ## How it looks
 
