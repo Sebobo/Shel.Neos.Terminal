@@ -43,6 +43,7 @@ class Terminal extends React.PureComponent<TerminalProps> {
             <CommandsProvider
                 getCommandsEndPoint={config.getCommandsEndPoint}
                 invokeCommandEndPoint={config.invokeCommandEndPoint}
+                checkCommandsEndPoint={config.checkCommandsEndPoint}
                 siteNode={this.props.siteNode?.contextPath}
                 documentNode={this.props.documentNode?.contextPath}
                 focusedNode={this.props.focusedNodes?.length > 0 ? this.props.focusedNodes[0] : null}

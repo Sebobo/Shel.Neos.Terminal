@@ -7,6 +7,7 @@ interface Window {
 interface TerminalConfig {
     getCommandsEndPoint: string;
     invokeCommandEndPoint: string;
+    checkCommandsEndPoint: string;
     theme: TerminalTheme;
     welcomeMessage?: string;
 }

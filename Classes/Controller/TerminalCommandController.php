@@ -77,7 +77,7 @@ class TerminalCommandController extends ActionController
      */
     protected $privilegeManager;
 
-    public function getCommandsAction(): void
+    protected function getAllowedCommands(): array
     {
         $commandNames = $this->terminalCommandService->getCommandNames();
 
@@ -85,6 +85,18 @@ class TerminalCommandController extends ActionController
             return $this->privilegeManager->isGranted(TerminalCommandPrivilege::class,
                 new TerminalCommandPrivilegeSubject($commandName));
         });
+        return $availableCommandNames;
+    }
+
+    public function checkCommandsAction(): void
+    {
+        $availableCommandNames = $this->getAllowedCommands();
+        $this->view->assign('value', ['success' => count($availableCommandNames) > 0]);
+    }
+
+    public function getCommandsAction(): void
+    {
+        $availableCommandNames = $this->getAllowedCommands();
 
         $commandDefinitions = array_reduce($availableCommandNames, function (array $carry, string $commandName) {
             $command = $this->terminalCommandService->getCommand($commandName);

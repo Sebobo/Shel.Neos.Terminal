@@ -3,6 +3,10 @@ privilegeTargets:
     'Shel.Neos.Terminal:ExecuteCommands':
       matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->(?!initialize).*Action())'
 
+    'Shel.Neos.Terminal:CheckCommands':
+      label: Permission to check available commands
+      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->checkCommandsAction())'
+
   'Shel\Neos\Terminal\Security\TerminalCommandPrivilege':
     'Shel.Neos.Terminal:Command.All':
       matcher: '*'
@@ -16,6 +20,11 @@ privilegeTargets:
       matcher: 'nodeRepair'
 
 roles:
+  'Neos.Flow:Everybody':
+    privileges:
+      -
+        privilegeTarget: 'Shel.Neos.Terminal:CheckCommands'
+        permission: GRANT
   'Shel.Neos.Terminal:TerminalUser':
     label: 'Terminal user'
     description: 'Grants access to run read-only eel and search terminal commands'

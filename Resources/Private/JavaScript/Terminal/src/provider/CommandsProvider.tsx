@@ -3,10 +3,12 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 
 import { FeedbackEnvelope, I18nRegistry, CommandList, NodeContextPath } from '../interfaces';
 import fetchCommands from '../helpers/fetchCommands';
+import checkCommands from '../helpers/checkCommands';
 import doInvokeCommand from '../helpers/doInvokeCommand';
 
 interface CommandsContextProps {
     children: React.ReactElement;
+    checkCommandsEndPoint: string;
     getCommandsEndPoint: string;
     invokeCommandEndPoint: string;
     siteNode: NodeContextPath;
@@ -50,6 +52,7 @@ const logToConsole = (type = 'log', text: string, ...args) => {
 export const CommandsProvider = ({
     invokeCommandEndPoint,
     getCommandsEndPoint,
+    checkCommandsEndPoint,
     children,
     documentNode,
     focusedNode,
@@ -60,7 +63,12 @@ export const CommandsProvider = ({
     const [commands, setCommands] = useState<CommandList>({});
 
     useEffect(() => {
-        fetchCommands(getCommandsEndPoint).then(({ result }) => setCommands(result));
+        checkCommands(checkCommandsEndPoint).then(({ success }) => {
+            if (!success) {
+                return;
+            }
+            return fetchCommands(getCommandsEndPoint).then(({ result }) => setCommands(result));
+        });
     }, [getCommandsEndPoint, setCommands]);
 
     const translate = useCallback(

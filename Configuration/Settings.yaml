@@ -18,6 +18,7 @@ Neos:
             signature: ''
             showThankYouMessage: true
           getCommandsEndPoint: '/neos/shel-neos-terminal/getcommands'
+          checkCommandsEndPoint: '/neos/shel-neos-terminal/checkcommands'
           invokeCommandEndPoint: '/neos/shel-neos-terminal/invokecommand'
           theme:
             contentStyle:
