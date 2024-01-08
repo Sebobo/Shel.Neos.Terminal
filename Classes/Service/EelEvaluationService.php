@@ -34,7 +34,7 @@ class EelEvaluationService
      */
     protected array $defaultContext;
 
-    protected ?array $defaultContextVariables;
+    protected ?array $defaultContextVariables = null;
 
     /**
      * Evaluate an Eel expression.
