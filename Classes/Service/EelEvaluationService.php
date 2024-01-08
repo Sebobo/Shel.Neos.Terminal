@@ -15,7 +15,6 @@ namespace Shel\Neos\Terminal\Service;
 
 use Neos\Eel\CompilingEvaluator;
 use Neos\Eel\Exception as EelException;
-use Neos\Eel\ParserException;
 use Neos\Eel\Utility as EelUtility;
 use Neos\Flow\Annotations as Flow;
 
@@ -32,23 +31,16 @@ class EelEvaluationService
 
     /**
      * @Flow\InjectConfiguration(path="defaultContext", package="Neos.Fusion")
-     * @var array
      */
-    protected $defaultContext;
+    protected array $defaultContext;
 
-    /**
-     * @var array
-     */
-    protected $defaultContextVariables;
+    protected ?array $defaultContextVariables;
 
     /**
      * Evaluate an Eel expression.
      *
-     * @param string $expression The Eel expression to evaluate
-     * @param array $contextVariables
      * @return mixed The result of the evaluated Eel expression
      * @throws EelException
-     * @throws ParserException
      */
     public function evaluateEelExpression(string $expression, array $contextVariables = [])
     {

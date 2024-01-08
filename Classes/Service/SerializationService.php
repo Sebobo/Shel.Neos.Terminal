@@ -22,7 +22,6 @@ class SerializationService
      * This makes it easier to view them when displayed in the terminal.
      *
      * @param mixed $result
-     * @return string
      */
     public static function serialize($result): string
     {
@@ -34,7 +33,7 @@ class SerializationService
                 return $item;
             }, $result);
         }
-        if (is_object($result) && $result instanceof NodeInterface) {
+        if ($result instanceof NodeInterface) {
             $result = self::serializeNode($result);
         }
         return json_encode($result);
@@ -43,9 +42,6 @@ class SerializationService
     /**
      * Serialises a node into an array with its properties and attributes
      * to improve readability in the terminal output
-     *
-     * @param NodeInterface $node
-     * @return array
      */
     public static function serializeNode(NodeInterface $node): array
     {

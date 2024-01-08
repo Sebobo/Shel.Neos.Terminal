@@ -17,10 +17,7 @@ use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 
 class TerminalCommandPrivilegeSubject implements PrivilegeSubjectInterface
 {
-    /**
-     * @var string
-     */
-    private $commandName;
+    private string $commandName;
 
     public function __construct(string $commandName)
     {

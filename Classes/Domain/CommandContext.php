@@ -39,34 +39,21 @@ class CommandContext
      */
     protected $focusedNode;
 
-    /**
-     * @param ControllerContext $controllerContext
-     */
     public function __construct(ControllerContext $controllerContext)
     {
         $this->controllerContext = $controllerContext;
     }
 
-    /**
-     * @return ControllerContext
-     */
     public function getControllerContext(): ControllerContext
     {
         return $this->controllerContext;
     }
 
-    /**
-     * @return NodeInterface|null
-     */
     public function getSiteNode(): ?NodeInterface
     {
         return $this->siteNode;
     }
 
-    /**
-     * @param NodeInterface|null $siteNode
-     * @return CommandContext
-     */
     public function withSiteNode(NodeInterface $siteNode = null): CommandContext
     {
         $instance = clone $this;
@@ -74,18 +61,11 @@ class CommandContext
         return $instance;
     }
 
-    /**
-     * @return NodeInterface|null
-     */
     public function getDocumentNode(): ?NodeInterface
     {
         return $this->documentNode;
     }
 
-    /**
-     * @param NodeInterface|null $documentNode
-     * @return CommandContext
-     */
     public function withDocumentNode(NodeInterface $documentNode = null): CommandContext
     {
         $instance = clone $this;
@@ -93,18 +73,11 @@ class CommandContext
         return $instance;
     }
 
-    /**
-     * @return NodeInterface|null
-     */
     public function getFocusedNode(): ?NodeInterface
     {
         return $this->focusedNode;
     }
 
-    /**
-     * @param NodeInterface|null $focusedNode
-     * @return CommandContext
-     */
     public function withFocusedNode(NodeInterface $focusedNode = null): CommandContext
     {
         $instance = clone $this;

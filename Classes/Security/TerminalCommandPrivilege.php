@@ -18,6 +18,7 @@ use Neos\Flow\Security\Authorization\Privilege\AbstractPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeInterface;
 use Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilegeSubject;
+use Neos\Flow\Security\Authorization\Privilege\PrivilegeInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeSubjectInterface;
 use Neos\Flow\Security\Authorization\Privilege\PrivilegeTarget;
 use Neos\Flow\Security\Exception as SecurityException;
@@ -30,15 +31,9 @@ use Shel\Neos\Terminal\Service\TerminalCommandService;
  */
 class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivilegeInterface
 {
-    /**
-     * @var MethodPrivilegeInterface
-     */
-    private $methodPrivilege;
+    private PrivilegeInterface $methodPrivilege;
 
-    /**
-     * @var boolean
-     */
-    private $initialized = false;
+    private bool $initialized = false;
 
     /**
      * @throws SecurityException
@@ -70,7 +65,6 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
      * Returns a string which distinctly identifies this object and thus can be used as an identifier for cache entries
      * related to this object.
      *
-     * @return string
      * @throws SecurityException
      */
     public function getCacheEntryIdentifier(): string
@@ -82,8 +76,6 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
     /**
      * Returns true, if this privilege covers the given subject
      *
-     * @param PrivilegeSubjectInterface $subject
-     * @return boolean
      * @throws InvalidPrivilegeTypeException|SecurityException if the given $subject is not supported by the privilege
      */
     public function matchesSubject(PrivilegeSubjectInterface $subject): bool
@@ -110,10 +102,9 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
     /**
      * @param string $className
      * @param string $methodName
-     * @return boolean
      * @throws SecurityException
      */
-    public function matchesMethod($className, $methodName)
+    public function matchesMethod($className, $methodName): bool
     {
         $this->initialize();
         return $this->methodPrivilege->matchesMethod($className, $methodName);
@@ -123,7 +114,7 @@ class TerminalCommandPrivilege extends AbstractPrivilege implements MethodPrivil
      * @return PointcutFilterInterface
      * @throws SecurityException
      */
-    public function getPointcutFilterComposite()
+    public function getPointcutFilterComposite(): PointcutFilterInterface
     {
         $this->initialize();
         return $this->methodPrivilege->getPointcutFilterComposite();

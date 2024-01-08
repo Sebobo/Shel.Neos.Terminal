@@ -113,7 +113,6 @@ class SearchCommand implements TerminalCommandInterface
         }
 
         // The NodeSearchInterface does not yet have a 4th argument for the startingPoint but all known implementations do
-        /** @noinspection PhpMethodParametersCountMismatchInspection */
         $nodes = $this->nodeSearchService->findByProperties(
             $input->getArgument('searchword'),
             $input->getOption('nodeTypes'),

@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Shel\Neos\Terminal\Domain;
 
-use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
 /**
@@ -18,10 +17,7 @@ use Neos\Neos\Ui\Domain\Model\FeedbackInterface;
 
 class CommandInvocationResult
 {
-    /**
-     * @var bool
-     */
-    protected $success;
+    protected bool $success;
 
     /**
      * @var mixed
@@ -31,12 +27,10 @@ class CommandInvocationResult
     /**
      * @var array<FeedbackInterface>
      */
-    protected $uiFeedback;
+    protected array $uiFeedback;
 
     /**
-     * @param bool $success
      * @param mixed $result has to be json serializable
-     * @param array $uiFeedback
      */
     public function __construct(bool $success, $result, array $uiFeedback = [])
     {

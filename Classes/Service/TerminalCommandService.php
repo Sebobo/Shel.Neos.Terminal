@@ -9,19 +9,12 @@ use Neos\Flow\Reflection\ReflectionService;
 use Shel\Neos\Terminal\Command\TerminalCommandInterface;
 
 /**
- * Class TerminalCommandService
  * @Flow\Scope("singleton")
  */
 class TerminalCommandService {
 
-    /**
-     * @var ObjectManagerInterface
-     */
-    private $objectManager;
+    private ObjectManagerInterface $objectManager;
 
-    /**
-     * @param ObjectManagerInterface $objectManager
-     */
     public function __construct(ObjectManagerInterface $objectManager)
     {
         $this->objectManager = $objectManager;
@@ -31,7 +24,6 @@ class TerminalCommandService {
      * Detects plugins for this command controller
      *
      * @Flow\CompileStatic
-     * @param ObjectManagerInterface $objectManager
      * @return array<string>
      */
     public static function detectCommandNames(ObjectManagerInterface $objectManager): array
@@ -48,10 +40,6 @@ class TerminalCommandService {
         return $commandConfiguration;
     }
 
-    /**
-     * @param string $commandName
-     * @return TerminalCommandInterface
-     */
     public function getCommand(string $commandName): TerminalCommandInterface
     {
         /** @var TerminalCommandInterface $command */
@@ -67,10 +55,6 @@ class TerminalCommandService {
         return array_keys(self::detectCommandNames($this->objectManager));
     }
 
-    /**
-     * @param string $commandName
-     * @return string
-     */
     public function getCommandClassName(string $commandName): string
     {
         $commandNames = self::detectCommandNames($this->objectManager);

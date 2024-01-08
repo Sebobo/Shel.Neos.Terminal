@@ -106,8 +106,6 @@ class TerminalCommandController extends ActionController
         NodeInterface $documentNode = null,
         NodeInterface $focusedNode = null
     ): void {
-        $result = null;
-
         $this->response->setContentType('application/json');
 
         $command = $this->terminalCommandService->getCommand($commandName);
@@ -148,11 +146,9 @@ class TerminalCommandController extends ActionController
     }
 
     /**
-     * @param ActionRequest $request
-     * @param ActionResponse $response
      * @throws UnsupportedRequestTypeException
      */
-    protected function initializeController(ActionRequest $request, ActionResponse $response)
+    protected function initializeController(ActionRequest $request, ActionResponse $response): void
     {
         parent::initializeController($request, $response);
         $this->feedbackCollection->setControllerContext($this->getControllerContext());
@@ -163,7 +159,7 @@ class TerminalCommandController extends ActionController
      *
      * @throws TerminalException
      */
-    protected function initializeAction()
+    protected function initializeAction(): void
     {
         $terminalConfiguration = $this->frontendConfiguration['Shel.Neos.Terminal:Terminal'];
 

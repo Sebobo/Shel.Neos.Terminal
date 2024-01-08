@@ -13,14 +13,11 @@ namespace Shel\Neos\Terminal\Command;
  * source code.
  */
 
-use Neos\Eel\Exception as EelException;
-use Neos\Eel\ParserException;
 use Neos\Flow\Annotations as Flow;
 use Shel\Neos\Terminal\Domain\CommandContext;
 use Shel\Neos\Terminal\Domain\CommandInvocationResult;
 use Shel\Neos\Terminal\Service\EelEvaluationService;
 use Symfony\Component\Console\Exception\RuntimeException;
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\StringInput;
@@ -76,7 +73,7 @@ class EvaluateEelExpressionCommand implements TerminalCommandInterface
 
         try {
             $result = $this->eelEvaluationService->evaluateEelExpression('${' . $argument . '}', $evaluationContext);
-        } catch (EelException | ParserException | \Exception $e) {
+        } catch (\Exception $e) {
             $success = false;
             $result = $e->getMessage();
         }
