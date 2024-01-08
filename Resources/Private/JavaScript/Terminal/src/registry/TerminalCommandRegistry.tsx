@@ -7,26 +7,43 @@ import fetchCommands from '../helpers/fetchCommands';
 import { CommandList, I18nRegistry, NeosRootState } from '../interfaces';
 import doInvokeCommand from '../helpers/doInvokeCommand';
 import Command from '../interfaces/Command';
+import logToConsole from '../helpers/logger';
 
 interface NeosStore {
     getState: () => NeosRootState;
     dispatch: () => void;
 }
 
+// noinspection JSPotentiallyInvalidUsageOfClassThis
 /**
  * Provides a registry for terminal commands for the Shel.Neos.CommandBar plugin
  */
-// noinspection JSPotentiallyInvalidUsageOfClassThis
 class TerminalCommandRegistry {
     constructor(readonly config: TerminalConfig, readonly i18nRegistry: I18nRegistry, readonly store: NeosStore) {
         this.invokeCommand = this.invokeCommand.bind(this);
     }
 
     private commands: CommandList;
+    private loading = false;
 
     public getCommands = async () => {
+        // Wait for commands to be loaded if another call already requested them
+        let i = 0;
+        while (this.loading) {
+            i++;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            if (i > 100) {
+                logToConsole('warn', 'Loading commands timed out');
+                break;
+            }
+        }
         if (this.commands) return this.commands;
-        return (this.commands = await fetchCommands(this.config.getCommandsEndPoint).then(({ result }) => result));
+
+        // Load commands
+        this.loading = true;
+        return (this.commands = await fetchCommands(this.config.getCommandsEndPoint)
+            .then(({ result }) => result)
+            .finally(() => (this.loading = false)));
     };
 
     public translate = (
@@ -130,9 +147,13 @@ class TerminalCommandRegistry {
 let singleton = null;
 
 export default function getTerminalCommandRegistry(
-    config: TerminalConfig,
-    i18nRegistry: I18nRegistry,
-    store: NeosStore
+    config?: TerminalConfig,
+    i18nRegistry?: I18nRegistry,
+    store?: NeosStore
 ): TerminalCommandRegistry {
-    return singleton ?? (singleton = new TerminalCommandRegistry(config, i18nRegistry, store));
+    if (singleton) return singleton;
+    if (!config) throw Error('No config provided for TerminalCommandRegistry');
+    if (!i18nRegistry) throw Error('No i18nRegistry provided for TerminalCommandRegistry');
+    if (!store) throw Error('No store provided for TerminalCommandRegistry');
+    return (singleton = new TerminalCommandRegistry(config, i18nRegistry, store));
 }

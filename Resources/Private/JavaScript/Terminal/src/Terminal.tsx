@@ -41,13 +41,12 @@ class Terminal extends React.PureComponent<TerminalProps> {
 
         return (
             <CommandsProvider
-                getCommandsEndPoint={config.getCommandsEndPoint}
-                invokeCommandEndPoint={config.invokeCommandEndPoint}
                 siteNode={this.props.siteNode?.contextPath}
                 documentNode={this.props.documentNode?.contextPath}
                 focusedNode={this.props.focusedNodes?.length > 0 ? this.props.focusedNodes[0] : null}
                 i18nRegistry={this.props.i18nRegistry}
                 handleServerFeedback={this.props.handleServerFeedback}
+                config={config}
             >
                 <ReplWrapper {...this.props} />
             </CommandsProvider>

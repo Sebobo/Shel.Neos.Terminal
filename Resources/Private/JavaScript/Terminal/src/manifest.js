@@ -11,6 +11,9 @@ manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { store, frontendCo
 
     if (!config.enabled) return;
 
+    const i18nRegistry = globalRegistry.get('i18n');
+    const terminalCommandRegistry = getTerminalCommandRegistry(config, i18nRegistry, store);
+
     globalRegistry.get('reducers').set('Shel.Neos.Terminal', { reducer });
     globalRegistry.get('containers').set('PrimaryToolbar/Middle/Terminal', Terminal);
 
@@ -24,10 +27,6 @@ manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { store, frontendCo
     // Register commands for command bar if installed
     const commandBarRegistry = globalRegistry.get('Shel.Neos.CommandBar');
     if (commandBarRegistry) {
-        commandBarRegistry.set('plugins/terminal', async () => {
-            const i18nRegistry = globalRegistry.get('i18n');
-            const terminalCommandRegistry = getTerminalCommandRegistry(config, i18nRegistry, store);
-            return terminalCommandRegistry.getCommandsForCommandBar();
-        });
+        commandBarRegistry.set('plugins/terminal', terminalCommandRegistry.getCommandsForCommandBar);
     }
 });
