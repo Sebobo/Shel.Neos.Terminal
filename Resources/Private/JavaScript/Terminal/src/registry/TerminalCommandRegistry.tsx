@@ -26,7 +26,7 @@ class TerminalCommandRegistry {
     private commands: CommandList;
     private loading = false;
 
-    public getCommands = async () => {
+    public getCommands = async (): Promise<CommandList> => {
         // Wait for commands to be loaded if another call already requested them
         let i = 0;
         while (this.loading) {
@@ -56,29 +56,31 @@ class TerminalCommandRegistry {
         return this.i18nRegistry.translate(id, fallback, params, packageKey, sourceName);
     };
 
-    public getCommandsForCommandBar = async () => {
+    public getCommandsForCommandBar = async (): Promise<Record<string, object>> => {
         const commands = await this.getCommands();
         const invokeCommand = this.invokeCommand;
-        return {
-            'shel.neos.terminal': {
-                name: 'Terminal',
-                description: 'Execute terminal commands',
-                icon: 'terminal',
-                subCommands: Object.values(commands).reduce((acc, { name, description }) => {
-                    acc[name] = {
-                        name,
-                        icon: 'terminal',
-                        description: this.translate(description),
-                        action: async function* (arg) {
-                            yield* invokeCommand(name, arg);
-                        },
-                        canHandleQueries: true,
-                        executeManually: true,
-                    };
-                    return acc;
-                }, {}),
-            },
-        };
+        return Object.keys(commands).length > 0
+            ? {
+                  'shel.neos.terminal': {
+                      name: 'Terminal',
+                      description: 'Execute terminal commands',
+                      icon: 'terminal',
+                      subCommands: Object.values(commands).reduce((acc, { name, description }) => {
+                          acc[name] = {
+                              name,
+                              icon: 'terminal',
+                              description: this.translate(description),
+                              action: async function* (arg) {
+                                  yield* invokeCommand(name, arg);
+                              },
+                              canHandleQueries: true,
+                              executeManually: true,
+                          };
+                          return acc;
+                      }, {}),
+                  },
+              }
+            : {};
     };
 
     public invokeCommand = async function* (commandName: string, arg = '') {

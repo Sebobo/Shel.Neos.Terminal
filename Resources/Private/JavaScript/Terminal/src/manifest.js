@@ -17,6 +17,7 @@ manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { store, frontendCo
     globalRegistry.get('reducers').set('Shel.Neos.Terminal', { reducer });
     globalRegistry.get('containers').set('PrimaryToolbar/Middle/Terminal', Terminal);
 
+    // TODO: Don't register hotkey if terminal is not accessible for the current user
     if (frontendConfiguration.hotkeys !== null && frontendConfiguration.hotkeys.length !== 0) {
         globalRegistry.get('hotkeys').set('Shel.Neos.Terminal.toggle', {
             description: 'Toggle Neos Terminal',
@@ -24,7 +25,7 @@ manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { store, frontendCo
         });
     }
 
-    // Register commands for command bar if installed
+    // Register commands for command bar if installed and commands are available
     const commandBarRegistry = globalRegistry.get('Shel.Neos.CommandBar');
     if (commandBarRegistry) {
         commandBarRegistry.set('plugins/terminal', terminalCommandRegistry.getCommandsForCommandBar);

@@ -79,6 +79,11 @@ class TerminalCommandController extends ActionController
 
     public function getCommandsAction(): void
     {
+        if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+            $this->view->assign('value', ['success' => false, 'result' => []]);
+            return;
+        }
+
         $commandNames = $this->terminalCommandService->getCommandNames();
 
         $availableCommandNames = array_filter($commandNames, function ($commandName) {

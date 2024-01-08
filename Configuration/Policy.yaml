@@ -3,6 +3,9 @@ privilegeTargets:
     'Shel.Neos.Terminal:ExecuteCommands':
       matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->(?!initialize).*Action())'
 
+    'Shel.Neos.Terminal:GetCommands':
+      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->getCommandsAction())'
+
   'Shel\Neos\Terminal\Security\TerminalCommandPrivilege':
     'Shel.Neos.Terminal:Command.All':
       matcher: '*'
@@ -16,6 +19,13 @@ privilegeTargets:
       matcher: 'nodeRepair'
 
 roles:
+  'Neos.Flow:Everybody':
+    privileges:
+      # Allow everybody to load commands to prevent 403 errors for users without access in the UI.
+      # The command list will still be empty in the response as all commands have their own privileges.
+      - privilegeTarget: 'Shel.Neos.Terminal:GetCommands'
+        permission: GRANT
+
   'Shel.Neos.Terminal:TerminalUser':
     label: 'Terminal user'
     description: 'Grants access to run read-only eel and search terminal commands'
@@ -26,6 +36,7 @@ roles:
         permission: GRANT
       - privilegeTarget: 'Shel.Neos.Terminal:Command.Search'
         permission: GRANT
+
   'Neos.Neos:Administrator':
     privileges:
       - privilegeTarget: 'Shel.Neos.Terminal:ExecuteCommands'
