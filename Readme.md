@@ -199,7 +199,7 @@ See [Policy.yaml](Configuration/Policy.yaml) in this package for examples.
 
 ## Adding your own commands
 
-Adding your commands is quite easy (depending on what you plan to do).
+Adding your commands takes just a few steps (depending on what you plan to do).
 
 Create a new class named `MyCommand` and implement the `TerminalCommandControllerPluginInterface` from 
 this package or inherit from `AbstractTerminalCommand`. 
@@ -253,8 +253,7 @@ class JokeCommand implements TerminalCommandInterface
 ```
 
 Did you create awesome commands that could be helpful to others?
-Send a link to a [gist](https://gist.github.com) containing the PHP 
-class or a link to your repo, and we can add it to the docs.
+Send a link to a [gist](https://gist.github.com) containing the PHP class or a link to your repo, and we can add it to the docs.
 
 ### Providing feedback to Neos UI
 

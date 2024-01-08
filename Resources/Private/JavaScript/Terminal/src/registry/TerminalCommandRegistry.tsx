@@ -13,6 +13,9 @@ interface NeosStore {
     dispatch: () => void;
 }
 
+/**
+ * Provides a registry for terminal commands for the Shel.Neos.CommandBar plugin
+ */
 // noinspection JSPotentiallyInvalidUsageOfClassThis
 class TerminalCommandRegistry {
     constructor(readonly config: TerminalConfig, readonly i18nRegistry: I18nRegistry, readonly store: NeosStore) {

@@ -21,7 +21,7 @@ manifest('Shel.Neos.Terminal:Terminal', {}, (globalRegistry, { store, frontendCo
         });
     }
 
-    // Register test plugin command
+    // Register commands for command bar if installed
     const commandBarRegistry = globalRegistry.get('Shel.Neos.CommandBar');
     if (commandBarRegistry) {
         commandBarRegistry.set('plugins/terminal', async () => {
