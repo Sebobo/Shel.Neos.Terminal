@@ -14,12 +14,34 @@ const fetchCommands = async (endPoint: string): Promise<{ success: boolean; resu
                 'Content-Type': 'application/json',
             },
         }))
-        .then((response: Response) => response && response.json())
+        .then((response: Response) => {
+            if (!response.ok) {
+                return {
+                    success: false,
+                    result: {},
+                };
+            }
+
+            return (
+                response &&
+                response
+                    .json()
+                    .then((data: CommandList) => {
+                        return data;
+                    })
+                    .catch((error: Error) => {
+                        return {
+                            success: false,
+                            result: {},
+                        };
+                    })
+            );
+        })
         .catch((error: Error) => {
             logToConsole('error', error.message);
             return {
                 success: false,
-                result: [],
+                result: {},
             };
         });
 };
