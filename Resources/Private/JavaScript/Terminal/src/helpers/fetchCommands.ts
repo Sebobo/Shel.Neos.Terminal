@@ -18,7 +18,7 @@ const fetchCommands = async (endPoint: string): Promise<{ success: boolean; resu
             if (!response.ok) {
                 return {
                     success: false,
-                    result: [],
+                    result: {},
                 };
             }
 
@@ -32,7 +32,7 @@ const fetchCommands = async (endPoint: string): Promise<{ success: boolean; resu
                     .catch((error: Error) => {
                         return {
                             success: false,
-                            result: [],
+                            result: {},
                         };
                     })
             );
@@ -41,7 +41,7 @@ const fetchCommands = async (endPoint: string): Promise<{ success: boolean; resu
             logToConsole('error', error.message);
             return {
                 success: false,
-                result: [],
+                result: {},
             };
         });
 };
