@@ -13,7 +13,7 @@ namespace Shel\Neos\Terminal\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\I18n\Translator;
@@ -143,8 +143,8 @@ class SearchCommand implements TerminalCommandInterface
 
     protected function getUriForNode(
         ControllerContext $controllerContext,
-        NodeInterface $node,
-        NodeInterface $baseNode
+        Node $node,
+        Node $baseNode
     ): string {
         try {
             return $this->linkingService->createNodeUri(

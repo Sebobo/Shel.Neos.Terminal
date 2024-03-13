@@ -13,7 +13,7 @@ namespace Shel\Neos\Terminal\Controller;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
@@ -79,17 +79,20 @@ class TerminalCommandController extends ActionController
 
     public function getCommandsAction(): void
     {
-        if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
+        /* TODO re-establish privilege checks when supported by NEOS 9*/
+        /*if (!$this->privilegeManager->isPrivilegeTargetGranted('Neos.Neos:Backend.GeneralAccess')) {
             $this->view->assign('value', ['success' => false, 'result' => []]);
             return;
-        }
+        }*/
 
         $commandNames = $this->terminalCommandService->getCommandNames();
 
-        $availableCommandNames = array_filter($commandNames, function ($commandName) {
+        /* TODO re-establish privilege checks when supported by NEOS 9*/
+        $availableCommandNames = $commandNames;
+        /*$availableCommandNames = array_filter($commandNames, function ($commandName) {
             return $this->privilegeManager->isGranted(TerminalCommandPrivilege::class,
                 new TerminalCommandPrivilegeSubject($commandName));
-        });
+        });*/
 
         $commandDefinitions = array_reduce($availableCommandNames, function (array $carry, string $commandName) {
             $command = $this->terminalCommandService->getCommand($commandName);
@@ -107,9 +110,9 @@ class TerminalCommandController extends ActionController
     public function invokeCommandAction(
         string $commandName,
         string $argument = null,
-        NodeInterface $siteNode = null,
-        NodeInterface $documentNode = null,
-        NodeInterface $focusedNode = null
+        Node $siteNode = null,
+        Node $documentNode = null,
+        Node $focusedNode = null
     ): void {
         $this->response->setContentType('application/json');
 
