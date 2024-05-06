@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shel\Neos\Terminal\Domain;
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 
 /**
@@ -25,17 +25,17 @@ class CommandContext
     protected $controllerContext;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $siteNode;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $documentNode;
 
     /**
-     * @var NodeInterface
+     * @var Node
      */
     protected $focusedNode;
 
@@ -49,36 +49,36 @@ class CommandContext
         return $this->controllerContext;
     }
 
-    public function getSiteNode(): ?NodeInterface
+    public function getSiteNode(): ?Node
     {
         return $this->siteNode;
     }
 
-    public function withSiteNode(NodeInterface $siteNode = null): CommandContext
+    public function withSiteNode(Node $siteNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->siteNode = $siteNode;
         return $instance;
     }
 
-    public function getDocumentNode(): ?NodeInterface
+    public function getDocumentNode(): ?Node
     {
         return $this->documentNode;
     }
 
-    public function withDocumentNode(NodeInterface $documentNode = null): CommandContext
+    public function withDocumentNode(Node $documentNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->documentNode = $documentNode;
         return $instance;
     }
 
-    public function getFocusedNode(): ?NodeInterface
+    public function getFocusedNode(): ?Node
     {
         return $this->focusedNode;
     }
 
-    public function withFocusedNode(NodeInterface $focusedNode = null): CommandContext
+    public function withFocusedNode(Node $focusedNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->focusedNode = $focusedNode;

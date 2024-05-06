@@ -70,7 +70,6 @@ Available default commands:
 * `help` - Show command list and their arguments
 * `clear` - Clear terminal
 * `search` - Search for nodes by their properties
-* `nodeRepair` - Repair nodes
 
 You can add [custom commands](#adding-your-own-commands). 
 
@@ -127,32 +126,6 @@ If the cache identifier is omitted, all caches are flushed.
 
 Please use this command only when absolutely necessary.
 Caching issues can be fixed in the implementation.
-
-### Repair nodes
-
-The `nodeRepair` command allows you to repair nodes by their nodetype. 
-It uses the same plugins and methods as the `./flow node:repair` CLI command.
-
-E.g. the following call will remove undefined properties from the Neos example text nodes:
-
-```
-nodeRepair removeUndefinedProperties Neos.NodeTypes:Text
-```
-
-You can also do a dry run by adding the `-d` option and see what the method would do:
-
-```
-nodeRepair --dryRun removeUndefinedProperties Neos.NodeTypes:Text
-```
-
-To filter by workspace you can add the name of the workspace:
-
-```
-nodeRepair --workspace user-admin removeUndefinedProperties Neos.NodeTypes:Text
-```
-
-**Warning:** Some repair methods would ask you for confirmation when you run them via CLI. 
-Currently they would execute without asking for confirmation.
 
 ## Configuration
 

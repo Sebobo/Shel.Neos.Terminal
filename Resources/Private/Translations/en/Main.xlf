@@ -79,15 +79,6 @@
                 <source>The cache "{cacheIdentifier}" does not exist</source>
             </trans-unit>
 
-            <trans-unit id="command.nodeRepair.description">
-                <source>Repair nodes</source>
-            </trans-unit>
-            <trans-unit id="command.nodeRepair.nodeTypeNotFound">
-                <source>NodeType "{nodeType}" not found</source>
-            </trans-unit>
-            <trans-unit id="command.nodeRepair.noMatchingMethodName">
-                <source>No result for the method "{methodName}"</source>
-            </trans-unit>
 
             <trans-unit id="command.help.description">
                 <source>Show help</source>

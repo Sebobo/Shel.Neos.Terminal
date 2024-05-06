@@ -11,10 +11,10 @@
     "eel"
   ],
   "require": {
-    "php": ">=7.4",
-    "neos/neos": "^7.3 || ^8.0",
-    "neos/neos-ui": "^7.3 || ^8.0",
-    "symfony/console": "^4.2 || ^5.1"
+    "php": ">=8.2",
+    "neos/neos": "^7.3 || ^8.0 || ^9.0 || dev-master",
+    "neos/neos-ui": "^7.3 || ^8.0 || ^9.0 || 9.0.0-beta3",
+    "symfony/console": "^4.2 || ^5.1 || ^6.4"
   },
   "suggest": {
     "shel/neos-commandbar": "The terminal provides a plugin integration for the Neos command bar"
@@ -30,4 +30,3 @@
     }
   }
 }
-

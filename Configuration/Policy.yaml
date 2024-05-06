@@ -15,8 +15,6 @@ privilegeTargets:
       matcher: 'flushCache'
     'Shel.Neos.Terminal:Command.Search':
       matcher: 'search'
-    'Shel.Neos.Terminal:Command.NodeRepair':
-      matcher: 'nodeRepair'
 
 roles:
   'Neos.Flow:Everybody':
