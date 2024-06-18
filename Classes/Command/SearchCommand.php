@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Shel\Neos\Terminal\Command;
@@ -22,6 +23,7 @@ use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
 use Neos\Neos\Service\LinkingService;
 use Shel\Neos\Terminal\Domain\CommandContext;
 use Shel\Neos\Terminal\Domain\CommandInvocationResult;
+use Shel\Neos\Terminal\Domain\Dto\NodeResult;
 use Symfony\Component\Console\Exception\RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -32,28 +34,17 @@ class SearchCommand implements TerminalCommandInterface
 {
 
     /**
-     * @Flow\Inject
-     * @var CacheManager
-     */
-    protected $cacheManager;
-
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
-     * @Flow\Inject
-     * @var LinkingService
-     */
-    protected $linkingService;
-
-    /**
-     * @Flow\Inject
      * @var NodeSearchServiceInterface
      */
+    #[Flow\Inject]
     protected $nodeSearchService;
+
+    public function __construct(
+        protected Translator $translator,
+        protected LinkingService $linkingService,
+        protected CacheManager $cacheManager,
+    ) {
+    }
 
     public static function getCommandName(): string
     {
@@ -107,9 +98,17 @@ class SearchCommand implements TerminalCommandInterface
         }
 
         if (!$contextNode) {
-            return new CommandInvocationResult(false,
-                $this->translator->translateById('command.search.noContext', [], null, null, 'Main',
-                    'Shel.Neos.Terminal'));
+            return new CommandInvocationResult(
+                false,
+                $this->translator->translateById(
+                    'command.search.noContext',
+                    [],
+                    null,
+                    null,
+                    'Main',
+                    'Shel.Neos.Terminal'
+                )
+            );
         }
 
         // The NodeSearchInterface does not yet have a 4th argument for the startingPoint but all known implementations do
@@ -121,21 +120,10 @@ class SearchCommand implements TerminalCommandInterface
         );
 
         $results = array_map(function ($node) use ($documentNode, $commandContext) {
-            $breadcrumbs = [];
-            $parent = $node->getParent();
-            while ($parent) {
-                if ($parent->getNodeType()->isOfType('Neos.Neos:Document')) {
-                    $breadcrumbs[] = $parent->getLabel();
-                }
-                $parent = $parent->getParent();
-            }
-
-            return [
-                'label' => $node->getLabel(),
-                'nodeType' => $node->getNodeType()->getName(),
-                'breadcrumb' => implode(' / ', array_reverse($breadcrumbs)),
-                'uri' => $this->getUriForNode($commandContext->getControllerContext(), $documentNode, $documentNode),
-            ];
+            return NodeResult::fromNode(
+                $node,
+                $this->getUriForNode($commandContext->getControllerContext(), $documentNode, $documentNode)
+            );
         }, $nodes);
 
         return new CommandInvocationResult(true, $results);
@@ -154,7 +142,7 @@ class SearchCommand implements TerminalCommandInterface
                 $controllerContext->getRequest()->getFormat(),
                 true
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
         }
         return '';
     }

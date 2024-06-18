@@ -13,7 +13,6 @@ jobs:
     strategy:
       matrix:
         neosVersion:
-          - '7.3'
           - '8.2'
 
     name: 'Terminal with Neos ${{ matrix.neosVersion }} test'

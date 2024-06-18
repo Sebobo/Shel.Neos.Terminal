@@ -8387,6 +8387,7 @@ __metadata:
     react-console-emulator: ^5.0.2
     react-redux: ^7.2.9
     redux-actions: ^0.12.0
+    redux-saga: ^0.15.0
   languageName: unknown
   linkType: soft
 
@@ -10302,6 +10303,13 @@ __metadata:
     lodash: ^4.13.1
     reduce-reducers: ^0.1.0
   checksum: d0fa68ad4a55b1a4ca620610f39cec35bb59efd784d4cfe238c9b72a7c181183a013845c8945bcefc288c01615650f1d6dd72989309c5aae87c07e645ba7c143
+  languageName: node
+  linkType: hard
+
+"redux-saga@npm:^0.15.0":
+  version: 0.15.6
+  resolution: "redux-saga@npm:0.15.6"
+  checksum: 7b40f5473faee362c4c6308146eb11b2b2f3c7c9cd1e7bf948add5e5e8b06857266ff14576a98a94bf04e69d9262414b4c12c4bb3fc647e31183b3660321ec82
   languageName: node
   linkType: hard
 

@@ -17,3 +17,14 @@ interface TerminalTheme {
     promptLabelStyle: Record<string, any> | string;
     inputTextStyle: Record<string, any> | string;
 }
+
+interface NodeResult {
+    __typename: 'NodeResult';
+    identifier: string;
+    label: string;
+    nodeType: string;
+    icon: string;
+    breadcrumb: string;
+    uri: string;
+    score: number;
+}

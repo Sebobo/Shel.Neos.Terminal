@@ -17,6 +17,7 @@
     "react": "^16.14.0",
     "react-console-emulator": "^5.0.2",
     "react-redux": "^7.2.9",
-    "redux-actions": "^0.12.0"
+    "redux-actions": "^0.12.0",
+    "redux-saga": "^0.15.0"
   }
 }
