@@ -60,7 +60,7 @@
             </trans-unit>
 
             <trans-unit id="command.search.description">
-                <source>Fulltext search on nodes</source>
+                <source>Search for nodes by their properties</source>
             </trans-unit>
             <trans-unit id="command.search.noContext">
                 <source>Context node not available</source>
