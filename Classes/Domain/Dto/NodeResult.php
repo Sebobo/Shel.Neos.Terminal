@@ -16,11 +16,11 @@ class NodeResult implements \JsonSerializable
         public readonly string $icon,
         public readonly string $breadcrumb,
         public readonly string $uri,
-        public readonly float $score = 0,
+        public readonly string $score = '',
     ) {
     }
 
-    public static function fromNode(NodeInterface $node, string $uri, float $score = 0): self
+    public static function fromNode(NodeInterface $node, string $uri, mixed $score = ''): self
     {
         $breadcrumbs = [];
         $parent = $node->getParent();

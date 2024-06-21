@@ -129,7 +129,7 @@ class TerminalCommandRegistry {
                                 success: true,
                                 message: this.translate(
                                     'TerminalCommandRegistry.message.nodeResults',
-                                    `${parsedResult.length} matches`,
+                                    `${parsedResult.length} results`,
                                     { matches: parsedResult.length }
                                 ),
                                 options: (parsedResult as NodeResult[]).reduce((carry, {
@@ -148,7 +148,7 @@ class TerminalCommandRegistry {
 
                                     carry[identifier] = {
                                         id: identifier,
-                                        name: label + (score ? ` (${score}%)` : ''),
+                                        name: label + (score ? ` ${score}` : ''),
                                         description: breadcrumb,
                                         category: nodeType,
                                         action: async () => {

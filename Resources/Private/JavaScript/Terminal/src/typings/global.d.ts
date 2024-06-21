@@ -26,5 +26,5 @@ interface NodeResult {
     icon: string;
     breadcrumb: string;
     uri: string;
-    score: number;
+    score: string;
 }
