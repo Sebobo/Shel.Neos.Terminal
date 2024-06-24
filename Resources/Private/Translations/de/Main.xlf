@@ -78,8 +78,8 @@
             </trans-unit>
 
             <trans-unit id="command.search.description">
-                <source>Fulltext search on nodes</source>
-                <target>Volltextsuche auf Nodes</target>
+                <source>Search for nodes by their properties</source>
+                <target>Nodes anhand ihrer Eigenschaften suchen</target>
             </trans-unit>
             <trans-unit id="command.search.noContext">
                 <source>Context node not available</source>

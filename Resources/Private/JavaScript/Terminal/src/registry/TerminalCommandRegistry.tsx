@@ -1,7 +1,7 @@
 import React from 'react';
 
 // @ts-ignore
-import { selectors } from '@neos-project/neos-ui-redux-store';
+import { selectors, actions } from '@neos-project/neos-ui-redux-store';
 
 import fetchCommands from '../helpers/fetchCommands';
 import { CommandList, I18nRegistry, NeosRootState } from '../interfaces';
@@ -61,25 +61,25 @@ class TerminalCommandRegistry {
         const invokeCommand = this.invokeCommand;
         return Object.keys(commands).length > 0
             ? {
-                  'shel.neos.terminal': {
-                      name: 'Terminal',
-                      description: 'Execute terminal commands',
-                      icon: 'terminal',
-                      subCommands: Object.values(commands).reduce((acc, { name, description }) => {
-                          acc[name] = {
-                              name,
-                              icon: 'terminal',
-                              description: this.translate(description),
-                              action: async function* (arg) {
-                                  yield* invokeCommand(name, arg);
-                              },
-                              canHandleQueries: true,
-                              executeManually: true,
-                          };
-                          return acc;
-                      }, {}),
-                  },
-              }
+                'shel.neos.terminal': {
+                    name: 'Terminal',
+                    description: 'Execute terminal commands',
+                    icon: 'terminal',
+                    subCommands: Object.values(commands).reduce((acc, { name, description }) => {
+                        acc[name] = {
+                            name,
+                            icon: 'terminal',
+                            description: this.translate(description),
+                            action: async function* (arg) {
+                                yield* invokeCommand(name, arg);
+                            },
+                            canHandleQueries: true,
+                            executeManually: true
+                        };
+                        return acc;
+                    }, {})
+                }
+            }
             : {};
     };
 
@@ -88,6 +88,7 @@ class TerminalCommandRegistry {
         const siteNode = selectors.CR.Nodes.siteNodeSelector(state);
         const documentNode = selectors.CR.Nodes.documentNodeSelector(state);
         const focusedNodes = selectors.CR.Nodes.focusedNodePathsSelector(state);
+        const setActiveContentCanvasSrc = actions.UI.ContentCanvas.setSrc;
         const command = this.commands[commandName] as Command;
 
         if (!arg) {
@@ -103,7 +104,7 @@ class TerminalCommandRegistry {
                         <p>{this.translate(command.description)}</p>
                         <code>{command.usage}</code>
                     </div>
-                ),
+                )
             };
         } else {
             const response = await doInvokeCommand(
@@ -121,6 +122,47 @@ class TerminalCommandRegistry {
             try {
                 const parsedResult = JSON.parse(result);
                 if (typeof parsedResult !== 'string') {
+                    if (Array.isArray(parsedResult)) {
+                        const resultType = parsedResult[0].__typename ?? '';
+                        if (resultType === 'NodeResult') {
+                            yield {
+                                success: true,
+                                message: this.translate(
+                                    'TerminalCommandRegistry.message.nodeResults',
+                                    `${parsedResult.length} results`,
+                                    { matches: parsedResult.length }
+                                ),
+                                options: (parsedResult as NodeResult[]).reduce((carry, {
+                                    identifier,
+                                    label,
+                                    nodeType,
+                                    breadcrumb,
+                                    uri,
+                                    icon,
+                                    score
+                                }) => {
+                                    if (!uri) {
+                                        // Skip nodes without uri
+                                        return carry;
+                                    }
+
+                                    carry[identifier] = {
+                                        id: identifier,
+                                        name: label + (score ? ` ${score}` : ''),
+                                        description: breadcrumb,
+                                        category: nodeType,
+                                        action: async () => {
+                                            this.store.dispatch(setActiveContentCanvasSrc(uri));
+                                        },
+                                        closeOnExecute: true,
+                                        icon
+                                    };
+                                    return carry;
+                                }, {})
+                            };
+                            return;
+                        }
+                    }
                     result = (
                         <pre>
                             <code>{JSON.stringify(parsedResult, null, 2)}</code>
@@ -140,7 +182,7 @@ class TerminalCommandRegistry {
                     `Result of command "${commandName}"`,
                     { commandName }
                 ),
-                view: result,
+                view: result
             };
         }
     };
