@@ -11,7 +11,7 @@ import logToConsole from '../helpers/logger';
 
 interface NeosStore {
     getState: () => NeosRootState;
-    dispatch: () => void;
+    dispatch: (action: any) => void;
 }
 
 // noinspection JSPotentiallyInvalidUsageOfClassThis
@@ -116,7 +116,11 @@ class TerminalCommandRegistry {
                 documentNode.contextPath
             );
 
-            let result = response.result;
+            let { success, result, uiFeedback } = response;
+
+            if (uiFeedback) {
+                this.store.dispatch(actions.ServerFeedback.handleServerFeedback(uiFeedback));
+            }
 
             // Try to prettify json results
             try {
@@ -176,7 +180,7 @@ class TerminalCommandRegistry {
             }
 
             yield {
-                success: response.success,
+                success,
                 message: this.translate(
                     'TerminalCommandRegistry.message.result',
                     `Result of command "${commandName}"`,
