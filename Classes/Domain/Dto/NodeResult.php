@@ -25,7 +25,7 @@ class NodeResult implements \JsonSerializable
         $breadcrumbs = [];
         $parent = $node->getParent();
         while ($parent) {
-            if ($parent->getNodeType()->isOfType('Neos.Neos:Document')) {
+            if ($parent->getNodeType()->isOfType('Neos.Neos:Node')) {
                 $breadcrumbs[] = $parent->getLabel();
             }
             $parent = $parent->getParent();
