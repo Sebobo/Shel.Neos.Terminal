@@ -8,9 +8,9 @@
   },
   "scripts": {
     "postinstall": "patch-package",
-    "lint": "yarn workspace neos-terminal run lint",
-    "build": "yarn workspace neos-terminal run build",
-    "watch": "yarn workspace neos-terminal run watch"
+    "lint": "NODE_OPTIONS=--openssl-legacy-provider yarn workspace neos-terminal run lint",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider yarn workspace neos-terminal run build",
+    "watch": "NODE_OPTIONS=--openssl-legacy-provider yarn workspace neos-terminal run watch"
   },
   "workspaces": [
     "Resources/Private/JavaScript/Terminal"
