@@ -15,11 +15,13 @@ import { actions as terminalActions, selectors as terminalSelectors } from './ac
 
 interface TerminalProps {
     config: TerminalConfig;
+    user: TerminalUser;
     siteNode: Node;
     documentNode: Node;
     focusedNodes: string[];
     i18nRegistry: I18nRegistry;
     terminalOpen: boolean;
+    toggleNeosTerminal: (visible?: boolean) => void;
     handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
@@ -37,18 +39,16 @@ class Terminal extends React.PureComponent<TerminalProps> {
     };
 
     render() {
-        const { config } = this.props as TerminalProps;
-
         return (
-            <CommandsProvider
-                siteNode={this.props.siteNode?.contextPath}
-                documentNode={this.props.documentNode?.contextPath}
-                focusedNode={this.props.focusedNodes?.length > 0 ? this.props.focusedNodes[0] : null}
-                i18nRegistry={this.props.i18nRegistry}
-                handleServerFeedback={this.props.handleServerFeedback}
-                config={config}
-            >
-                <ReplWrapper {...this.props} />
+            <CommandsProvider i18nRegistry={this.props.i18nRegistry}>
+                <ReplWrapper
+                    config={this.props.config}
+                    user={this.props.user}
+                    siteNode={this.props.siteNode}
+                    documentNode={this.props.documentNode}
+                    terminalOpen={this.props.terminalOpen}
+                    toggleNeosTerminal={this.props.toggleNeosTerminal}
+                />
             </CommandsProvider>
         );
     }

@@ -29,7 +29,7 @@ const fetchCommands = async (endPoint: string): Promise<{ success: boolean; resu
                     .then((data: CommandList) => {
                         return data;
                     })
-                    .catch((error: Error) => {
+                    .catch(() => {
                         return {
                             success: false,
                             result: {},

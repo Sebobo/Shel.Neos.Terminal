@@ -1,6 +1,6 @@
 interface Window {
     NeosTerminal: {
-        [key: string]: (...args) => Promise<string>;
+        [key: string]: (...args) => AsyncGenerator<string | JSX.Element, null, void>;
     };
 }
 
@@ -28,3 +28,16 @@ interface NodeResult {
     uri: string;
     score: string;
 }
+
+type CommandInvocationResult = {
+    success: boolean;
+    message: string;
+    view?: string | JSX.Element;
+    options?: object;
+};
+
+type TerminalUser = {
+    firstName: string;
+    lastName: string;
+    fullName: string;
+};
