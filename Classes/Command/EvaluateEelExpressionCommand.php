@@ -78,6 +78,8 @@ class EvaluateEelExpressionCommand implements TerminalCommandInterface
             $result = $e->getMessage();
         }
 
+        // TODO: Convert NodeInterfaces to a variant of NodeResults with all properties and technical details
+
         return new CommandInvocationResult($success, $result);
     }
 }

@@ -20,14 +20,9 @@ interface ReplProps {
         welcomeMessage?: string;
         registrationKey?: RegistrationKey;
     };
-    user: {
-        firstName: string;
-        lastName: string;
-        fullName: string;
-    };
+    user: TerminalUser;
     siteNode: Node;
     documentNode: Node;
-    className?: string;
     theme?: Record<string, string>;
     terminalOpen?: boolean;
     toggleNeosTerminal: (visible?: boolean) => void;
@@ -56,35 +51,26 @@ const ReplWrapper: React.FC<ReplProps> = ({
             const command = commands[commandName];
 
             // Register command globally
-            window.NeosTerminal[commandName] = (...args) => invokeCommand(commandName, args);
+            window.NeosTerminal[commandName] = (...args: any[]) => invokeCommand(commandName, args);
 
             carry[commandName] = {
                 ...command,
                 description: translate(command.description ?? ''),
-                fn: (...args) => {
+                fn: async (...args: any[]) => {
                     const currentTerminal = terminal.current;
-                    invokeCommand(commandName, args)
-                        .then((result) => {
+                    currentTerminal.pushToStdout(translate('command.evaluating'));
+                    let evaluatingMessageRemoved = false;
+                    for await (const result of invokeCommand(commandName, args)) {
+                        if (!evaluatingMessageRemoved) {
                             currentTerminal.state.stdout.pop();
-                            let output = result;
-                            if (!result) {
-                                output = translate('command.empty');
-                            }
-                            currentTerminal.pushToStdout(output);
-                        })
-                        .catch((error) => {
-                            console.error(
-                                error,
-                                translate(
-                                    'command.invocationError',
-                                    'An error occurred during invocation of the "{commandName}" command',
-                                    { commandName }
-                                )
-                            );
-                            currentTerminal.state.stdout.pop();
-                            currentTerminal.pushToStdout(translate('command.error'));
-                        });
-                    return translate('command.evaluating');
+                            evaluatingMessageRemoved = true;
+                        }
+                        let output = result;
+                        if (!result) {
+                            output = translate('command.empty');
+                        }
+                        currentTerminal.pushToStdout(output);
+                    }
                 },
             };
             return carry;

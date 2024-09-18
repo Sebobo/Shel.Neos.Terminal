@@ -11,7 +11,7 @@ interface CommandInvocationResult {
 const doInvokeCommand = async (
     endPoint: string,
     commandName: string,
-    args: string[],
+    argument: string,
     siteNode: string = null,
     focusedNode: string = null,
     documentNode: string = null
@@ -27,7 +27,7 @@ const doInvokeCommand = async (
             },
             body: JSON.stringify({
                 commandName,
-                argument: args.join(' '),
+                argument,
                 siteNode,
                 focusedNode,
                 documentNode,

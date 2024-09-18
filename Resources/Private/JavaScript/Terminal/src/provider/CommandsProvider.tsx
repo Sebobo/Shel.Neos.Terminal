@@ -1,24 +1,18 @@
-import * as React from 'react';
+import React from 'react';
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
-import { FeedbackEnvelope, I18nRegistry, CommandList, NodeContextPath } from '../interfaces';
-import doInvokeCommand from '../helpers/doInvokeCommand';
+import { I18nRegistry, CommandList } from '../interfaces';
 import logToConsole from '../helpers/logger';
 import getTerminalCommandRegistry from '../registry/TerminalCommandRegistry';
 
 interface CommandsContextProps {
     children: React.ReactElement;
-    config: TerminalConfig;
-    siteNode: NodeContextPath;
-    documentNode: NodeContextPath;
-    focusedNode?: NodeContextPath;
     i18nRegistry: I18nRegistry;
-    handleServerFeedback: (feedback: FeedbackEnvelope) => void;
 }
 
 interface CommandsContextValues {
     commands: CommandList;
-    invokeCommand: (endPoint: string, param: string[]) => Promise<string>;
+    invokeCommand: (endPoint: string, param: string[]) => AsyncGenerator<string | JSX.Element, null, void>;
     translate: (
         id: string,
         fallback?: string,
@@ -31,15 +25,7 @@ interface CommandsContextValues {
 export const CommandsContext = createContext({} as CommandsContextValues);
 export const useCommands = (): CommandsContextValues => useContext(CommandsContext);
 
-export const CommandsProvider = ({
-    config,
-    children,
-    documentNode,
-    focusedNode,
-    siteNode,
-    i18nRegistry,
-    handleServerFeedback,
-}: CommandsContextProps) => {
+export const CommandsProvider = ({ children, i18nRegistry }: CommandsContextProps) => {
     const [commands, setCommands] = useState<CommandList>({});
 
     useEffect(() => {
@@ -60,7 +46,7 @@ export const CommandsProvider = ({
     );
 
     const invokeCommand = useCallback(
-        async (commandName: string, args: string[]): Promise<string> => {
+        async function* (commandName: string, args: string[]): AsyncGenerator<string | JSX.Element, null, void> {
             const command = commands[commandName];
 
             if (!command)
@@ -68,43 +54,26 @@ export const CommandsProvider = ({
                     translate('command.doesNotExist', `The command {commandName} does not exist!`, { commandName })
                 );
 
-            // TODO: Use TerminalCommandRegistry for invocation - needs some refactoring
-            const { success, result, uiFeedback } = await doInvokeCommand(
-                config.invokeCommandEndPoint,
+            for await (const { success, view, message, options } of getTerminalCommandRegistry().invokeCommand(
                 commandName,
-                args,
-                siteNode,
-                focusedNode,
-                documentNode
-            );
-            let parsedResult = result;
-            let textResult = result;
-            // Try to prettify json results
-            try {
-                parsedResult = JSON.parse(result);
-                if (typeof parsedResult !== 'string') {
-                    textResult = JSON.stringify(parsedResult, null, 2);
-                } else {
-                    textResult = parsedResult;
-                }
-            } catch (e) {
-                /* empty */
+                args.join(' ')
+            )) {
+                logToConsole(
+                    success ? 'log' : 'error',
+                    translate('command.output', `"{commandName} {argument}":`, {
+                        commandName,
+                        argument: args.join(' '),
+                    }),
+                    message,
+                    view,
+                    options
+                );
+                yield view;
             }
-            logToConsole(
-                success ? 'log' : 'error',
-                translate('command.output', `"{commandName} {argument}":`, {
-                    commandName,
-                    argument: args.join(' '),
-                }),
-                parsedResult
-            );
-            // Forward server feedback to the Neos UI
-            if (uiFeedback) {
-                handleServerFeedback(uiFeedback);
-            }
-            return textResult;
+
+            return;
         },
-        [commands, siteNode, documentNode, focusedNode]
+        [commands]
     );
 
     return (

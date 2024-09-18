@@ -61,29 +61,32 @@ class TerminalCommandRegistry {
         const invokeCommand = this.invokeCommand;
         return Object.keys(commands).length > 0
             ? {
-                'shel.neos.terminal': {
-                    name: 'Terminal',
-                    description: 'Execute terminal commands',
-                    icon: 'terminal',
-                    subCommands: Object.values(commands).reduce((acc, { name, description }) => {
-                        acc[name] = {
-                            name,
-                            icon: 'terminal',
-                            description: this.translate(description),
-                            action: async function* (arg) {
-                                yield* invokeCommand(name, arg);
-                            },
-                            canHandleQueries: true,
-                            executeManually: true
-                        };
-                        return acc;
-                    }, {})
-                }
-            }
+                  'shel.neos.terminal': {
+                      name: 'Terminal',
+                      description: 'Execute terminal commands',
+                      icon: 'terminal',
+                      subCommands: Object.values(commands).reduce((acc, { name, description }) => {
+                          acc[name] = {
+                              name,
+                              icon: 'terminal',
+                              description: this.translate(description),
+                              action: async function* (arg) {
+                                  yield* invokeCommand(name, arg);
+                              },
+                              canHandleQueries: true,
+                              executeManually: true,
+                          };
+                          return acc;
+                      }, {}),
+                  },
+              }
             : {};
     };
 
-    public invokeCommand = async function* (commandName: string, arg = '') {
+    public invokeCommand = async function* (
+        commandName: string,
+        argument = ''
+    ): AsyncGenerator<CommandInvocationResult, CommandInvocationResult, void> {
         const state = this.store.getState();
         const siteNode = selectors.CR.Nodes.siteNodeSelector(state);
         const documentNode = selectors.CR.Nodes.documentNodeSelector(state);
@@ -91,7 +94,7 @@ class TerminalCommandRegistry {
         const setActiveContentCanvasSrc = actions.UI.ContentCanvas.setSrc;
         const command = this.commands[commandName] as Command;
 
-        if (!arg) {
+        if (!argument) {
             yield {
                 success: true,
                 message: this.translate(
@@ -104,19 +107,39 @@ class TerminalCommandRegistry {
                         <p>{this.translate(command.description)}</p>
                         <code>{command.usage}</code>
                     </div>
-                )
+                ),
             };
         } else {
             const response = await doInvokeCommand(
                 this.config.invokeCommandEndPoint,
                 commandName,
-                [arg],
+                argument,
                 siteNode.contextPath,
                 focusedNodes[0]?.contextPath,
                 documentNode.contextPath
-            );
+            ).catch((error) => {
+                console.error(
+                    error,
+                    this.translate(
+                        'command.invocationError',
+                        `An error occurred during invocation of the command "${commandName}"`,
+                        { commandName }
+                    )
+                );
+                return {
+                    success: false,
+                    message: this.translate(
+                        'TerminalCommandRegistry.message.error',
+                        `An error occurred during invocation of the command "${commandName}"`,
+                        { commandName }
+                    ),
+                    result: error.message,
+                    uiFeedback: null,
+                };
+            });
 
-            let { success, result, uiFeedback } = response;
+            const { success, result, uiFeedback } = response;
+            let view = result;
 
             if (uiFeedback) {
                 this.store.dispatch(actions.ServerFeedback.handleServerFeedback(uiFeedback));
@@ -126,6 +149,11 @@ class TerminalCommandRegistry {
             try {
                 const parsedResult = JSON.parse(result);
                 if (typeof parsedResult !== 'string') {
+                    view = (
+                        <pre>
+                            <code>{JSON.stringify(parsedResult, null, 2)}</code>
+                        </pre>
+                    );
                     if (Array.isArray(parsedResult)) {
                         const resultType = parsedResult[0].__typename ?? '';
                         if (resultType === 'NodeResult') {
@@ -136,44 +164,35 @@ class TerminalCommandRegistry {
                                     `${parsedResult.length} results`,
                                     { matches: parsedResult.length }
                                 ),
-                                options: (parsedResult as NodeResult[]).reduce((carry, {
-                                    identifier,
-                                    label,
-                                    nodeType,
-                                    breadcrumb,
-                                    uri,
-                                    icon,
-                                    score
-                                }) => {
-                                    if (!uri) {
-                                        // Skip nodes without uri
-                                        return carry;
-                                    }
+                                view,
+                                options: (parsedResult as NodeResult[]).reduce(
+                                    (carry, { identifier, label, nodeType, breadcrumb, uri, icon, score }) => {
+                                        if (!uri) {
+                                            // Skip nodes without uri
+                                            return carry;
+                                        }
 
-                                    carry[identifier] = {
-                                        id: identifier,
-                                        name: label + (score ? ` ${score}` : ''),
-                                        description: breadcrumb,
-                                        category: nodeType,
-                                        action: async () => {
-                                            this.store.dispatch(setActiveContentCanvasSrc(uri));
-                                        },
-                                        closeOnExecute: true,
-                                        icon
-                                    };
-                                    return carry;
-                                }, {})
+                                        carry[identifier] = {
+                                            id: identifier,
+                                            name: label + (score ? ` ${score}` : ''),
+                                            description: breadcrumb,
+                                            category: nodeType,
+                                            action: async () => {
+                                                this.store.dispatch(setActiveContentCanvasSrc(uri));
+                                            },
+                                            closeOnExecute: true,
+                                            icon,
+                                        };
+                                        return carry;
+                                    },
+                                    {}
+                                ),
                             };
                             return;
                         }
                     }
-                    result = (
-                        <pre>
-                            <code>{JSON.stringify(parsedResult, null, 2)}</code>
-                        </pre>
-                    );
                 } else {
-                    result = <p>{result.replace(/\\n/g, '\n')}</p>;
+                    view = <p>{result.replace(/\\n/g, '\n')}</p>;
                 }
             } catch (e) {
                 // Treat result as simple string
@@ -186,7 +205,7 @@ class TerminalCommandRegistry {
                     `Result of command "${commandName}"`,
                     { commandName }
                 ),
-                view: result
+                view,
             };
         }
     };
