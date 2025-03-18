@@ -64,7 +64,7 @@ class SearchCommand implements TerminalCommandInterface
     public static function getInputDefinition(): InputDefinition
     {
         return new InputDefinition([
-            new InputArgument('searchword', InputArgument::REQUIRED),
+            new InputArgument('searchword', InputArgument::REQUIRED | InputArgument::IS_ARRAY),
             new InputOption('contextNode', 'c', InputOption::VALUE_OPTIONAL),
             new InputOption('nodeTypes', 'n', InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL),
         ]);
@@ -82,20 +82,11 @@ class SearchCommand implements TerminalCommandInterface
         }
 
         $siteNode = $commandContext->getSiteNode();
-        $documentNode = $commandContext->getDocumentNode();
-
-        switch ($input->getOption('contextNode')) {
-            case 'node':
-            case 'focusedNode':
-                $contextNode = $commandContext->getFocusedNode();
-                break;
-            case 'document':
-            case 'documentNode':
-                $contextNode = $commandContext->getDocumentNode();
-                break;
-            default:
-                $contextNode = $siteNode;
-        }
+        $contextNode = match ($input->getOption('contextNode')) {
+            'node', 'focusedNode' => $commandContext->getFocusedNode(),
+            'document', 'documentNode' => $commandContext->getDocumentNode(),
+            default => $siteNode,
+        };
 
         if (!$contextNode) {
             return new CommandInvocationResult(
@@ -112,17 +103,22 @@ class SearchCommand implements TerminalCommandInterface
         }
 
         // The NodeSearchInterface does not yet have a 4th argument for the startingPoint but all known implementations do
+        $searchTerm = $input->getArgument('searchword');
+        if (is_array($searchTerm)) {
+            $searchTerm = implode(' ', $searchTerm);
+        }
+
         $nodes = $this->nodeSearchService->findByProperties(
-            $input->getArgument('searchword'),
+            $searchTerm,
             $input->getOption('nodeTypes'),
             $contextNode->getContext(),
             $contextNode
         );
 
-        $results = array_map(function ($node) use ($documentNode, $commandContext) {
+        $results = array_map(function ($node) use ($commandContext) {
             return NodeResult::fromNode(
                 $node,
-                $this->getUriForNode($commandContext->getControllerContext(), $documentNode, $documentNode)
+                $this->getUriForNode($commandContext->getControllerContext(), $node)
             );
         }, $nodes);
 
@@ -131,15 +127,23 @@ class SearchCommand implements TerminalCommandInterface
 
     protected function getUriForNode(
         ControllerContext $controllerContext,
-        NodeInterface $node,
-        NodeInterface $baseNode
+        NodeInterface $node
     ): string {
+        // Get the closest document to create uri from for navigation
+        $closestDocumentNode = $node;
+        while ($closestDocumentNode && !$closestDocumentNode->getNodeType()->isOfType('Neos.Neos:Document')) {
+            $closestDocumentNode = $closestDocumentNode->getParent();
+        }
+        if (!$closestDocumentNode) {
+            return '';
+        }
+
         try {
             return $this->linkingService->createNodeUri(
                 $controllerContext,
-                $node,
-                $baseNode,
-                $controllerContext->getRequest()->getFormat(),
+                $closestDocumentNode,
+                null,
+                'html',
                 true
             );
         } catch (\Exception) {
