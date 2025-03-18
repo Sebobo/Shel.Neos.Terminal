@@ -124,8 +124,11 @@ class TerminalCommandRegistry {
 
             // Try to prettify json results
             try {
-                const parsedResult = JSON.parse(result);
+                let parsedResult = JSON.parse(result);
                 if (typeof parsedResult !== 'string') {
+                    if (typeof parsedResult === 'object') {
+                        parsedResult = Object.values(parsedResult);
+                    }
                     if (Array.isArray(parsedResult)) {
                         const resultType = parsedResult[0].__typename ?? '';
                         if (resultType === 'NodeResult') {
