@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "eslint --ext .ts,.tsx,.js src",
     "build": "NODE_ENV=production NODE_OPTIONS=--openssl-legacy-provider neos-react-scripts build",
-    "watch": "neos-react-scripts watch"
+    "watch": "NODE_OPTIONS=--openssl-legacy-provider neos-react-scripts watch"
   },
   "neos": {
     "buildTargetDirectory": "../../../Public/Assets"
