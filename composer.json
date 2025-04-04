@@ -14,7 +14,7 @@
     "php": ">=8.1",
     "neos/neos": "^8.3",
     "neos/neos-ui": "^8.3",
-    "symfony/console": "^4.2 || ^5.1"
+    "symfony/console": "^4.2 || ^5.1 || ^6.1"
   },
   "suggest": {
     "shel/neos-commandbar": "The terminal provides a plugin integration for the Neos command bar"
