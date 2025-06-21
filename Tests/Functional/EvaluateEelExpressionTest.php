@@ -38,7 +38,7 @@ class EvaluateEelExpressionTest extends FunctionalTestCase
     {
         parent::setUp();
         $this->evaluateEelExpressionCommand = $this->objectManager->get(EvaluateEelExpressionCommand::class);
-        $context = $this->getMockBuilder(Context::class)->disableOriginalConstructor()->getMock();
+        $context = $this->getMockBuilder(\Neos\Rector\ContentRepository90\Legacy\LegacyContextStub::class)->disableOriginalConstructor()->getMock();
 
         $siteNodeData = $this->getMockBuilder(NodeData::class)->disableOriginalConstructor()->getMock();
         $siteNodeData->method('getName')->willReturn(self::HOMEPAGE);
@@ -48,9 +48,9 @@ class EvaluateEelExpressionTest extends FunctionalTestCase
         $focusedNodeData->method('getName')->willReturn(self::HEADLINE);
 
         $this->commandContext = (new CommandContext($this->createControllerContext()))
-            ->withSiteNode(new Node($siteNodeData, $context))
-            ->withDocumentNode(new Node($documentNodeData, $context))
-            ->withFocusedNode(new Node($focusedNodeData, $context));
+            ->withSiteNode(new \Neos\ContentRepository\Core\Projection\ContentGraph\Node($siteNodeData, $context))
+            ->withDocumentNode(new \Neos\ContentRepository\Core\Projection\ContentGraph\Node($documentNodeData, $context))
+            ->withFocusedNode(new \Neos\ContentRepository\Core\Projection\ContentGraph\Node($focusedNodeData, $context));
     }
 
     /**
@@ -125,9 +125,9 @@ class EvaluateEelExpressionTest extends FunctionalTestCase
         $result = $this->evaluateEelExpressionCommand->invokeCommand($expression, $this->commandContext);
 
         $this->assertTrue($result->isSuccess(), 'Evaluation of expression "' . $expression . '" failed');
-        $this->assertInstanceOf(NodeInterface::class, $result->getResult(),
+        $this->assertInstanceOf(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::class, $result->getResult(),
             'Evaluation of expression "' . $expression . '" should return a node');
-        $this->assertEquals(self::HOMEPAGE, $result->getResult()->getName(),
+        $this->assertEquals(self::HOMEPAGE, $result->getResult()->nodeName,
             'Evaluation of expression "' . $expression . '" should return the site node');
     }
 
@@ -141,9 +141,9 @@ class EvaluateEelExpressionTest extends FunctionalTestCase
         $result = $this->evaluateEelExpressionCommand->invokeCommand($expression, $this->commandContext);
 
         $this->assertTrue($result->isSuccess(), 'Evaluation of expression "' . $expression . '" failed');
-        $this->assertInstanceOf(NodeInterface::class, $result->getResult(),
+        $this->assertInstanceOf(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::class, $result->getResult(),
             'Evaluation of expression "' . $expression . '" should return a node');
-        $this->assertEquals(self::ABOUTUS, $result->getResult()->getName(),
+        $this->assertEquals(self::ABOUTUS, $result->getResult()->nodeName,
             'Evaluation of expression "' . $expression . '" should return the "about us" document node');
     }
 
@@ -157,9 +157,9 @@ class EvaluateEelExpressionTest extends FunctionalTestCase
         $result = $this->evaluateEelExpressionCommand->invokeCommand($expression, $this->commandContext);
 
         $this->assertTrue($result->isSuccess(), 'Evaluation of expression "' . $expression . '" failed');
-        $this->assertInstanceOf(NodeInterface::class, $result->getResult(),
+        $this->assertInstanceOf(\Neos\ContentRepository\Core\Projection\ContentGraph\Node::class, $result->getResult(),
             'Evaluation of expression "' . $expression . '" should return a node');
-        $this->assertEquals(self::HEADLINE, $result->getResult()->getName(),
+        $this->assertEquals(self::HEADLINE, $result->getResult()->nodeName,
             'Evaluation of expression "' . $expression . '" should return the focused headline content node');
     }
 

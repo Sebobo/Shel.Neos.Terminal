@@ -25,17 +25,17 @@ class CommandContext
     protected $controllerContext;
 
     /**
-     * @var NodeInterface
+     * @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node
      */
     protected $siteNode;
 
     /**
-     * @var NodeInterface
+     * @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node
      */
     protected $documentNode;
 
     /**
-     * @var NodeInterface
+     * @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node
      */
     protected $focusedNode;
 
@@ -49,36 +49,36 @@ class CommandContext
         return $this->controllerContext;
     }
 
-    public function getSiteNode(): ?NodeInterface
+    public function getSiteNode(): ?\Neos\ContentRepository\Core\Projection\ContentGraph\Node
     {
         return $this->siteNode;
     }
 
-    public function withSiteNode(NodeInterface $siteNode = null): CommandContext
+    public function withSiteNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $siteNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->siteNode = $siteNode;
         return $instance;
     }
 
-    public function getDocumentNode(): ?NodeInterface
+    public function getDocumentNode(): ?\Neos\ContentRepository\Core\Projection\ContentGraph\Node
     {
         return $this->documentNode;
     }
 
-    public function withDocumentNode(NodeInterface $documentNode = null): CommandContext
+    public function withDocumentNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $documentNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->documentNode = $documentNode;
         return $instance;
     }
 
-    public function getFocusedNode(): ?NodeInterface
+    public function getFocusedNode(): ?\Neos\ContentRepository\Core\Projection\ContentGraph\Node
     {
         return $this->focusedNode;
     }
 
-    public function withFocusedNode(NodeInterface $focusedNode = null): CommandContext
+    public function withFocusedNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $focusedNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->focusedNode = $focusedNode;

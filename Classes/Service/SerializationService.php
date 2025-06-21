@@ -17,6 +17,8 @@ use Neos\ContentRepository\Domain\Model\NodeInterface;
 
 class SerializationService
 {
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
     /**
      * Unwraps certain object types in the evaluation result.
      * This makes it easier to view them when displayed in the terminal.
@@ -27,13 +29,13 @@ class SerializationService
     {
         if (is_array($result)) {
             $result = array_map(static function ($item) {
-                if ($item instanceof NodeInterface) {
+                if ($item instanceof \Neos\ContentRepository\Core\Projection\ContentGraph\Node) {
                     return self::serializeNode($item);
                 }
                 return $item;
             }, $result);
         }
-        if ($result instanceof NodeInterface) {
+        if ($result instanceof \Neos\ContentRepository\Core\Projection\ContentGraph\Node) {
             $result = self::serializeNode($result);
         }
         return json_encode($result);
@@ -43,18 +45,26 @@ class SerializationService
      * Serialises a node into an array with its properties and attributes
      * to improve readability in the terminal output
      */
-    public static function serializeNode(NodeInterface $node): array
+    public static function serializeNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node): array
     {
+        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
+
+        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
+
+        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
+
         $result = [
-            '_identifier' => $node->getIdentifier(),
-            '_nodeType' => $node->getNodeType()->getName(),
-            '_name' => $node->getName(),
+            '_identifier' => $node->aggregateId->value,
+            '_nodeType' => $node->nodeTypeName->value,
+            '_name' => $node->nodeName,
             '_workspace' => $node->getWorkspace()->getName(),
-            '_path' => $node->getPath(),
+            '_path' => (string) $subgraph->findNodePath($node->aggregateId),
         ];
 
         try {
-            foreach ($node->getProperties()->getIterator() as $key => $property) {
+            foreach ($node->properties->getIterator() as $key => $property) {
                 if (is_object($property)) {
                     $property = get_class($property);
                 }

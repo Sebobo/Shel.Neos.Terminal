@@ -33,11 +33,8 @@ use Symfony\Component\Console\Input\StringInput;
 class SearchCommand implements TerminalCommandInterface
 {
 
-    /**
-     * @var NodeSearchServiceInterface
-     */
-    #[Flow\Inject]
-    protected $nodeSearchService;
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public function __construct(
         protected Translator $translator,
@@ -107,13 +104,10 @@ class SearchCommand implements TerminalCommandInterface
         if (is_array($searchTerm)) {
             $searchTerm = implode(' ', $searchTerm);
         }
+        // TODO 9.0 migration: This could be a suitable replacement. Please check if all your requirements are still fulfilled.
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
 
-        $nodes = $this->nodeSearchService->findByProperties(
-            $searchTerm,
-            $input->getOption('nodeTypes'),
-            $contextNode->getContext(),
-            $contextNode
-        );
+        $nodes = $subgraph->findDescendantNodes($contextNode->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::create(nodeTypes: \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::create(\Neos\ContentRepository\Core\NodeType\NodeTypeNames::fromStringArray($input->getOption('nodeTypes')), \Neos\ContentRepository\Core\NodeType\NodeTypeNames::createEmpty()), searchTerm: $searchTerm));
 
         $results = array_map(function ($node) use ($commandContext) {
             return NodeResult::fromNode(
@@ -127,12 +121,14 @@ class SearchCommand implements TerminalCommandInterface
 
     protected function getUriForNode(
         ControllerContext $controllerContext,
-        NodeInterface $node
+        \Neos\ContentRepository\Core\Projection\ContentGraph\Node $node
     ): string {
         // Get the closest document to create uri from for navigation
         $closestDocumentNode = $node;
-        while ($closestDocumentNode && !$closestDocumentNode->getNodeType()->isOfType('Neos.Neos:Document')) {
-            $closestDocumentNode = $closestDocumentNode->getParent();
+        $contentRepository = $this->contentRepositoryRegistry->get($closestDocumentNode->contentRepositoryId);
+        while ($closestDocumentNode && !$contentRepository->getNodeTypeManager()->getNodeType($closestDocumentNode->nodeTypeName)->isOfType('Neos.Neos:Document')) {
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($closestDocumentNode);
+            $closestDocumentNode = $subgraph->findParentNode($closestDocumentNode->aggregateId);
         }
         if (!$closestDocumentNode) {
             return '';

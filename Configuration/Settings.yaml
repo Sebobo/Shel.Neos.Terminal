@@ -3,12 +3,11 @@ Neos:
     Ui:
       resources:
         javascript:
-          Shel.Neos.Terminal:Terminal:
-            resource: resource://Shel.Neos.Terminal/Public/Assets/Plugin.js
+          'Shel.Neos.Terminal:Terminal':
+            resource: 'resource://Shel.Neos.Terminal/Public/Assets/Plugin.js'
         stylesheets:
-          Shel.Neos.Terminal:Terminal:
-            resource: resource://Shel.Neos.Terminal/Public/Assets/Plugin.css
-
+          'Shel.Neos.Terminal:Terminal':
+            resource: 'resource://Shel.Neos.Terminal/Public/Assets/Plugin.css'
       frontendConfiguration:
         'Shel.Neos.Terminal:Terminal':
           enabled: false
@@ -17,26 +16,24 @@ Neos:
             id: ''
             signature: ''
             showThankYouMessage: true
-          getCommandsEndPoint: '/neos/shel-neos-terminal/getcommands'
-          invokeCommandEndPoint: '/neos/shel-neos-terminal/invokecommand'
+          getCommandsEndPoint: /neos/shel-neos-terminal/getcommands
+          invokeCommandEndPoint: /neos/shel-neos-terminal/invokecommand
           theme:
             contentStyle:
               color: '#adadad'
-            styleEchoBack: 'fullInherit'
+            styleEchoBack: fullInherit
             promptLabelStyle:
               color: '#ff8700'
-              whitespace: 'nowrap'
+              whitespace: nowrap
             inputTextStyle:
               color: '#ffffff'
             messageStyle:
-              whiteSpace: 'pre-wrap'
+              whiteSpace: pre-wrap
               color: '#00adee'
-
         hotkeys:
-          'Shel.Neos.Terminal.toggle': 't t'
-
+          Shel.Neos.Terminal.toggle: 't t'
     userInterface:
       translation:
         autoInclude:
-          Shel.Neos.Terminal: ['Main']
-
+          Shel.Neos.Terminal:
+            - Main

@@ -107,9 +107,9 @@ class TerminalCommandController extends ActionController
     public function invokeCommandAction(
         string $commandName,
         string $argument = null,
-        NodeInterface $siteNode = null,
-        NodeInterface $documentNode = null,
-        NodeInterface $focusedNode = null
+        \Neos\ContentRepository\Core\Projection\ContentGraph\Node $siteNode = null,
+        \Neos\ContentRepository\Core\Projection\ContentGraph\Node $documentNode = null,
+        \Neos\ContentRepository\Core\Projection\ContentGraph\Node $focusedNode = null
     ): void {
         $this->response->setContentType('application/json');
 

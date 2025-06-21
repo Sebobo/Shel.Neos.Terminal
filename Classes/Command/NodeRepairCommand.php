@@ -40,15 +40,11 @@ class NodeRepairCommand implements TerminalCommandInterface
 
     /**
      * @Flow\Inject
-     * @var NodeTypeManager
-     */
-    protected $nodeTypeManager;
-
-    /**
-     * @Flow\Inject
      * @var Translator
      */
     protected $translator;
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
 
     public static function getCommandName(): string
     {
@@ -92,9 +88,13 @@ class NodeRepairCommand implements TerminalCommandInterface
         $nodeTypeName = $input->getArgument('nodeType');
         $workspace = $input->getOption('workspace');
         $dryRun = $input->getOption('dryRun');
+        // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+        $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
 
-        if ($this->nodeTypeManager->hasNodeType($nodeTypeName)) {
-            $nodeType = $this->nodeTypeManager->getNodeType($nodeTypeName);
+        if ($contentRepository->getNodeTypeManager()->hasNodeType($nodeTypeName)) {
+            // TODO 9.0 migration: Make this code aware of multiple Content Repositories.
+            $contentRepository = $this->contentRepositoryRegistry->get(\Neos\ContentRepository\Core\SharedModel\ContentRepository\ContentRepositoryId::fromString('default'));
+            $nodeType = $contentRepository->getNodeTypeManager()->getNodeType($nodeTypeName);
 
             $bufferedOutput = new BufferedOutput();
             $consoleOutput = new ConsoleOutput();

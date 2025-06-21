@@ -2,9 +2,8 @@ Neos:
   Flow:
     mvc:
       routes:
-        'Shel.Neos.Terminal':
-          position: 'start'
-
+        Shel.Neos.Terminal:
+          position: start
     security:
       authentication:
         providers:

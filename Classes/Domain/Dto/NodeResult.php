@@ -9,6 +9,10 @@ use Neos\Flow\Annotations as Flow;
 class NodeResult implements \JsonSerializable
 {
 
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+    #[\Neos\Flow\Annotations\Inject]
+    protected \Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface $nodeLabelGenerator;
     private function __construct(
         public readonly string $identifier,
         public readonly string $label,
@@ -20,22 +24,30 @@ class NodeResult implements \JsonSerializable
     ) {
     }
 
-    public static function fromNode(NodeInterface $node, string $uri, mixed $score = ''): self
+    public static function fromNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node, string $uri, mixed $score = ''): self
     {
         $breadcrumbs = [];
-        $parent = $node->getParent();
+        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
+        $parent = $subgraph->findParentNode($node->aggregateId);
         while ($parent) {
-            if ($parent->getNodeType()->isOfType('Neos.Neos:Node')) {
-                $breadcrumbs[] = $parent->getLabel();
+            $contentRepository = $this->contentRepositoryRegistry->get($parent->contentRepositoryId);
+            if ($contentRepository->getNodeTypeManager()->getNodeType($parent->nodeTypeName)->isOfType('Neos.Neos:Node')) {
+                $breadcrumbs[] = $this->nodeLabelGenerator->getLabel($parent);
             }
-            $parent = $parent->getParent();
+            $subgraph = $this->contentRepositoryRegistry->subgraphForNode($parent);
+            $parent = $subgraph->findParentNode($parent->aggregateId);
         }
+        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
+
+        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
+        $contentRepository = $this->contentRepositoryRegistry->get($node->contentRepositoryId);
 
         return new self(
-            $node->getIdentifier(),
-            $node->getLabel(),
-            $node->getNodeType()->getLabel(),
-            $node->getNodeType()->getConfiguration('ui.icon') ?? 'question',
+            $node->aggregateId->value,
+            $this->nodeLabelGenerator->getLabel($node),
+            $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName)->getLabel(),
+            $contentRepository->getNodeTypeManager()->getNodeType($node->nodeTypeName)->getConfiguration('ui.icon') ?? 'question',
             implode(' / ', array_reverse($breadcrumbs)),
             $uri,
             $score,
