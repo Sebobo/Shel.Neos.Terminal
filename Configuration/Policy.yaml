@@ -1,44 +1,48 @@
 privilegeTargets:
-  Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege:
+  'Neos\Flow\Security\Authorization\Privilege\Method\MethodPrivilege':
     'Shel.Neos.Terminal:ExecuteCommands':
+      label: 'Execute terminal commands'
       matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->(?!initialize).*Action())'
     'Shel.Neos.Terminal:GetCommands':
-      matcher: method(Shel\Neos\Terminal\Controller\TerminalCommandController->getCommandsAction())
-  Shel\Neos\Terminal\Security\TerminalCommandPrivilege:
+      label: 'Get terminal commands'
+      matcher: 'method(Shel\Neos\Terminal\Controller\TerminalCommandController->getCommandsAction())'
+  'Shel\Neos\Terminal\Security\TerminalCommandPrivilege':
     'Shel.Neos.Terminal:Command.All':
+      label: 'All terminal commands'
       matcher: '*'
     'Shel.Neos.Terminal:Command.Eel':
+      label: 'Eel terminal command'
       matcher: eel
     'Shel.Neos.Terminal:Command.FlushCache':
+      label: 'Flush cache terminal command'
       matcher: flushCache
     'Shel.Neos.Terminal:Command.Search':
+      label: 'Search terminal command'
       matcher: search
-    'Shel.Neos.Terminal:Command.NodeRepair':
-      matcher: nodeRepair
 roles:
   'Neos.Flow:Everybody':
+    # Allow everybody to load commands to prevent 403 errors for users without access in the UI.
+    # The command list will still be empty in the response as all commands have their own privileges.
     privileges:
-      -
-        privilegeTarget: 'Shel.Neos.Terminal:GetCommands'
+      - privilegeTarget: 'Shel.Neos.Terminal:GetCommands'
         permission: GRANT
   'Shel.Neos.Terminal:TerminalUser':
     label: 'Terminal user'
     description: 'Grants access to run read-only eel and search terminal commands'
     privileges:
-      -
-        privilegeTarget: 'Shel.Neos.Terminal:ExecuteCommands'
+      - privilegeTarget: 'Shel.Neos.Terminal:ExecuteCommands'
         permission: GRANT
-      -
-        privilegeTarget: 'Shel.Neos.Terminal:Command.Eel'
+      - privilegeTarget: 'Shel.Neos.Terminal:GetCommands'
         permission: GRANT
-      -
-        privilegeTarget: 'Shel.Neos.Terminal:Command.Search'
+      - privilegeTarget: 'Shel.Neos.Terminal:Command.Eel'
+        permission: GRANT
+      - privilegeTarget: 'Shel.Neos.Terminal:Command.Search'
         permission: GRANT
   'Neos.Neos:Administrator':
     privileges:
-      -
-        privilegeTarget: 'Shel.Neos.Terminal:ExecuteCommands'
+      - privilegeTarget: 'Shel.Neos.Terminal:ExecuteCommands'
         permission: GRANT
-      -
-        privilegeTarget: 'Shel.Neos.Terminal:Command.All'
+      - privilegeTarget: 'Shel.Neos.Terminal:GetCommands'
+        permission: GRANT
+      - privilegeTarget: 'Shel.Neos.Terminal:Command.All'
         permission: GRANT

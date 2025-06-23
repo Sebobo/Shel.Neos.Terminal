@@ -26,17 +26,11 @@ use Symfony\Component\Console\Input\StringInput;
 class FlushCacheCommand implements TerminalCommandInterface
 {
 
-    /**
-     * @Flow\Inject
-     * @var CacheManager
-     */
-    protected $cacheManager;
+    #[Flow\Inject]
+    protected CacheManager $cacheManager;
 
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
+    #[Flow\Inject]
+    protected Translator $translator;
 
     public static function getCommandName(): string
     {
@@ -97,7 +91,7 @@ class FlushCacheCommand implements TerminalCommandInterface
         echo json_encode([
             'success' => $success,
             'result' => $result,
-        ]);
+        ], JSON_THROW_ON_ERROR);
         exit;
     }
 }

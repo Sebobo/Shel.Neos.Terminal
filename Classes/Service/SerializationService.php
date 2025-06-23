@@ -13,54 +13,46 @@ namespace Shel\Neos\Terminal\Service;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
+use Neos\Flow\Annotations as Flow;
 
 class SerializationService
 {
-    #[\Neos\Flow\Annotations\Inject]
-    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
+    #[Flow\Inject]
+    protected ContentRepositoryRegistry $contentRepositoryRegistry;
+
     /**
      * Unwraps certain object types in the evaluation result.
      * This makes it easier to view them when displayed in the terminal.
-     *
-     * @param mixed $result
      */
-    public static function serialize($result): string
+    public static function serialize(mixed $result): string
     {
         if (is_array($result)) {
             $result = array_map(static function ($item) {
-                if ($item instanceof \Neos\ContentRepository\Core\Projection\ContentGraph\Node) {
+                if ($item instanceof Node) {
                     return self::serializeNode($item);
                 }
                 return $item;
             }, $result);
         }
-        if ($result instanceof \Neos\ContentRepository\Core\Projection\ContentGraph\Node) {
+        if ($result instanceof Node) {
             $result = self::serializeNode($result);
         }
-        return json_encode($result);
+        return json_encode($result, JSON_THROW_ON_ERROR);
     }
 
     /**
      * Serialises a node into an array with its properties and attributes
      * to improve readability in the terminal output
      */
-    public static function serializeNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $node): array
+    public static function serializeNode(Node $node): array
     {
-        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
-
-        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
-
-        // TODO 9.0 migration: Check if you could change your code to work with the NodeAggregateId value object instead.
-        $subgraph = $this->contentRepositoryRegistry->subgraphForNode($node);
-        // TODO 9.0 migration: Try to remove the (string) cast and make your code more type-safe.
-
         $result = [
-            '_identifier' => $node->aggregateId->value,
+            '_aggregateId' => $node->aggregateId->value,
             '_nodeType' => $node->nodeTypeName->value,
-            '_name' => $node->nodeName,
-            '_workspace' => $node->getWorkspace()->getName(),
-            '_path' => (string) $subgraph->findNodePath($node->aggregateId),
+            '_name' => $node->name,
+            '_workspace' => $node->workspaceName->value,
         ];
 
         try {
@@ -73,11 +65,11 @@ class SerializationService
                 }
                 $result[$key] = $property;
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
+            // Noop
         }
 
         ksort($result);
-
         return $result;
     }
 }

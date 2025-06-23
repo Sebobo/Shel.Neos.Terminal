@@ -14,12 +14,15 @@ namespace Shel\Neos\Terminal\Command;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
-use Neos\Flow\Annotations as Flow;
+use Neos\ContentRepository\Core\NodeType\NodeTypeNames;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
+use Neos\ContentRepositoryRegistry\ContentRepositoryRegistry;
 use Neos\Flow\Cache\CacheManager;
 use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\Controller\ControllerContext;
-use Neos\Neos\Domain\Service\NodeSearchServiceInterface;
+use Neos\Neos\Domain\NodeLabel\NodeLabelGeneratorInterface;
 use Neos\Neos\Service\LinkingService;
 use Shel\Neos\Terminal\Domain\CommandContext;
 use Shel\Neos\Terminal\Domain\CommandInvocationResult;
@@ -33,14 +36,14 @@ use Symfony\Component\Console\Input\StringInput;
 class SearchCommand implements TerminalCommandInterface
 {
 
-    #[\Neos\Flow\Annotations\Inject]
-    protected \Neos\ContentRepositoryRegistry\ContentRepositoryRegistry $contentRepositoryRegistry;
-
     public function __construct(
-        protected Translator $translator,
-        protected LinkingService $linkingService,
-        protected CacheManager $cacheManager,
-    ) {
+        protected Translator                  $translator,
+        protected LinkingService              $linkingService,
+        protected CacheManager                $cacheManager,
+        protected NodeLabelGeneratorInterface $nodeLabelGenerator,
+        protected ContentRepositoryRegistry   $contentRepositoryRegistry,
+    )
+    {
     }
 
     public static function getCommandName(): string
@@ -104,29 +107,45 @@ class SearchCommand implements TerminalCommandInterface
         if (is_array($searchTerm)) {
             $searchTerm = implode(' ', $searchTerm);
         }
-        // TODO 9.0 migration: This could be a suitable replacement. Please check if all your requirements are still fulfilled.
         $subgraph = $this->contentRepositoryRegistry->subgraphForNode($contextNode);
+        $contentRepository = $this->contentRepositoryRegistry->get($contextNode->contentRepositoryId);
 
-        $nodes = $subgraph->findDescendantNodes($contextNode->aggregateId, \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\FindDescendantNodesFilter::create(nodeTypes: \Neos\ContentRepository\Core\Projection\ContentGraph\Filter\NodeType\NodeTypeCriteria::create(\Neos\ContentRepository\Core\NodeType\NodeTypeNames::fromStringArray($input->getOption('nodeTypes')), \Neos\ContentRepository\Core\NodeType\NodeTypeNames::createEmpty()), searchTerm: $searchTerm));
+        $nodes = $subgraph->findDescendantNodes(
+            $contextNode->aggregateId,
+            FindDescendantNodesFilter::create(
+                nodeTypes: NodeTypeCriteria::create(
+                    NodeTypeNames::fromStringArray($input->getOption('nodeTypes')
+                    ),
+                    NodeTypeNames::createEmpty()
+                ),
+                searchTerm: $searchTerm)
+        );
 
-        $results = array_map(function ($node) use ($commandContext) {
+        $results = $nodes->map(function (Node $node) use ($commandContext, $contentRepository) {
             return NodeResult::fromNode(
                 $node,
-                $this->getUriForNode($commandContext->getControllerContext(), $node)
+                $this->getUriForNode($commandContext->getControllerContext(), $node),
+                $contentRepository,
+                $this->nodeLabelGenerator,
             );
-        }, $nodes);
+        });
 
         return new CommandInvocationResult(true, $results);
     }
 
     protected function getUriForNode(
         ControllerContext $controllerContext,
-        \Neos\ContentRepository\Core\Projection\ContentGraph\Node $node
-    ): string {
+        Node              $node
+    ): string
+    {
         // Get the closest document to create uri from for navigation
         $closestDocumentNode = $node;
         $contentRepository = $this->contentRepositoryRegistry->get($closestDocumentNode->contentRepositoryId);
-        while ($closestDocumentNode && !$contentRepository->getNodeTypeManager()->getNodeType($closestDocumentNode->nodeTypeName)->isOfType('Neos.Neos:Document')) {
+        while ($closestDocumentNode
+            && !$contentRepository->getNodeTypeManager()
+                ->getNodeType($closestDocumentNode->nodeTypeName)
+                ?->isOfType('Neos.Neos:Document')
+        ) {
             $subgraph = $this->contentRepositoryRegistry->subgraphForNode($closestDocumentNode);
             $closestDocumentNode = $subgraph->findParentNode($closestDocumentNode->aggregateId);
         }
