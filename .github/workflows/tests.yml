@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  PACKAGE_FOLDER: Shel.Neos.Terminal
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,40 +26,58 @@ jobs:
       FLOW_FOLDER: ../neos-base-distribution
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: 8.3
-        tools: composer:v2
+      - name: Set package branch name
+        run: echo "PACKAGE_TARGET_VERSION=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_ENV
+        working-directory: .
 
-    - name: Get composer cache directory
-      id: composer-cache
-      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, xml, json, zlib, iconv, intl, pdo_sqlite, mysql
+          tools: composer:v2
 
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ matrix.neosVersion }}-${{ hashFiles('**/composer.json') }}
-        restore-keys: ${{ runner.os }}-composer-${{ matrix.neosVersion }}-
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ matrix.neosVersion }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: ${{ runner.os }}-composer-${{ matrix.neosVersion }}-
 
-    - name: Prepare Flow distribution
-      run: |
-        git clone https://github.com/neos/neos-base-distribution.git -b ${NEOS_TARGET_VERSION} ${FLOW_FOLDER}
-        cd ${FLOW_FOLDER}
-        composer require --no-update --no-interaction shel/neos-terminal
+      - name: Prepare Flow distribution
+        run: |
+          git clone https://github.com/neos/neos-base-distribution.git -b ${NEOS_TARGET_VERSION} ${FLOW_FOLDER}
+          cd ${FLOW_FOLDER}
 
-    - name: Install distribution
-      run: |
-        cd ${FLOW_FOLDER}
-        composer config --no-plugins allow-plugins.neos/composer-plugin true
-        composer install --no-interaction --no-progress
-        rm -rf Packages/Plugins/Shel.Neos.Terminal
-        cp -r ../Shel.Neos.Terminal Packages/Plugins/Shel.Neos.Terminal
+          git -C ../${{ env.PACKAGE_FOLDER }} checkout -b build
+          composer config repositories.package '{ "type": "path", "url": "../${{ env.PACKAGE_FOLDER }}", "options": { "symlink": false } }'
+          composer require --no-update --no-interaction shel/neos-terminal:"dev-build as dev-${PACKAGE_TARGET_VERSION}"
+          composer require --no-update --no-interaction neos/contentgraph-doctrinedbaladapter:"~9.0.0"
 
-    - name: Run Functional tests
-      run: |
-        cd ${FLOW_FOLDER}
-        bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/Plugins/Shel.Neos.Terminal/Tests/Functional/*
+      - name: Composer Install
+        run: |
+          cd ${FLOW_FOLDER}
+          composer update --no-interaction --no-progress
+
+      - name: Setup Flow configuration
+        run: |
+          cd ${FLOW_FOLDER}
+          rm -f Configuration/Testing/Settings.yaml
+          cat <<EOF >> Configuration/Testing/Settings.yaml
+          Neos:
+            Flow:
+              persistence:
+                backendOptions:
+                  host: '127.0.0.1'
+                  driver: pdo_mysql
+                  user: 'neos'
+                  password: 'neos'
+                  dbname: 'neos_functional_testing'
+          EOF
+
+      - name: Run Functional tests
+        run: |
+          cd ${FLOW_FOLDER}
+          bin/phpunit --colors -c Build/BuildEssentials/PhpUnit/FunctionalTests.xml Packages/Plugins/Shel.Neos.Terminal/Tests/Functional/*
