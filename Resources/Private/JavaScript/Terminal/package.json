@@ -12,7 +12,7 @@
     "buildTargetDirectory": "../../../Public/Assets"
   },
   "dependencies": {
-    "@neos-project/neos-ui-extensibility-webpack-adapter": "^8.3.8",
+    "@neos-project/neos-ui-extensibility-webpack-adapter": "^9.0.1",
     "react": "^16.14.0",
     "react-console-emulator": "^5.0.2",
     "react-redux": "^7.2.9",
