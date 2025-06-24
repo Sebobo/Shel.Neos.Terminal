@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Shel\Neos\Terminal\Domain;
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Mvc\Controller\ControllerContext;
 
 /**
@@ -15,29 +15,12 @@ use Neos\Flow\Mvc\Controller\ControllerContext;
  * information, please view the LICENSE file which was distributed with this
  * source code.
  */
-
 class CommandContext
 {
-
-    /**
-     * @var ControllerContext
-     */
-    protected $controllerContext;
-
-    /**
-     * @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node
-     */
-    protected $siteNode;
-
-    /**
-     * @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node
-     */
-    protected $documentNode;
-
-    /**
-     * @var \Neos\ContentRepository\Core\Projection\ContentGraph\Node
-     */
-    protected $focusedNode;
+    protected ?ControllerContext $controllerContext;
+    protected ?Node $siteNode = null;
+    protected ?Node $documentNode = null;
+    protected ?Node $focusedNode = null;
 
     public function __construct(ControllerContext $controllerContext)
     {
@@ -49,36 +32,36 @@ class CommandContext
         return $this->controllerContext;
     }
 
-    public function getSiteNode(): ?\Neos\ContentRepository\Core\Projection\ContentGraph\Node
+    public function getSiteNode(): ?Node
     {
         return $this->siteNode;
     }
 
-    public function withSiteNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $siteNode = null): CommandContext
+    public function withSiteNode(Node $siteNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->siteNode = $siteNode;
         return $instance;
     }
 
-    public function getDocumentNode(): ?\Neos\ContentRepository\Core\Projection\ContentGraph\Node
+    public function getDocumentNode(): ?Node
     {
         return $this->documentNode;
     }
 
-    public function withDocumentNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $documentNode = null): CommandContext
+    public function withDocumentNode(Node $documentNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->documentNode = $documentNode;
         return $instance;
     }
 
-    public function getFocusedNode(): ?\Neos\ContentRepository\Core\Projection\ContentGraph\Node
+    public function getFocusedNode(): ?Node
     {
         return $this->focusedNode;
     }
 
-    public function withFocusedNode(\Neos\ContentRepository\Core\Projection\ContentGraph\Node $focusedNode = null): CommandContext
+    public function withFocusedNode(Node $focusedNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->focusedNode = $focusedNode;

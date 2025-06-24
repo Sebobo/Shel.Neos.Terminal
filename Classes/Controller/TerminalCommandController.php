@@ -110,7 +110,7 @@ class TerminalCommandController extends ActionController
 
         try {
             $result = $command->invokeCommand($argument, $commandContext);
-        } catch (AccessDeniedException $e) {
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (AccessDeniedException $e) {
             $result = new CommandInvocationResult(false,
                 $this->translateById('commandNotGranted', ['command' => $commandName]));
         }

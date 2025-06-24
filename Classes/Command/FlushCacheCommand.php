@@ -15,6 +15,8 @@ namespace Shel\Neos\Terminal\Command;
 
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\Cache\CacheManager;
+use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
+use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
 use Neos\Flow\I18n\Translator;
 use Shel\Neos\Terminal\Domain\CommandContext;
 use Shel\Neos\Terminal\Domain\CommandInvocationResult;
@@ -71,16 +73,19 @@ class FlushCacheCommand implements TerminalCommandInterface
         if ($cacheIdentifier) {
             if ($this->cacheManager->hasCache($cacheIdentifier)) {
                 $this->cacheManager->getCache($cacheIdentifier)->flush();
-                $result = $this->translator->translateById('command.flushCache.flushedOne',
-                    ['cacheIdentifier' => $cacheIdentifier], null, null, 'Main', 'Shel.Neos.Terminal');
+                $result = $this->translateById(
+                    'command.flushCache.flushedOne',
+                    ['cacheIdentifier' => $cacheIdentifier]
+                );
             } else {
                 $success = false;
-                $result = $this->translator->translateById('command.flushCache.cacheDoesNotExist',
-                    ['cacheIdentifier' => $cacheIdentifier], null, null, 'Main', 'Shel.Neos.Terminal');
+                $result = $this->translateById(
+                    'command.flushCache.cacheDoesNotExist',
+                    ['cacheIdentifier' => $cacheIdentifier]
+                );
             }
         } else {
-            $result = $this->translator->translateById('command.flushCache.flushedAll', [], null, null, 'Main',
-                'Shel.Neos.Terminal');
+            $result = $this->translateById('command.flushCache.flushedAll');
             $this->cacheManager->flushCaches();
         }
 
@@ -93,5 +98,21 @@ class FlushCacheCommand implements TerminalCommandInterface
             'result' => $result,
         ], JSON_THROW_ON_ERROR);
         exit;
+    }
+
+    protected function translateById(string $identifier, array $arguments = []): ?string
+    {
+        try {
+            return $this->translator->translateById(
+                $identifier,
+                $arguments, null,
+                null,
+                'Main',
+                'Shel.Neos.Terminal'
+            );
+        } catch (\Exception) {
+            // Noop
+        }
+        return $identifier;
     }
 }
