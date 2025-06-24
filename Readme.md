@@ -44,12 +44,13 @@ for more recent Neos versions which provide React >= 16.8.
 But the commands are still registered and available via the `NeosTerminal` global 
 window object even when the React version is too old.
 
-| Neos version  | Terminal         |
-| ------------- | ---------------- |
-| 4.3           | Commands are only available via the browser console |
-| 5.2 - 5.3     | Full support     |
-| 7.0+          | Full support     |
-| 8.0+          | Full support     |
+| Neos version | Terminal         |
+|--------------| ---------------- |
+| 4.3          | Commands are only available via the browser console |
+| 5.2 - 5.3    | Full support     |
+| 7.0+         | Full support     |
+| 8.0+         | Full support     |
+| 9.0+         | Full support     |
 
 ## Usage
 

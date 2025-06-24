@@ -13,7 +13,7 @@ namespace Shel\Neos\Terminal\Controller;
  * source code.
  */
 
-use Neos\ContentRepository\Domain\Model\NodeInterface;
+use Neos\ContentRepository\Core\Projection\ContentGraph\Node;
 use Neos\Flow\Annotations as Flow;
 use Neos\Flow\I18n\Exception\IndexOutOfBoundsException;
 use Neos\Flow\I18n\Exception\InvalidFormatPlaceholderException;
@@ -21,9 +21,9 @@ use Neos\Flow\I18n\Translator;
 use Neos\Flow\Mvc\ActionRequest;
 use Neos\Flow\Mvc\ActionResponse;
 use Neos\Flow\Mvc\Controller\ActionController;
-use Neos\Flow\Mvc\Exception\UnsupportedRequestTypeException;
 use Neos\Flow\Mvc\View\JsonView;
 use Neos\Flow\Security\Authorization\PrivilegeManagerInterface;
+use Neos\Flow\Security\Context;
 use Neos\Flow\Security\Exception\AccessDeniedException;
 use Neos\Neos\Ui\Domain\Model\FeedbackCollection;
 use Shel\Neos\Terminal\Domain\CommandContext;
@@ -34,48 +34,29 @@ use Shel\Neos\Terminal\Security\TerminalCommandPrivilegeSubject;
 use Shel\Neos\Terminal\Service\SerializationService;
 use Shel\Neos\Terminal\Service\TerminalCommandService;
 
-/**
- * @Flow\Scope("singleton")
- */
+#[Flow\Scope('singleton')]
 class TerminalCommandController extends ActionController
 {
 
-    /**
-     * @var array
-     */
-    protected $viewFormatToObjectNameMap = [
-        'json' => JsonView::class,
-    ];
+    protected $defaultViewObjectName = JsonView::class;
 
-    /**
-     * @Flow\Inject
-     * @var Translator
-     */
-    protected $translator;
+    #[Flow\Inject]
+    protected Translator $translator;
 
-    /**
-     * @Flow\Inject
-     * @var FeedbackCollection
-     */
-    protected $feedbackCollection;
+    #[Flow\Inject]
+    protected FeedbackCollection $feedbackCollection;
 
-    /**
-     * @Flow\InjectConfiguration(path="frontendConfiguration", package="Neos.Neos.Ui")
-     * @var array
-     */
-    protected $frontendConfiguration;
+    #[Flow\InjectConfiguration('frontendConfiguration', 'Neos.Neos.Ui')]
+    protected array $frontendConfiguration;
 
-    /**
-     * @Flow\Inject
-     * @var TerminalCommandService
-     */
-    protected $terminalCommandService;
+    #[Flow\Inject]
+    protected TerminalCommandService $terminalCommandService;
 
-    /**
-     * @Flow\Inject
-     * @var PrivilegeManagerInterface
-     */
-    protected $privilegeManager;
+    #[Flow\Inject]
+    protected PrivilegeManagerInterface $privilegeManager;
+
+    #[Flow\Inject]
+    protected Context $securityContext;
 
     public function getCommandsAction(): void
     {
@@ -104,13 +85,17 @@ class TerminalCommandController extends ActionController
         $this->view->assign('value', ['success' => true, 'result' => $commandDefinitions]);
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function invokeCommandAction(
         string $commandName,
         string $argument = null,
-        NodeInterface $siteNode = null,
-        NodeInterface $documentNode = null,
-        NodeInterface $focusedNode = null
-    ): void {
+        Node   $siteNode = null,
+        Node   $documentNode = null,
+        Node   $focusedNode = null
+    ): void
+    {
         $this->response->setContentType('application/json');
 
         $command = $this->terminalCommandService->getCommand($commandName);
@@ -125,14 +110,9 @@ class TerminalCommandController extends ActionController
 
         try {
             $result = $command->invokeCommand($argument, $commandContext);
-        } catch (AccessDeniedException $e) {
+        } /** @noinspection PhpRedundantCatchClauseInspection */ catch (AccessDeniedException $e) {
             $result = new CommandInvocationResult(false,
                 $this->translateById('commandNotGranted', ['command' => $commandName]));
-        }
-
-        if (!$result) {
-            $result = new CommandInvocationResult(false,
-                $this->translateById('commandNotFound', ['command' => $commandName]));
         }
 
         // TODO: Move the feedback related logic into a separate service
@@ -150,9 +130,6 @@ class TerminalCommandController extends ActionController
         ]);
     }
 
-    /**
-     * @throws UnsupportedRequestTypeException
-     */
     protected function initializeController(ActionRequest $request, ActionResponse $response): void
     {
         parent::initializeController($request, $response);
@@ -180,7 +157,7 @@ class TerminalCommandController extends ActionController
     {
         try {
             return $this->translator->translateById('disabled', $arguments);
-        } catch (InvalidFormatPlaceholderException | IndexOutOfBoundsException $e) {
+        } catch (InvalidFormatPlaceholderException|IndexOutOfBoundsException) {
         }
         return $id;
     }

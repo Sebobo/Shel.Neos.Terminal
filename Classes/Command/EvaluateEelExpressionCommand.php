@@ -24,11 +24,8 @@ use Symfony\Component\Console\Input\StringInput;
 
 class EvaluateEelExpressionCommand implements TerminalCommandInterface
 {
-    /**
-     * @Flow\Inject
-     * @var EelEvaluationService
-     */
-    protected $eelEvaluationService;
+    #[Flow\Inject]
+    protected EelEvaluationService $eelEvaluationService;
 
     public static function getCommandName(): string
     {

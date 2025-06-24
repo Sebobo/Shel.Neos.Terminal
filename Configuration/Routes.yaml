@@ -1,7 +1,8 @@
 - name: 'Shel.Neos.Terminal:Commands'
   uriPattern: 'neos/shel-neos-terminal/{@action}'
   defaults:
-    '@package':    'Shel.Neos.Terminal'
-    '@controller': 'TerminalCommand'
-    '@format':     'json'
+    '@package': Shel.Neos.Terminal
+    '@controller': TerminalCommand
+    '@format': json
   appendExceedingArguments: true
+  httpMethods: ['GET', 'POST']

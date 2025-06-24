@@ -32,7 +32,7 @@ class CommandInvocationResult
     /**
      * @param mixed $result has to be json serializable
      */
-    public function __construct(bool $success, $result, array $uiFeedback = [])
+    public function __construct(bool $success, mixed $result, array $uiFeedback = [])
     {
         $this->success = $success;
         $this->result = $result;
@@ -44,10 +44,7 @@ class CommandInvocationResult
         return $this->success;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getResult()
+    public function getResult(): mixed
     {
         return $this->result;
     }
