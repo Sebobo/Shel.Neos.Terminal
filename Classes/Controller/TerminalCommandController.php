@@ -90,10 +90,10 @@ class TerminalCommandController extends ActionController
      */
     public function invokeCommandAction(
         string $commandName,
-        string $argument = null,
-        Node   $siteNode = null,
-        Node   $documentNode = null,
-        Node   $focusedNode = null
+        ?string $argument = null,
+        ?Node   $siteNode = null,
+        ?Node   $documentNode = null,
+        ?Node   $focusedNode = null
     ): void
     {
         $this->response->setContentType('application/json');

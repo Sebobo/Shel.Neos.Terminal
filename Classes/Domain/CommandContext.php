@@ -37,7 +37,7 @@ class CommandContext
         return $this->siteNode;
     }
 
-    public function withSiteNode(Node $siteNode = null): CommandContext
+    public function withSiteNode(?Node $siteNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->siteNode = $siteNode;
@@ -49,7 +49,7 @@ class CommandContext
         return $this->documentNode;
     }
 
-    public function withDocumentNode(Node $documentNode = null): CommandContext
+    public function withDocumentNode(?Node $documentNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->documentNode = $documentNode;
@@ -61,7 +61,7 @@ class CommandContext
         return $this->focusedNode;
     }
 
-    public function withFocusedNode(Node $focusedNode = null): CommandContext
+    public function withFocusedNode(?Node $focusedNode = null): CommandContext
     {
         $instance = clone $this;
         $instance->focusedNode = $focusedNode;
