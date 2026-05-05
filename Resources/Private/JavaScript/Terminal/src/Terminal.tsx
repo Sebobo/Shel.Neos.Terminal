@@ -62,7 +62,7 @@ const mapStateToProps = (state: NeosRootState) => ({
     terminalOpen: terminalSelectors.terminalOpen(state),
 });
 
-const mapDispatchToProps = () => ({ handleServerFeedback: actions.ServerFeedback.handleServerFeedback });
+const mapDispatchToProps = { handleServerFeedback: actions.ServerFeedback.handleServerFeedback };
 
 const mapGlobalRegistryToProps = neos((globalRegistry: any) => ({
     i18nRegistry: globalRegistry.get('i18n'),
